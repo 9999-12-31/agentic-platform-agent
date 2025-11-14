@@ -225,17 +225,17 @@ public class ModelService extends ServiceImpl<ModelMapper, Model> {
 
             // SECURITY FIX: Add hardcoded default blacklist to prevent SSRF even if database is empty
             // List<String> defaultBlacklist = Arrays.asList(
-            //         // Private IP ranges (RFC 1918)
-            //         "10.0.0.0/8",
-            //         "172.16.0.0/12",
-            //         "192.168.0.0/16",
-            //         // Loopback
-            //         "127.0.0.0/8",
-            //         // Link-local
-            //         "169.254.0.0/16",
-            //         // IPv6 loopback and link-local
-            //         "::1/128",
-            //         "fe80::/10");
+            // // Private IP ranges (RFC 1918)
+            // "10.0.0.0/8",
+            // "172.16.0.0/12",
+            // "192.168.0.0/16",
+            // // Loopback
+            // "127.0.0.0/8",
+            // // Link-local
+            // "169.254.0.0/16",
+            // // IPv6 loopback and link-local
+            // "::1/128",
+            // "fe80::/10");
 
             // // Merge database blacklist with default blacklist
             // List<String> mergedBlacklist = new ArrayList<>(defaultBlacklist);
