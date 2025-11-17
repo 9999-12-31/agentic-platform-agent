@@ -272,12 +272,12 @@ public class DatabaseService extends ServiceImpl<DbInfoMapper, DbInfo> {
                 throw new BusinessException(ResponseEnum.DATABASE_NOT_EXIST);
             }
             // Table count limit
-            Long tableCount = dbTableMapper.selectCount(new QueryWrapper<DbTable>().lambda()
-                    .eq(DbTable::getDbId, dbInfo.getDbId())
-                    .eq(DbTable::getDeleted, false));
-            if (tableCount > 20) {
-                throw new BusinessException(ResponseEnum.DATABASE_COUNT_LIMITED);
-            }
+            // Long tableCount = dbTableMapper.selectCount(new QueryWrapper<DbTable>().lambda()
+            //         .eq(DbTable::getDbId, dbInfo.getDbId())
+            //         .eq(DbTable::getDeleted, false));
+            // if (tableCount > 20) {
+            //     throw new BusinessException(ResponseEnum.DATABASE_COUNT_LIMITED);
+            // }
             // Duplicate table name validation
             Long count = dbTableMapper.selectCount(new QueryWrapper<DbTable>().lambda()
                     .eq(DbTable::getName, dbTableDto.getName())
@@ -408,20 +408,20 @@ public class DatabaseService extends ServiceImpl<DbInfoMapper, DbInfo> {
                 }
             }
             // Query table field count
-            Long fieldCount = dbTableFieldMapper.selectCount(new QueryWrapper<DbTableField>().lambda()
-                    .eq(DbTableField::getTbId, dbTable.getId()));
-            // Count the number of new fields and deleted fields
-            long insertCount = dbTableDto.getFields()
-                    .stream()
-                    .filter(field -> DBOperateEnum.INSERT.getCode().equals(field.getOperateType()))
-                    .count();
-            long deleteCount = dbTableDto.getFields()
-                    .stream()
-                    .filter(field -> DBOperateEnum.DELETE.getCode().equals(field.getOperateType()))
-                    .count();
-            if (fieldCount + insertCount - deleteCount > 20) {
-                throw new BusinessException(ResponseEnum.DATABASE_FIELD_CANNOT_BEYOND_20);
-            }
+            // Long fieldCount = dbTableFieldMapper.selectCount(new QueryWrapper<DbTableField>().lambda()
+            //         .eq(DbTableField::getTbId, dbTable.getId()));
+            // // Count the number of new fields and deleted fields
+            // long insertCount = dbTableDto.getFields()
+            //         .stream()
+            //         .filter(field -> DBOperateEnum.INSERT.getCode().equals(field.getOperateType()))
+            //         .count();
+            // long deleteCount = dbTableDto.getFields()
+            //         .stream()
+            //         .filter(field -> DBOperateEnum.DELETE.getCode().equals(field.getOperateType()))
+            //         .count();
+            // if (fieldCount + insertCount - deleteCount > 20) {
+            //     throw new BusinessException(ResponseEnum.DATABASE_FIELD_CANNOT_BEYOND_20);
+            // }
             DbInfo dbInfo = dbInfoMapper.selectById(dbTable.getDbId());
             if (dbTableDto.getFields() != null && !dbTableDto.getFields().isEmpty()) {
                 for (DbTableFieldDto field : dbTableDto.getFields()) {
