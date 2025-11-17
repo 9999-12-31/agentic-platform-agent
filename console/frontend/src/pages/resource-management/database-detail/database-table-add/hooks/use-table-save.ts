@@ -78,10 +78,10 @@ export const useTableSave = (
             });
           }
 
-          if (state.dataSource.length > 20) {
-            message.error(t('database.fieldCountExceeded'));
-            return;
-          }
+          // if (state.dataSource.length > 20) {
+          //   message.error(t('database.fieldCountExceeded'));
+          //   return;
+          // }
 
           actions.setSaveLoading(true);
           const params = {
@@ -131,11 +131,11 @@ export const useTableSave = (
               dbId: Number(id) || 0,
             });
 
-            if (tables.length >= 20) {
-              message.error(t('database.tableCountExceeded'));
-              actions.setSaveLoading(false);
-              return;
-            }
+            // if (tables.length >= 20) {
+            //   message.error(t('database.tableCountExceeded'));
+            //   actions.setSaveLoading(false);
+            //   return;
+            // }
 
             await serviceFunc(params);
             message.success(t('database.saveSuccess'));
