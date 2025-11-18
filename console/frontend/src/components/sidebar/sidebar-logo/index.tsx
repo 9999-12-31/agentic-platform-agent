@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import agentLog from '@/assets/imgs/sidebar/agentLog.svg';
+import topLogo from '@/assets/imgs/sidebar/topLogo.png';
 import agentLogoText from '@/assets/imgs/sidebar/agentLogoText.svg';
 import agentLogoTextEn from '@/assets/imgs/sidebar/agent_logo_text_en.svg';
 import textLogo from '@/assets/imgs/sidebar/logoText.png';
@@ -62,13 +63,32 @@ const SidebarLogo = ({
   }
 
   return (
-    <img
-      src={isCollapsed ? agentLog : agentLogoTextEn}
-      className="w-[190px] cursor-pointer mx-auto"
-      alt="Astron Agent"
-      style={{ height: isCollapsed ? '34px' : 'auto' }}
-      onClick={handleLogoClick}
-    />
+    // <img
+    //   src={isCollapsed ? agentLog : agentLogoTextEn}
+    //   className="w-[190px] cursor-pointer mx-auto"
+    //   alt="Astron Agent"
+    //   style={{ height: isCollapsed ? '34px' : 'auto' }}
+    //   onClick={handleLogoClick}
+    // />
+    isCollapsed ? (
+      <img
+        src={topLogo}
+        className="w-[190px] cursor-pointer mx-auto"
+        alt="Astron Agent"
+        style={{ height: isCollapsed ? '44px' : 'auto' }}
+        onClick={handleLogoClick}
+      />
+    ) : (
+      <div onClick={handleLogoClick}>
+        <img
+        src={topLogo}
+        className="w-[190px] cursor-pointer mx-auto"
+        style={{ height: '56px',width:'56px' }}
+        onClick={handleLogoClick}
+        />
+        <div style={{ textAlign: 'center', fontSize: 'large', fontWeight: "bolder" }}>医院运营管理智能体</div>
+      </div>
+    )
   );
 };
 
