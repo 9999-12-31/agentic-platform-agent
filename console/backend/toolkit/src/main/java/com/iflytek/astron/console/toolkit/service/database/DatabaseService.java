@@ -291,9 +291,9 @@ public class DatabaseService extends ServiceImpl<DbInfoMapper, DbInfo> {
                 throw new BusinessException(ResponseEnum.DATABASE_TABLE_FIELD_CANNOT_EMPTY);
             }
             // Table fields cannot exceed 20
-            if (dbTableDto.getFields().size() > 20) {
-                throw new BusinessException(ResponseEnum.DATABASE_FIELD_CANNOT_BEYOND_20);
-            }
+            // if (dbTableDto.getFields().size() > 20) {
+            //     throw new BusinessException(ResponseEnum.DATABASE_FIELD_CANNOT_BEYOND_20);
+            // }
             // Save information
             DbTable dbTable = new DbTable();
             BeanUtils.copyProperties(dbTableDto, dbTable);
