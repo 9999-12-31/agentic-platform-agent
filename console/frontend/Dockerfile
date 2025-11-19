@@ -14,11 +14,12 @@ COPY console/frontend/package*.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --legacy-peer-deps
 
-# 增加内存上限 + 可选缓存构建产物
+# 再拷贝源码，进行构建
 COPY console/frontend/ ./
 RUN --mount=type=cache,target=/app/.cache \
     NODE_OPTIONS="--max-old-space-size=6144" \
     npm run build-prod
+
 
 #############################################
 # 2) Runtime：按目标平台各自封装 Nginx 镜像

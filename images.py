@@ -1,4 +1,11 @@
 images = [
+    # ragflow
+    "infiniflow/ragflow:v0.20.5-slim",
+    "elasticsearch:8.11.3",
+    "mysql:8.0.39",
+    "quay.io/minio/minio:RELEASE.2025-06-13T11-33-47Z",
+    "valkey/valkey:8"
+    # rpa
     "mysql:8.4.6",
     "bitnami/redis:latest",
     "minio/minio:RELEASE.2025-06-13T11-33-47Z-cpuv1",
@@ -7,6 +14,27 @@ images = [
     "ghcr.io/iflytek/astron-rpa/openapi-service:latest",
     "ghcr.io/iflytek/astron-rpa/resource-service:latest",
     "ghcr.io/iflytek/astron-rpa/robot-service:latest"
+    # casdoor
+    "casbin/casdoor:v2.67.0",
+    "mysql:8.4"
+    # agent
+    "postgres:14",
+    "mysql:8.4",
+    "redis:7",
+    "nginx:1.25-alpine",
+    "apache/kafka:3.7.0",
+    "elasticsearch:7.16.2",
+    "minio/minio:RELEASE.2025-07-23T15-54-02Z",
+    "ghcr.io/iflytek/astron-agent/core-tenant:latest",
+    "ghcr.io/iflytek/astron-agent/core-database:latest",
+    "ghcr.io/iflytek/astron-agent/core-rpa:latest",
+    "ghcr.io/iflytek/astron-agent/core-link:latest",
+    "ghcr.io/iflytek/astron-agent/core-aitools:latest",
+    "ghcr.io/iflytek/astron-agent/core-agent:latest",
+    "ghcr.io/iflytek/astron-agent/core-knowledge:latest",
+    "ghcr.io/iflytek/astron-agent/core-workflow:latest",
+    "ghcr.io/iflytek/astron-agent/console-frontend:latest",
+    "ghcr.io/iflytek/astron-agent/console-hub:latest",
 ]
 
 harbor_registry = "harbor.bigdata.com/agentic"
