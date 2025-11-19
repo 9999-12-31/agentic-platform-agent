@@ -3,7 +3,7 @@
     "ver": "1.0",
     "mcp": {
         "createTime": "2025-09-20T23:44:00+08:00",
-        "server": "http://172.19.230.2:1122/mcp",
+        "server": "http://172.19.230.2:1123/sse",
         "authorized": false,
         "logo": "https://openstorage.xfyousheng.com/lost/asset/20250920/d61073fe-7f43-479f-9675-6040beeaaa27.png",
         "name": "可视化图表",
