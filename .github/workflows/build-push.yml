@@ -3,8 +3,7 @@ name: Build and Push astron Agent Images
 on:
   push:
     branches:
-      - main
-      - master
+      - develop
   workflow_dispatch:
     inputs:
       push_images:
@@ -49,11 +48,9 @@ jobs:
           # Version is always latest
           VERSION="latest"
 
-          # Determine if should push (only main/master branches or manual dispatch)
+          # Determine if should push (only develop branches or manual dispatch)
           SHOULD_PUSH="false"
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-            SHOULD_PUSH="true"
-          elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/develop" ]]; then
             SHOULD_PUSH="true"
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.push_images }}" == "true" ]]; then
             SHOULD_PUSH="true"
