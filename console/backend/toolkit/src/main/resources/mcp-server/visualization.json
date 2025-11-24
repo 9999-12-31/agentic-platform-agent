@@ -1,15 +1,15 @@
 {
-    "id": "10d27396-71da-4de8-975b-735833a57ec8",
+    "id": "9d2e6d2c-7078-43dd-9e01-5ca0943f33f1",
     "ver": "1.0",
     "mcp": {
         "createTime": "2025-09-20T23:44:00+08:00",
         "server": "http://172.19.230.2:1123/sse",
         "authorized": false,
-        "logo": "https://openstorage.xfyousheng.com/lost/asset/20250920/d61073fe-7f43-479f-9675-6040beeaaa27.png",
+        "logo": "https://oss-beijing-m8.openstorage.cn/SparkBotProd/mcp_logos/13b87937-9d1b-421f-a499-a593d5311ad8.png",
         "name": "可视化图表",
         "creator": "官方",
-        "brief": "提供图表生成功能",
-        "content": "提供图表生成功能",
+        "brief": "用于生成可视化图表的 MCP Server，通过 MCP Tools 的方式，支持常用的可视化图表。",
+        "content": "基于 TypeScript 的 MCP 服务器，专门用于使用 AntV 生成各种类型的图表。\n\n### 核心功能\n- **支持 15+ 种图表类型**：\n  - **面积图 (Area Chart)**: `generate_area_chart`\n  - **柱状图 (Bar Chart)**: `generate_bar_chart`\n  - **柱形图 (Column Chart)**: `generate_column_chart`\n  - **双轴图 (Dual Axes Chart)**: `generate_dual_axes_chart`\n  - **鱼骨图 (Fishbone Diagram)**: `generate_fishbone_diagram`\n  - **流程图 (Flow Diagram)**: `generate_flow_diagram`\n  - **直方图 (Histogram Chart)**: `generate_histogram_chart`\n  - **折线图 (Line Chart)**: `generate_line_chart`\n  - **思维导图 (Mind Map)**: `generate_mind_map`\n  - **网络图 (Network Graph)**: `generate_network_graph`\n  - **饼图 (Pie Chart)**: `generate_pie_chart`\n  - **雷达图 (Radar Chart)**: `generate_radar_chart`\n  - **散点图 (Scatter Chart)**: `generate_scatter_chart`\n  - **矩形树图 (Treemap Chart)**: `generate_treemap_chart`\n  - **词云图 (Word Cloud Chart)**: `generate_word_cloud_chart`\n\n- **输出结果**：每种图表生成后返回一个图像 URL。\n\n### 技术信息\n- **语言**：TypeScript\n- **依赖库**：AntV（用于图表生成）\n- **npm 版本**：未明确提及，但可通过 npm 安装和使用。\n- **许可证**：未明确提及，但通常开源项目会采用 MIT 或类似许可证。\n\n### 使用场景\n- 通过 MCP 工具调用服务器，生成所需类型的图表，并将生成的图表以图像 URL 的形式返回，便于嵌入或展示。",
         "tools": [
             {
                 "name": "generate_area_chart",
