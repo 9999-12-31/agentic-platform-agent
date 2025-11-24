@@ -1,6 +1,6 @@
 services:
   casdoor:
-    image: casbin/casdoor:v2.67.0
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/casbin/casdoor:v2.67.0
     container_name: astron-agent-casdoor
     restart: always
     user: root
@@ -23,7 +23,7 @@ services:
     entrypoint: ["/bin/sh", "/entrypoint.sh"]
 
   casdoor-mysql:
-    image: mysql:8.4
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/mysql:8.4
     container_name: astron-agent-casdoor-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root123

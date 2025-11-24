@@ -5,7 +5,7 @@ services:
 
   # PostgreSQL Database
   postgres:
-    image: postgres:14
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/postgres:14
     container_name: astron-agent-postgres
     environment:
       POSTGRES_DB: sparkdb_manager
@@ -26,7 +26,7 @@ services:
 
   # MySQL Database
   mysql:
-    image: mysql:8.4
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/mysql:8.4
     container_name: astron-agent-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
@@ -44,7 +44,7 @@ services:
 
   # Redis Cache
   redis:
-    image: redis:7
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/redis:7
     container_name: astron-agent-redis
     volumes:
       - redis_data:/data
@@ -60,7 +60,7 @@ services:
 
   # Elasticsearch Search Engine (Disabled by default, uncomment to enable)
   elasticsearch:
-    image: elasticsearch:7.16.2
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/elasticsearch:7.16.2
     container_name: astron-agent-elasticsearch
     environment:
       - discovery.type=single-node
@@ -80,7 +80,7 @@ services:
 
   # Kafka Message Queue (Disabled by default, uncomment to enable)
   kafka:
-    image: apache/kafka:3.7.0
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/apache/kafka:3.7.0
     container_name: astron-agent-kafka
     environment:
       KAFKA_NODE_ID: 1
@@ -108,7 +108,7 @@ services:
 
   # MinIO Object Storage
   minio:
-    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/minio/minio:RELEASE.2025-07-23T15-54-02Z
     container_name: astron-agent-minio
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
@@ -135,7 +135,7 @@ services:
 
   # Tenant Service
   core-tenant:
-    image: ghcr.io/iflytek/astron-agent/core-tenant:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-tenant:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-tenant
     environment:
       SERVICE_PORT: "${CORE_TENANT_PORT:-5052}"
@@ -167,7 +167,7 @@ services:
   # Memory Database Service
 
   core-database:
-    image: ghcr.io/iflytek/astron-agent/core-database:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-database:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-database
     environment:
       SERVICE_PORT: "${CORE_DATABASE_PORT:-7990}"
@@ -196,7 +196,7 @@ services:
 
   # RPA Plugin Service
   core-rpa:
-    image: ghcr.io/iflytek/astron-agent/core-rpa:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-rpa:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-rpa
     environment:
       SERVICE_PORT: "${CORE_RPA_PORT:-17198}"
@@ -224,7 +224,7 @@ services:
 
   # Link Plugin Service
   core-link:
-    image: ghcr.io/iflytek/astron-agent/core-link:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-link:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-link
     environment:
       SERVICE_PORT: "${CORE_LINK_PORT:-18888}"
@@ -259,7 +259,7 @@ services:
 
   # AI Tools Plugin Service
   core-aitools:
-    image: ghcr.io/iflytek/astron-agent/core-aitools:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-aitools:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-aitools
     environment:
       SERVICE_PORT: "${CORE_AITOOLS_PORT:-18668}"
@@ -293,7 +293,7 @@ services:
 
   # Agent Service
   core-agent:
-    image: ghcr.io/iflytek/astron-agent/core-agent:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-agent:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-agent
     environment:
       SERVICE_LOCATION: "${SERVICE_LOCATION:-hf}"
@@ -356,7 +356,7 @@ services:
 
   # Knowledge Base Service
   core-knowledge:
-    image: ghcr.io/iflytek/astron-agent/core-knowledge:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-knowledge:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-knowledge
     # Map container's localhost to host machine, to access services on the host
     extra_hosts:
@@ -389,7 +389,7 @@ services:
 
   # Workflow Service
   core-workflow:
-    image: ghcr.io/iflytek/astron-agent/core-workflow:${ASTRON_AGENT_VERSION:-latest}
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/core-workflow:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-workflow
     environment:
       RUNTIME_ENV: "${RUNTIME_ENV:-dev}"
@@ -454,7 +454,7 @@ services:
 
   # Nginx Reverse Proxy
   nginx:
-    image: nginx:1.25-alpine
+    image: harbor.bigdata.com/agentic/agentic-platform-agent/nginx:1.25-alpine
     container_name: astron-agent-nginx
     ports:
       - "${EXPOSE_NGINX_PORT:-80}:80"
