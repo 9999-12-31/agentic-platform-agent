@@ -12,7 +12,8 @@ import modelManagement from '@/assets/svgs/aside-model.svg';
 import modelManagementAct from '@/assets/svgs/aside-model-act.svg';
 import resourceManagement from '@/assets/svgs/aside-resource.svg';
 import resourceManagementAct from '@/assets/svgs/aside-resource-act.svg';
-
+import modelAgent from '@/assets/svgs/aside-model.svg';
+import modelAgentAct from '@/assets/svgs/aside-model-act.svg';
 // TODO 应用管理图标替换
 import appManagement from '@/assets/svgs/aside-app-manage.svg';
 import appManagementAct from '@/assets//svgs/aside-app-manage-act.svg';
@@ -77,6 +78,13 @@ export const createMenuList = (): {
         path: '/home',
         activeTab: 'home',
       },
+      // {
+      //   icon: modelAgent,
+      //   iconAct: modelAgentAct,
+      //   subTitle: getTranslation('sidebar.modelMarketplace'),
+      //   path: '/xl',
+      //   activeTab: 'Xlagent',
+      // },
       {
         icon: pluginSquare,
         iconAct: pluginSquareAct,

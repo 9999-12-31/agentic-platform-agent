@@ -344,6 +344,7 @@ export const zh = {
     teamSpace: '团队空间',
     agentMarketplace: '智能体广场',
     pluginMarketplace: '插件广场',
+    modelMarketplace: '杏林Agent',
     myAgents: '我的智能体',
     myAgentsManagement: '智能体管理',
     promptEngineering: 'Prompt工程',

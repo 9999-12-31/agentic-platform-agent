@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
 interface HomeStore {
-  botType: number;
+  botType: number | null;
   botOrigin: 'sys' | 'search' | 'home';
   scrollTop: number;
   loadingPage: number;
   searchInputValue: string;
 }
 interface HomeActions {
-  setBotType: (botType: number) => void;
+  setBotType: (botType: number | null) => void;
   setBotOrigin: (botOrigin: 'sys' | 'search' | 'home') => void;
   setScrollTop: (scrollTop: number) => void;
   setLoadingPage: (loadingPage: number) => void;
@@ -16,7 +16,7 @@ interface HomeActions {
 }
 
 const useHomeStore = create<HomeStore & HomeActions>(set => ({
-  botType: 0,
+  botType: null,
   botOrigin: 'home',
   scrollTop: 0,
   loadingPage: 1,

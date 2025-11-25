@@ -360,6 +360,7 @@ export const en = {
     teamSpace: 'Team Space',
     agentMarketplace: 'Agent Marketplace',
     pluginMarketplace: 'Plugin Marketplace',
+    modelMarketplace: 'XingLin Agent',
     myAgents: 'My Agents',
     myAgentsManagement: 'Agent Management',
     promptEngineering: 'Prompt Engineering',
