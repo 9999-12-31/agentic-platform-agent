@@ -37,6 +37,9 @@ public class UserInfo {
     @Schema(description = "Account status: 0 inactive, 1 active, 2 frozen")
     private Integer accountStatus;
 
+    @Schema(description = "Account type: 0 user, 9 admin")
+    private Integer accountType;
+
     @Schema(description = "User space type")
     private EnterpriseServiceTypeEnum enterpriseServiceType;
 
