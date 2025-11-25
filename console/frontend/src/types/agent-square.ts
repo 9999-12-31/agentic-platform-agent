@@ -41,20 +41,20 @@ interface BotListPage {
 
 interface BotType {
   /** 助手类型编码 */
-  typeKey: number;
+  typeKey: number | null;
   /** 助手类型名称 */
   typeName: string;
   /** 助手类型图标URL */
   icon: string;
   /** 助手类型英文名 */
-  typeNameEn: string;
+  typeNameEn: string  | null;
 }
 
 interface SearchBotParam {
   search: string;
   page: number;
   pageSize: number;
-  type: number;
+  type: number | null;
 }
 
 interface Banner {

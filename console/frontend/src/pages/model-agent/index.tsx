@@ -27,16 +27,6 @@ import VmsInteractionCmp from '@/components/vms-interaction-cmp';
 import { getSceneList } from '@/services/spark-common';
 import { getTalkAgentConfig } from '@/services/agent-square';
 
-/** 形象项（后端归一化后的前端结构） */
-interface SceneItem {
-  sceneId: string;
-  name: string;
-  gender?: string;
-  posture?: string;
-  type?: string;
-  avatar?: string;
-  defaultVCN?: string;
-}
 
 let vmsInter: any = null;
 //虚拟人形象参数

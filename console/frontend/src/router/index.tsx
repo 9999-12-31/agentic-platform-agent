@@ -32,6 +32,8 @@ const ReleaseManagement = lazy(() => import('@/pages/release-management'));
 const BotApi = lazy(() => import('@/pages/bot-api/api'));
 const SharePage = lazy(() => import('@/pages/share-page'));
 const AppListPage = lazy(() => import('@/pages/bot-api/app-list'));
+const ModelAgent = lazy(() => import('@/pages/model-agent'));
+const ModelAgentHome = lazy(() => import('@/pages/model-agent/home'));
 
 const routes = [
   {
@@ -153,6 +155,32 @@ const routes = [
           <Suspense fallback={<Loading />}>
             <SpacePage />
           </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: '/xl',
+    element: (
+        <Suspense fallback={<Loading />}>
+          <Layout showHeader={false} />
+        </Suspense>
+    ),
+    children: [
+      // {
+      //   path: '/xl',
+      //   element: (
+      //       <Suspense fallback={<Loading />}>
+      //         <ModelAgentHome />
+      //       </Suspense>
+      //   ),
+      // },
+      {
+        path: '/xl',
+        element: (
+            <Suspense fallback={<Loading />}>
+              <ModelAgent />
+            </Suspense>
         ),
       },
     ],

@@ -128,12 +128,19 @@ const HomePage: React.FC = () => {
 
   // get agent type list
   const loadAgentTypeList = async (): Promise<void> => {
+    setBotTypes([]);
     const res: BotType[] = await getAgentType();
-    setBotTypes(res || []);
-    setBotType(res[0]?.typeKey || 0);
+    const botList: BotType[] = [{
+        typeKey: null,
+        typeName: "全部",
+        icon: "",
+        typeNameEn: null
+    },...res]
+    setBotTypes(botList || []);
+    setBotType(botList[0]?.typeKey || null);
     setPageInfo({
       ...pageInfo,
-      type: res[0]?.typeKey || 0,
+      type: botList[0]?.typeKey || null,
       search: searchInputValue || '',
     });
   };
@@ -467,7 +474,7 @@ const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    pageInfo.type && loadAgentListAll();
+     loadAgentListAll();
   }, [pageInfo]);
 
   return (
@@ -480,7 +487,7 @@ const HomePage: React.FC = () => {
                 <div
                   key={item.typeKey}
                   className={classnames(styles.bot_type_item, 'relative', {
-                    [styles.activeTab as string]: botType === item.typeKey,
+                    [styles.activeTab as string]: botType === item.typeKey ,
                   })}
                   onClick={() => {
                     handleBotTypeChange(item.typeKey);
