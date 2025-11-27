@@ -58,7 +58,7 @@ export const parametersTypeList = [
 ];
 
 // Menu list with i18n keys
-export const createMenuList = (): {
+export const createMenuList = (isAdmin: boolean): {
   title: string;
   tabs: {
     icon: string;
@@ -85,16 +85,18 @@ export const createMenuList = (): {
       //   path: '/xl',
       //   activeTab: 'Xlagent',
       // },
-      {
-        icon: pluginSquare,
-        iconAct: pluginSquareAct,
-        subTitle: getTranslation('sidebar.pluginMarketplace'),
-        path: '/store/plugin',
-        activeTab: 'plugin',
-      },
+      ...(isAdmin ? [
+        {
+          icon: pluginSquare,
+          iconAct: pluginSquareAct,
+          subTitle: getTranslation('sidebar.pluginMarketplace'),
+          path: '/store/plugin',
+          activeTab: 'plugin',
+        },
+      ] : []),
     ],
   },
-  {
+  ...(isAdmin ?[ {
     title: getTranslation('sidebar.personalSpace'),
     tabs: [
       {
@@ -147,7 +149,7 @@ export const createMenuList = (): {
         path: '/management/app',
       },
     ],
-  },
+  }]:[]),
 ];
 // Helper function to get translations
 const getTranslation = (key: string): string => {
@@ -264,7 +266,7 @@ export const avatarGenerationMethods = [
 ];
 
 // Use a function to ensure translations are loaded when accessed
-export const menuList = createMenuList();
+// menuList is now dynamically generated using createMenuList(isAdmin) in components
 export const conditions = [
   {
     label: getTranslation('common.equals'),

@@ -14,6 +14,7 @@ import { PostChatItem, FavoriteEntry } from '@/types/chat';
 import eventBus from '@/utils/event-bus';
 import CreateApplicationModal from '@/components/create-application-modal';
 import { getMessageCountApi } from '@/services/notification';
+import {useUserStoreHook} from "@/hooks/use-user-store";
 
 const PAGE_SIZE = 45;
 const DEFAULT_PAGE_INFO = {
@@ -34,7 +35,7 @@ const Sidebar = (): ReactElement => {
   const [mixedChatList, setMixedChatList] = useState<PostChatItem[]>([]);
   const [favoriteBotList, setFavoriteBotList] = useState<FavoriteEntry[]>([]);
   const getIsLogin = useUserStore.getState().getIsLogin;
-
+  const { isAdmin } = useUserStoreHook();
   // 获取消息数量
   const getMessageCount = async () => {
     const res = await getMessageCountApi();
@@ -119,7 +120,7 @@ const Sidebar = (): ReactElement => {
       </div>
       <div className="flex flex-col h-full">
         <SidebarLogo isCollapsed={isCollapsed} />
-        <CreateButton isCollapsed={isCollapsed} />
+        {isAdmin && <CreateButton isCollapsed={isCollapsed} />}
         <MenuList
           isCollapsed={isCollapsed}
           mixedChatList={mixedChatList}

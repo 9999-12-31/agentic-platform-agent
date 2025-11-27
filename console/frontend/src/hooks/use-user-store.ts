@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import useUserStore from '@/store/user-store';
-import { RoleType } from '@/types/permission';
+import { RoleType,RoleTypeList } from '@/types/permission';
 
 export const useUserStoreHook = () => {
   const { user } = useUserStore();
@@ -14,11 +14,11 @@ export const useUserStoreHook = () => {
   }, [user]);
 
   const isAdmin = useMemo(() => {
-    return user.roleType === RoleType.ADMIN;
+    return user.accountType == RoleTypeList.ADMIN;
   }, [user]);
 
   const isMember = useMemo(() => {
-    return user.roleType === RoleType.MEMBER;
+    return user.accountType == RoleTypeList.MEMBER;
   }, [user]);
 
   const permissionParams: any = useMemo(() => {

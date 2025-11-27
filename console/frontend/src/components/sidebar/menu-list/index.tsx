@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Popover, Modal, message } from 'antd';
-import { menuList } from '@/constants';
+import { createMenuList } from '@/constants';
 import useUserStore from '@/store/user-store';
 import eventBus from '@/utils/event-bus';
 import { jumpToLogin } from '@/utils/http';
@@ -17,6 +17,7 @@ import SpaceModal from '@/components/space/space-modal';
 import { useSpaceType } from '@/hooks/use-space-type';
 import useEnterpriseStore from '@/store/enterprise-store';
 import { MEMBER_ROLE, OWNER_ROLE } from '@/pages/space/config';
+import { useUserStoreHook } from '@/hooks/use-user-store';
 
 // Assets
 import spaceMore from '@/assets/imgs/space/space-more.svg';
@@ -301,7 +302,8 @@ const useMenuListHelpers = (
   setChatListId: any,
   setDeleteOpen: any,
   chatListId: string,
-  onRefreshData?: () => void
+  onRefreshData?: () => void,
+  isAdmin: boolean
 ) => {
   // 动态设置 Popover 的最大高度
   const updatePopoverMaxHeight = () => {
@@ -377,6 +379,8 @@ const useMenuListHelpers = (
       '/application-development',
       ''
     );
+    // 使用动态生成的菜单列表替代menuList，从函数参数获取isAdmin
+    const menuList = createMenuList(isAdmin);
     menuList.map(item => {
       item.tabs.map(tab => {
         if (path.includes(tab.activeTab)) {
@@ -407,9 +411,11 @@ const useDynamicMenuList = (
   spaceType: any,
   spaceId: any,
   spaceName: any,
-  t: any
+  t: any,
+  isAdmin: boolean
 ) => {
   return useMemo(() => {
+    const menuList = createMenuList(isAdmin);
     // 无团队空间展示 智能体广场及插件广场
     if (isTeamSpaceEmpty) {
       return menuList.slice(0, 1);
@@ -643,6 +649,7 @@ const MenuList: FC<MenuListProps> = ({
   // User store
   const user = useUserStore((state: any) => state.user);
   const setMobile = useUserStore((state: any) => state.setMobile);
+  const { isAdmin } = useUserStoreHook();
 
   // Space store
   const {
@@ -671,27 +678,28 @@ const MenuList: FC<MenuListProps> = ({
   const { handleToChat } = useChat();
 
   // Helper functions
-  const {
-    handleShowSpacePopover,
-    handleNavigateToChat,
-    handleDeleteChat,
-    handleDeleteChatConfirm,
-    initializeActiveMenu,
-    initializeApp,
-  } = useMenuListHelpers(
-    t,
-    user,
-    setMobile,
-    checkNeedCreateTeamFn,
-    setMenuActiveKey,
-    setIsShowSpacePopover,
-    spaceButtonRef,
-    handleToChat,
-    setChatListId,
-    setDeleteOpen,
-    chatListId,
-    onRefreshData
-  );
+const {
+  handleShowSpacePopover,
+  handleNavigateToChat,
+  handleDeleteChat,
+  handleDeleteChatConfirm,
+  initializeActiveMenu,
+  initializeApp,
+} = useMenuListHelpers(
+  t,
+  user,
+  setMobile,
+  checkNeedCreateTeamFn,
+  setMenuActiveKey,
+  setIsShowSpacePopover,
+  spaceButtonRef,
+  handleToChat,
+  setChatListId,
+  setDeleteOpen,
+  chatListId,
+  onRefreshData,
+  isAdmin
+);
 
   // Dynamic menu list
   const getDynamicMenuList = useDynamicMenuList(
@@ -699,13 +707,14 @@ const MenuList: FC<MenuListProps> = ({
     spaceType,
     spaceId,
     spaceName,
-    t
+    t,
+    isAdmin
   );
 
   // Effects
   useEffect(() => {
     initializeActiveMenu(location);
-  }, [location]);
+  }, [location, isAdmin]);
 
   useEffect(() => {
     initializeApp();
