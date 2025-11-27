@@ -2094,8 +2094,7 @@ public class WorkflowService extends ServiceImpl<WorkflowMapper, Workflow> {
                 chatBotBase.setBotType(saveReq.getCategory());
             }
             chatBotBase.setUpdateTime(LocalDateTime.now());
-            setPrologue(chatBotBase, saveReq.getAdvancedConfig());
-            setInputExamples(chatBotBase, saveReq.getAdvancedConfig());
+            setPrologueAndInputExamples(chatBotBase, saveReq.getAdvancedConfig());
             setVnc(chatBotBase, saveReq.getAdvancedConfig());
             
             chatBotBaseMapper.updateById(chatBotBase);
@@ -2103,27 +2102,24 @@ public class WorkflowService extends ServiceImpl<WorkflowMapper, Workflow> {
         return botId;
     }
 
-    private void setPrologue(ChatBotBase chatBotBase, Map<String, Object> advancedConfig) {
-        if (advancedConfig != null) {
-            JSONObject jsonObject = new JSONObject(advancedConfig);
-            if (jsonObject.getJSONObject("prologue") != null) {
-                String prologueText = jsonObject.getJSONObject("prologue").getString("prologueText");
-                if (!StringUtils.isBlank(prologueText)) {
-                    chatBotBase.setPrologue(prologueText);
-                }
-            }
+    private void setPrologueAndInputExamples(ChatBotBase chatBotBase, Map<String, Object> advancedConfig) {
+        if (advancedConfig == null) {
+            return;
         }
-    }
+        JSONObject jsonObject = new JSONObject(advancedConfig);
+        JSONObject prologueConfig = jsonObject.getJSONObject("prologue");
+        if (prologueConfig == null) {
+            return;
+        }
 
-    private void setInputExamples(ChatBotBase chatBotBase, Map<String, Object> advancedConfig) {
-        if (advancedConfig != null) {
-            JSONObject jsonObject = new JSONObject(advancedConfig);
-            if (jsonObject.getJSONObject("prologue") != null) {
-                List<String> inputExample = jsonObject.getJSONObject("prologue").getList("inputExample",String.class);
-                if (inputExample != null && !inputExample.isEmpty()) {
-                    chatBotBase.setInputExample(String.join(BOT_INPUT_EXAMPLE_SPLIT, inputExample));
-                }
-            }
+        final String prologueText = prologueConfig.getString("prologueText");
+        if (StringUtils.isNotBlank(prologueText)) {
+            chatBotBase.setPrologue(prologueText);
+        }
+
+        final List<String> inputExamples = prologueConfig.getList("inputExample", String.class);
+        if (CollectionUtils.isNotEmpty(inputExamples)) {
+            chatBotBase.setInputExample(String.join(BOT_INPUT_EXAMPLE_SPLIT, inputExamples));
         }
     }
 
