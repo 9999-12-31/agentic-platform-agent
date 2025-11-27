@@ -38,6 +38,10 @@ const MessageList = (props: {
     fileUrl?: string;
     callback?: () => void;
   }) => void;
+  /** 当前聊天类型：text/vms/phone/phoneVms */
+  chatType?: string;
+  /** 虚拟人交互组件实例引用 */
+  vmsInteractionCmpRef?: MutableRefObject<any>;
 }): ReactElement => {
   const {
     messageList,

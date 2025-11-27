@@ -55,3 +55,16 @@
     }
   }
 }
+
+/* 空状态下左上角选择框透明背景样式 */
+.transparent_select {
+  :global(.ant-select-selector) {
+    background-color: transparent !important;
+    border-color: #e4eaff;
+    border-radius: 10px;
+    min-height: 38px;
+  }
+  :global(.ant-select-selection-search-input) {
+    background-color: transparent !important;
+  }
+}

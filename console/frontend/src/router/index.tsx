@@ -1,8 +1,28 @@
 import Loading from '@/components/loading';
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import Layout from '@/layouts/index';
 import ConfigPage from '@/pages/config-page';
+import useUserStore from "@/store/user-store";
+
+// 权限控制组件
+const RequirePermission: React.FC<{ 
+  children: React.ReactNode; 
+  requireAdmin?: boolean; 
+  requireMember?: boolean; 
+}> = ({ children, requireAdmin = false, requireMember = false }) => {
+  const { isAdmin, isMember } = useUserStore();
+  
+  if (requireAdmin && !isAdmin) {
+    return <Navigate to="/home" replace />;
+  }
+  
+  if (requireMember && !isMember) {
+    return <Navigate to="/home" replace />;
+  }
+  
+  return <>{children}</>;
+};
 
 const CallbackPage = lazy(() => import('@/pages/callback'));
 const HomePage = lazy(() => import('@/pages/home-page'));
@@ -60,8 +80,10 @@ const routes = [
         path: '/management/bot-api',
         element: (
           <Suspense fallback={<Loading />}>
-            <BotApi />
-            {/* <BotApiPublish /> */}
+            <RequirePermission requireAdmin={true}>
+              <BotApi />
+              {/* <BotApiPublish /> */}
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -69,7 +91,9 @@ const routes = [
         path: '/management/release/*',
         element: (
           <Suspense fallback={<Loading />}>
-            <ReleaseManagement />
+            <RequirePermission requireAdmin={true}>
+              <ReleaseManagement />
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -77,7 +101,9 @@ const routes = [
         path: '/management/model',
         element: (
           <Suspense fallback={<Loading />}>
-            <PersonalModel />
+            <RequirePermission requireMember={true}>
+              <PersonalModel />
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -85,7 +111,9 @@ const routes = [
         path: '/management/model/personalModel',
         element: (
           <Suspense fallback={<Loading />}>
-            <PersonalModel />
+            <RequirePermission requireMember={true}>
+              <PersonalModel />
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -93,7 +121,9 @@ const routes = [
         path: '/management/model/detail/:id',
         element: (
           <Suspense fallback={<Loading />}>
-            <ModelDetail />
+            <RequirePermission requireMember={true}>
+              <ModelDetail />
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -135,7 +165,9 @@ const routes = [
         path: '/management/app',
         element: (
           <Suspense fallback={<Loading />}>
-            <AppListPage />
+            <RequirePermission requireAdmin={true}>
+              <AppListPage />
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -153,7 +185,9 @@ const routes = [
         path: '/space/*',
         element: (
           <Suspense fallback={<Loading />}>
-            <SpacePage />
+            <RequirePermission requireAdmin={true}>
+              <SpacePage />
+            </RequirePermission>
           </Suspense>
         ),
       },
@@ -197,36 +231,42 @@ const routes = [
     path: '/team/create/:type',
     element: (
       <Suspense fallback={<Loading />}>
-        <TeamCreate />
+        <RequirePermission requireAdmin={true}>
+          <TeamCreate />
+        </RequirePermission>
       </Suspense>
     ),
   },
   {
-    path: '/store',
-    element: (
-      <Suspense fallback={<Loading />}>
-        <Layout showHeader={false} />
-      </Suspense>
-    ),
-    children: [
-      {
-        path: '/store/plugin',
+        path: '/store',
         element: (
           <Suspense fallback={<Loading />}>
-            <StorePlugin />
+            <Layout showHeader={false} />
           </Suspense>
         ),
+        children: [
+          {
+            path: '/store/plugin',
+            element: (
+              <Suspense fallback={<Loading />}>
+                <RequirePermission requireAdmin={true}>
+                  <StorePlugin />
+                </RequirePermission>
+              </Suspense>
+            ),
+          },
+          {
+            path: '/store/plugin/:id',
+            element: (
+              <Suspense fallback={<Loading />}>
+                <RequirePermission requireAdmin={true}>
+                  <ToolSquareDetail />
+                </RequirePermission>
+              </Suspense>
+            ),
+          },
+        ],
       },
-      {
-        path: '/store/plugin/:id',
-        element: (
-          <Suspense fallback={<Loading />}>
-            <ToolSquareDetail />
-          </Suspense>
-        ),
-      },
-    ],
-  },
   {
     path: '/chat/:botId/:version?',
     element: (
@@ -248,7 +288,10 @@ const routes = [
     children: [
       {
         path: '/space/config/*',
-        element: <ConfigPage />,
+        element: (
+            <RequirePermission requireAdmin={true}>
+          <ConfigPage />
+        </RequirePermission>),
       },
     ],
   },
@@ -256,7 +299,9 @@ const routes = [
     path: '/work_flow/:id/arrange',
     element: (
       <Suspense fallback={<Loading />}>
-        <WorkFlow />
+        <RequirePermission requireAdmin={true}>
+          <WorkFlow />
+        </RequirePermission>
       </Suspense>
     ),
   },
@@ -264,7 +309,9 @@ const routes = [
     path: '/work_flow/:id/overview',
     element: (
       <Suspense fallback={<Loading />}>
-        <WorkFlowAnalysis />
+        <RequirePermission requireAdmin={true}>
+          <WorkFlowAnalysis />
+        </RequirePermission>
       </Suspense>
     ),
   },

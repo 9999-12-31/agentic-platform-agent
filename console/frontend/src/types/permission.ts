@@ -19,7 +19,11 @@ export enum RoleType {
   SUPER_ADMIN = 'super_admin', // 超级管理员
   SPACE_ADMIN = 'space_admin', // 管理员
 }
-
+// 角色类型
+export enum RoleTypeList {
+  ADMIN = '9', // 管理者
+  MEMBER = '0', // 成员
+}
 // 1. 模块枚举
 export enum ModuleType {
   SPACE = 'space', // 空间权限
