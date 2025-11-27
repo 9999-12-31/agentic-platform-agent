@@ -1,11 +1,11 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
-import { message, Spin } from 'antd';
+import { message, Spin, Select } from 'antd';
 import useBotInfoStore from '@/store/bot-info-store';
 import ChatHeader from './components/chat-header';
 import chatBg from '@/assets/imgs/chat/chat-bg.png';
 import MessageList from './components/message-list';
 import useChatStore from '@/store/chat-store';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import {
   getChatHistory,
   postCreateChat,
@@ -25,7 +25,7 @@ import vmsIcon from '@/assets/svgs/icon-user-filled.svg';
 import messageIcon from '@/assets/svgs/icon-message-filled.svg';
 import VmsInteractionCmp from '@/components/vms-interaction-cmp';
 import { getSceneList } from '@/services/spark-common';
-import { getTalkAgentConfig } from '@/services/agent-square';
+import { getTalkAgentConfig, getAgentList } from '@/services/agent-square';
 
 
 let vmsInter: any = null;
@@ -42,6 +42,7 @@ let prevTempAns = '';
 let tempAnsBak = '';
 
 const ChatPage = (): ReactElement => {
+  const navigate = useNavigate();
   const botInfo = useBotInfoStore(state => state.botInfo); //  智能体信息
   const setBotInfo = useBotInfoStore(state => state.setBotInfo); //  设置智能体信息
   const messageList = useChatStore(state => state.messageList); //  消息列表
@@ -60,7 +61,8 @@ const ChatPage = (): ReactElement => {
     version?: string;
   }>();
   const sharekey = searchParams.get('sharekey') || ''; //  分享key
-  const botId = parseInt(botIdParam || '0', 10) || 0; //  智能体ID
+  // const botId = parseInt(botIdParam || '0', 10) || 0; //  智能体ID
+  const [botId, setBotId] = useState<number>(parseInt(botIdParam || '0', 10) || 0); //智能体ID
   const [botNameColor, setBotNameColor] = useState<string>('#000000'); //设置字体颜色
   const { onSendMsg } = useChat();
   const { t } = useTranslation();
@@ -70,6 +72,8 @@ const ChatPage = (): ReactElement => {
   const [talkAgentConfig, setTalkAgentConfig] = useState<any>({});
   const chatType = useChatStore(state => state.chatType); //  聊天类型
   const setChatType = useChatStore((state: any) => state.setChatType);
+  // 智能体选择
+  const [agentOptions, setAgentOptions] = useState<{ label: string; value: number }[]>([]);
 
   const vmsInteractiveRefStatus = useChatStore(
     (state: any) => state.vmsInteractiveRefStatus
@@ -79,12 +83,40 @@ const ChatPage = (): ReactElement => {
     (state: any) => state.setVmsInteractiveRefStatus
   );
   useEffect(() => {
-    initializeChatPage();
+    const initialize = async () => {
+      // 加载智能体列表
+      await loadAgentOptions();
+      // 等待botId设置后再初始化聊天页面
+      await initializeChatPage();
+    };
+    
+    // 立即调用异步函数
+    initialize();
+    
     return () => {
-      vmsInteractionCmpRef.current?.instance &&
-        vmsInteractionCmpRef?.current?.dispose();
+      // 安全地清理虚拟人实例，确保current存在且dispose方法可用
+      if (vmsInteractionCmpRef.current && typeof vmsInteractionCmpRef.current.dispose === 'function') {
+        vmsInteractionCmpRef.current.dispose();
+      }
+      // 清理其他资源
+      vmsInter && clearInterval(vmsInter);
+      vmsInter = null;
+      tempAnsBak = '';
+      prevTempAns = '';
     };
   }, []);
+
+  const loadAgentOptions = async (): Promise<void> => {
+    try {
+      const res = await getAgentList({ search: '', page: 1, pageSize: 50, type: null });
+      const opts = (res?.pageData || []).map((b: any) => ({ label: b.botName, value: b.botId }));
+      console.log(opts);
+      setBotId(opts[0].value)
+      setAgentOptions(opts);
+    } catch (e) {
+      console.error('loadAgentOptions failed', e);
+    }
+  };
 
   const handleChatTypeChange = (type: string) => {
     setChatType(type);
@@ -107,6 +139,7 @@ const ChatPage = (): ReactElement => {
 
   // 初始化聊天页面
   const initializeChatPage = async (): Promise<void> => {
+    console.log(botId)
     try {
       setIsDataLoading(true);
       initChatStore();
@@ -354,6 +387,12 @@ const ChatPage = (): ReactElement => {
     }
   }, [messageList, vmsInteractiveRefStatus]);
 
+  useEffect(() => {
+    if (botId && agentOptions.length > 0) {
+      initializeChatPage();
+    }
+  }, [botId, agentOptions.length]);
+
   return (
     <div
       className="w-full h-screen bg-no-repeat bg-center bg-cover flex flex-col overflow-auto scrollbar-none"
@@ -362,12 +401,44 @@ const ChatPage = (): ReactElement => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <Spin spinning={isDataLoading} />
       </div>
-      <ChatHeader
-        botInfo={botInfo}
-        setBotInfo={setBotInfo}
-        isDataLoading={isDataLoading}
-      />
-      <div className="overflow-scroll flex flex-1 flex-col pt-[100px] pr-[24px] pl-[24px]">
+      {messageList.length === 0 ? (
+        <>
+          <div className="flex-1 flex flex-col items-center justify-center px-6">
+            <div className="w-full  max-w-[960px] mx-auto">
+              <div className="absolute w-[260px] mb-4 px-6  top-5">
+                <Select
+                  className={styles.transparent_select}
+                  showSearch
+                  placeholder="选择智能体"
+                  options={agentOptions}
+                  value={botId}
+                  onChange={(val: number) => setBotId(val)}
+                  filterOption={(input, option) =>
+                    (option?.label as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                />
+              </div>
+              <div className="text-[28px] sm:text-[32px] font-semibold text-[#6356EA] mb-6 text-center">
+                你好，我是杏林，您专业的智慧伙伴
+              </div>
+              <ChatInput
+                handleSendMessage={handleRecomendClick}
+                botInfo={botInfo}
+                stopAnswer={stopAnswer}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <ChatHeader
+            botInfo={botInfo}
+            setBotInfo={setBotInfo}
+            isDataLoading={isDataLoading}
+          />
+          <div className="overflow-scroll flex flex-1 flex-col pt-[100px] pr-[24px] pl-[24px]">
         <div className="flex items-center justify-end gap-4">
           {talkAgentConfig?.sceneEnable === 1 && (
             <>
@@ -403,70 +474,72 @@ const ChatPage = (): ReactElement => {
             vmsInteractionCmpRef={vmsInteractionCmpRef}
           />
         </div>
-      </div>
-      {/*<ChatSide botInfo={botInfo} />*/}
-      <ChatInput
-        handleSendMessage={handleRecomendClick}
-        botInfo={botInfo}
-        stopAnswer={stopAnswer}
-      />
-      {chatType === 'vms' && (
-        <div className={styles.vms_container}>
-          {showVmsPermissionTip && (
-            <div className={styles.avatar_permission_tip_wrapper}>
-              <div className={styles.avatar_permission_tip}>
-                <span>{t('chatPage.chatWindow.virtualVoicePermission')}</span>
-                <a
-                  href="javascript:void(0)"
-                  onClick={() => {
-                    vmsInteractionCmpRef?.current?.player?.resume();
-                    setShowVmsPermissionTip(false);
-                  }}
-                >
-                  {t('chatPage.chatWindow.virtualAuthorization')}
-                </a>
-              </div>
-            </div>
-          )}
-          <div className={styles.vms_container_inner}>
-            <div
-              style={{
-                width: '380px',
-                height: '100%',
-                zIndex: 10,
-                position: 'absolute',
-                right: '-150px',
-              }}
-            >
-              <Spin
-                spinning={loadingVms}
-                tip={t('chatPage.chatWindow.virtualLoading') + '...'}
-                className="mt-[100px] color-[#275EFF]"
-              >
-                <div></div>
-              </Spin>
-            </div>
-            {/* {showResetOperation && <div>虚拟人已离开，是否恢复</div>} */}
-            <VmsInteractionCmp
-              ref={vmsInteractionCmpRef}
-              notAllowedPlayCallback={() => {
-                setShowVmsPermissionTip(true);
-              }}
-              playerResumeCallback={() => {
-                setShowVmsPermissionTip(false);
-              }}
-              avatarDom={document.getElementById('avatarDom') as HTMLDivElement}
-              styles={{
-                width: '380px',
-                height: '100%',
-                zIndex: 10,
-                position: 'absolute',
-                right: '-150px',
-              }}
-              loadingStatusChange={setLoadingVms}
-            />
-          </div>
         </div>
+        {/*<ChatSide botInfo={botInfo} />*/}
+        <ChatInput
+          handleSendMessage={handleRecomendClick}
+          botInfo={botInfo}
+          stopAnswer={stopAnswer}
+        />
+        {chatType === 'vms' && (
+          <div className={styles.vms_container}>
+            {showVmsPermissionTip && (
+              <div className={styles.avatar_permission_tip_wrapper}>
+                <div className={styles.avatar_permission_tip}>
+                  <span>{t('chatPage.chatWindow.virtualVoicePermission')}</span>
+                  <a
+                    href="javascript:void(0)"
+                    onClick={() => {
+                      vmsInteractionCmpRef?.current?.player?.resume();
+                      setShowVmsPermissionTip(false);
+                    }}
+                  >
+                    {t('chatPage.chatWindow.virtualAuthorization')}
+                  </a>
+                </div>
+              </div>
+            )}
+            <div className={styles.vms_container_inner}>
+              <div
+                style={{
+                  width: '380px',
+                  height: '100%',
+                  zIndex: 10,
+                  position: 'absolute',
+                  right: '-150px',
+                }}
+              >
+                <Spin
+                  spinning={loadingVms}
+                  tip={t('chatPage.chatWindow.virtualLoading') + '...'}
+                  className="mt-[100px] color-[#275EFF]"
+                >
+                  <div></div>
+                </Spin>
+              </div>
+              {/* {showResetOperation && <div>虚拟人已离开，是否恢复</div>} */}
+              <VmsInteractionCmp
+                ref={vmsInteractionCmpRef}
+                notAllowedPlayCallback={() => {
+                  setShowVmsPermissionTip(true);
+                }}
+                playerResumeCallback={() => {
+                  setShowVmsPermissionTip(false);
+                }}
+                avatarDom={document.getElementById('avatarDom') as HTMLDivElement}
+                styles={{
+                  width: '380px',
+                  height: '100%',
+                  zIndex: 10,
+                  position: 'absolute',
+                  right: '-150px',
+                }}
+                loadingStatusChange={setLoadingVms}
+              />
+            </div>
+          </div>
+        )}
+        </>
       )}
     </div>
   );
