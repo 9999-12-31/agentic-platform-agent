@@ -129,13 +129,13 @@ const Sidebar = (): ReactElement => {
             getFavoriteBotListLocal();
           }}
         />
-        <IconEntry
-          onMessageClick={() => {
-            setNoticeModalVisible(true);
-          }}
-          isCollapsed={isCollapsed}
-          unreadCount={unreadCount}
-        />
+        {/*<IconEntry*/}
+        {/*  onMessageClick={() => {*/}
+        {/*    setNoticeModalVisible(true);*/}
+        {/*  }}*/}
+        {/*  isCollapsed={isCollapsed}*/}
+        {/*  unreadCount={unreadCount}*/}
+        {/*/>*/}
         <BottomLogin
           isCollapsed={isCollapsed}
           isPersonCenterOpen={isPersonCenterOpen}

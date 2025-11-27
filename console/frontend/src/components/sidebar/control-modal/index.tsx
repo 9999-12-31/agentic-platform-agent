@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { visitSpace } from '@/services/space';
 import { handleLogout } from '@/utils/auth';
 import LanguageSwitcher from '@/components/language-switcher';
+import useUserStore from "@/store/user-store";
 
 const spaceRole = {
   '1': 'sidebar.spaceRoles.superAdmin',
@@ -48,6 +49,7 @@ const ControlModal = ({
   const { handleTeamSwitch, getLastVisitSpace, isTeamSpace } =
     useSpaceType(navigate);
   const { visitEnterprise } = useEnterprise();
+  const { user } = useUserStore();
 
   // 根据spaceType统一获取当前空间列表和配置
   const spaceConfig = useMemo(() => {
@@ -254,10 +256,10 @@ const ControlModal = ({
               overlayClassName="black-tooltip"
             >
               <div className={styles.title_name}>
-                {spaceType === 'personal' ? t('sidebar.xingchen') : info.name}
+                {spaceType === 'personal' ?  user?.nickname : info.name}
               </div>
             </Tooltip>
-            <div className={styles.title_sub}>{spaceConfig.displayType}</div>
+            {/*<div className={styles.title_sub}>{spaceConfig.displayType}</div>*/}
           </div>
           {joinedEnterpriseList?.length > 0 && (
             <img
@@ -283,9 +285,9 @@ const ControlModal = ({
           <div>{t('sidebar.feedback')}</div>
         </div> */}
 
-        <div className={styles.content_item}>
-          <LanguageSwitcher className={styles.content_item} />
-        </div>
+          {/*<div className={styles.content_item}>*/}
+          {/*  <LanguageSwitcher className={styles.content_item} />*/}
+          {/*</div>*/}
 
         <div
           className={classNames(styles.content_item, styles.logout)}

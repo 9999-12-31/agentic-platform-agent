@@ -228,7 +228,7 @@ const BottomLogin = ({
                   </div>
 
                   {/* 升级入口 */}
-                  <OrderTypeDisplay />
+                  {/*<OrderTypeDisplay />*/}
                 </div>
               )}
             </>

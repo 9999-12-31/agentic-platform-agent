@@ -374,13 +374,13 @@ const useMenuListHelpers = (
   };
 
   // Effects handlers
-  const initializeActiveMenu = (location: any) => {
+  const initializeActiveMenu = async (location: any) => {
     const path = window.location.pathname.replace(
       '/application-development',
       ''
     );
     // 使用动态生成的菜单列表替代menuList，从函数参数获取isAdmin
-    const menuList = createMenuList(isAdmin);
+    const menuList = await createMenuList(isAdmin);
     menuList.map(item => {
       item.tabs.map(tab => {
         if (path.includes(tab.activeTab)) {
@@ -438,7 +438,7 @@ const useDynamicMenuList = (
         return tab;
       }),
     }));
-  }, [spaceType, spaceId, spaceName, isTeamSpaceEmpty, t]);
+  }, [spaceType, spaceId, spaceName, isTeamSpaceEmpty, t, isAdmin]);
 };
 
 // Space Button Component
