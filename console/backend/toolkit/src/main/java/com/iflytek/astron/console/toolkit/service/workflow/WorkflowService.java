@@ -190,6 +190,8 @@ public class WorkflowService extends ServiceImpl<WorkflowMapper, Workflow> {
     // Cache load lock
     private static final Object CACHE_LOAD_LOCK = new Object();
 
+    public static final String BOT_INPUT_EXAMPLE_SPLIT = "%%split%%";
+
     @Autowired
     WorkflowDialogMapper workflowDialogMapper;
     @Autowired
@@ -2092,10 +2094,37 @@ public class WorkflowService extends ServiceImpl<WorkflowMapper, Workflow> {
                 chatBotBase.setBotType(saveReq.getCategory());
             }
             chatBotBase.setUpdateTime(LocalDateTime.now());
+            setPrologue(chatBotBase, saveReq.getAdvancedConfig());
+            setInputExamples(chatBotBase, saveReq.getAdvancedConfig());
             setVnc(chatBotBase, saveReq.getAdvancedConfig());
+            
             chatBotBaseMapper.updateById(chatBotBase);
         }
         return botId;
+    }
+
+    private void setPrologue(ChatBotBase chatBotBase, Map<String, Object> advancedConfig) {
+        if (advancedConfig != null) {
+            JSONObject jsonObject = new JSONObject(advancedConfig);
+            if (jsonObject.getJSONObject("prologue") != null) {
+                String prologueText = jsonObject.getJSONObject("prologue").getString("prologueText");
+                if (!StringUtils.isBlank(prologueText)) {
+                    chatBotBase.setPrologue(prologueText);
+                }
+            }
+        }
+    }
+
+    private void setInputExamples(ChatBotBase chatBotBase, Map<String, Object> advancedConfig) {
+        if (advancedConfig != null) {
+            JSONObject jsonObject = new JSONObject(advancedConfig);
+            if (jsonObject.getJSONObject("prologue") != null) {
+                List<String> inputExample = jsonObject.getJSONObject("prologue").getList("inputExample",String.class);
+                if (inputExample != null && !inputExample.isEmpty()) {
+                    chatBotBase.setInputExample(String.join(BOT_INPUT_EXAMPLE_SPLIT, inputExample));
+                }
+            }
+        }
     }
 
     private void setVnc(ChatBotBase chatBotBase, Map<String, Object> advancedConfig) {
