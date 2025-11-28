@@ -496,9 +496,9 @@ function index() {
                           </div>
                         </div>
                       </span>
-                      <div className="flex items-center text-desc flex-1 max-w-[200px] justify-between">
+                      <div className="flex items-center text-desc flex-1  justify-end">
                         <div
-                          className="card-chat cursor-pointer flex justify-center items-center"
+                          className="card-chat cursor-pointer flex justify-center items-center mr-2"
                           style={{
                             width: '76px',
                             height: '32px',
@@ -544,37 +544,37 @@ function index() {
                             {t('agentPage.agentPage.chat')}
                           </span>
                         </div>
-                        <Popover
-                          placement="bottom"
-                          overlayClassName="my-botlist-share-pop"
-                        >
-                          <div
-                            className="card-chat cursor-pointer flex justify-center items-center"
-                            style={{
-                              width: '76px',
-                              height: '32px',
-                              background: '#F1F0FF',
-                              borderRadius: '6px',
-                              textAlign: 'center',
-                            }}
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleShareAgent(k.botName, k.botId);
-                            }}
-                          >
-                            <img src={shareIcon} alt="" />
+                        {/*<Popover*/}
+                        {/*  placement="bottom"*/}
+                        {/*  overlayClassName="my-botlist-share-pop"*/}
+                        {/*>*/}
+                          {/*<div*/}
+                          {/*  className="card-chat cursor-pointer flex justify-center items-center"*/}
+                          {/*  style={{*/}
+                          {/*    width: '76px',*/}
+                          {/*    height: '32px',*/}
+                          {/*    background: '#F1F0FF',*/}
+                          {/*    borderRadius: '6px',*/}
+                          {/*    textAlign: 'center',*/}
+                          {/*  }}*/}
+                          {/*  onClick={e => {*/}
+                          {/*    e.stopPropagation();*/}
+                          {/*    handleShareAgent(k.botName, k.botId);*/}
+                          {/*  }}*/}
+                          {/*>*/}
+                          {/*  <img src={shareIcon} alt="" />*/}
 
-                            <span
-                              className="ml-1 whitespace-nowrap"
-                              style={{
-                                color: '#222529',
-                                fontSize: '14px',
-                              }}
-                            >
-                              {t('agentPage.agentPage.share')}
-                            </span>
-                          </div>
-                        </Popover>
+                          {/*  <span*/}
+                          {/*    className="ml-1 whitespace-nowrap"*/}
+                          {/*    style={{*/}
+                          {/*      color: '#222529',*/}
+                          {/*      fontSize: '14px',*/}
+                          {/*    }}*/}
+                          {/*  >*/}
+                          {/*    {t('agentPage.agentPage.share')}*/}
+                          {/*  </span>*/}
+                          {/*</div>*/}
+                        {/*</Popover>*/}
                         {
                           <div
                             className="bg-[#F1F0FF] rounded flex items-center justify-center relative"

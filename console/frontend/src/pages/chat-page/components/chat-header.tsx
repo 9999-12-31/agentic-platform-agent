@@ -138,18 +138,18 @@ const ChatHeader = (props: {
         <img
           src={botInfo.avatar}
           alt={botInfo.botName}
-          className="w-12 h-12 mr-4 rounded-xl object-cover"
+          className="w-8 h-8 mr-4 rounded-xl object-cover"
         />
         <div className="flex flex-col">
           <div className="text-base font-medium text-black mb-1">
             {botInfo.botName}
           </div>
-          <div className="flex items-center">
-            <img src={authorIcon} alt="" className="w-3.5 h-3.5 mr-2" />
-            <span className="text-sm font-normal text-[#7f7f7f]">
-              {botInfo.creatorNickname}
-            </span>
-          </div>
+          {/*<div className="flex items-center">*/}
+          {/*  <img src={authorIcon} alt="" className="w-3.5 h-3.5 mr-2" />*/}
+          {/*  <span className="text-sm font-normal text-[#7f7f7f]">*/}
+          {/*    {botInfo.creatorNickname}*/}
+          {/*  </span>*/}
+          {/*</div>*/}
         </div>
       </>
     );
@@ -188,21 +188,22 @@ const ChatHeader = (props: {
         </div>
 
         {/* 分享按钮 */}
-        <div
-          className={shareButtonClass}
-          onClick={handleShareAgent}
-          onMouseEnter={() => setShareHover(true)}
-          onMouseLeave={() => setShareHover(false)}
-        >
-          <img src={getShareIcon()} alt="" className="w-4 h-4 mr-2" />
-          <span>{t('chatPage.chatHeader.share')}</span>
-        </div>
+        {/*<div*/}
+        {/*  className={shareButtonClass}*/}
+        {/*  onClick={handleShareAgent}*/}
+        {/*  onMouseEnter={() => setShareHover(true)}*/}
+        {/*  onMouseLeave={() => setShareHover(false)}*/}
+        {/*>*/}
+        {/*  <img src={getShareIcon()} alt="" className="w-4 h-4 mr-2" />*/}
+        {/*  <span>{t('chatPage.chatHeader.share')}</span>*/}
+        {/*</div>*/}
       </>
     );
   };
 
   return (
-    <div className="w-full h-20 bg-white flex justify-between items-center z-10 fixed rounded-b-[18px] shadow-sm">
+      // <div className="w-full h-20 bg-white flex justify-between items-center z-10 fixed rounded-b-[18px] shadow-sm">
+    <div className="h-14 bg-white flex justify-between items-center z-10 fixed rounded-b-[10px] shadow-sm" style={{width:'-webkit-fill-available'}}>
       {/* 左侧区域 */}
       <div className="flex items-center justify-start h-full">
         <img

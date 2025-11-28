@@ -416,16 +416,16 @@
               gap: 16px;
               flex-shrink: 0;
 
-              div:nth-child(1) {
-                width: 16px;
-                height: 16px;
-                background: url('@/assets/imgs/home/share.svg') no-repeat center
-                  center;
-                &:hover {
-                  background: url('@/assets/imgs/home/hover-share.svg')
-                    no-repeat center center;
-                }
-              }
+              //div:nth-child(1) {
+              //  width: 16px;
+              //  height: 16px;
+              //  background: url('@/assets/imgs/home/share.svg') no-repeat center
+              //    center;
+              //  &:hover {
+              //    background: url('@/assets/imgs/home/hover-share.svg')
+              //      no-repeat center center;
+              //  }
+              //}
 
               .collect {
                 width: 16px;
@@ -434,7 +434,7 @@
                   center center !important;
               }
 
-              div:nth-child(2) {
+              div:nth-child(1) {
                 width: 16px;
                 height: 16px;
                 background: url('@/assets/imgs/home/collect.svg') no-repeat

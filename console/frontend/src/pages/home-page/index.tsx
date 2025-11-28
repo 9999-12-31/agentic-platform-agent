@@ -393,7 +393,7 @@ const HomePage: React.FC = () => {
                             <div className={styles.title}>
                               <span>{item?.botName}</span>
                               <div onClick={e => e.stopPropagation()}>
-                                <div onClick={() => handleShareAgent(item)} />
+                                {/*<div onClick={() => handleShareAgent(item)} />*/}
                                 <div
                                   className={classnames({
                                     [styles.collect as string]:

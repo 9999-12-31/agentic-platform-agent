@@ -94,7 +94,7 @@ const ChatPage = (): ReactElement => {
       vmsInteractionCmpRef.current?.instance &&
         vmsInteractionCmpRef?.current?.dispose();
     };
-  }, []);
+  }, [botId]);
 
   const handleChatTypeChange = (type: string) => {
     setChatType(type);
@@ -362,7 +362,7 @@ const ChatPage = (): ReactElement => {
         }
       }
     }
-  }, [messageList, vmsInteractiveRefStatus]);
+  }, [messageList, vmsInteractiveRefStatus, botId]);
 
   return (
     <div
@@ -377,7 +377,7 @@ const ChatPage = (): ReactElement => {
         setBotInfo={setBotInfo}
         isDataLoading={isDataLoading}
       />
-      <div className="overflow-scroll flex flex-1 flex-col pt-[100px] pr-[24px] pl-[24px]">
+      <div className="overflow-scroll flex flex-1 flex-col pt-[70px] pr-[24px] pl-[24px]">
         <div className="flex items-center justify-end gap-4">
           {talkAgentConfig?.sceneEnable === 1 && (
             <>

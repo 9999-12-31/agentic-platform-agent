@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import Layout from '@/layouts/index';
 import ConfigPage from '@/pages/config-page';
-import useUserStore from "@/store/user-store";
+import {useUserStoreHook} from "@/hooks/use-user-store";
 
 // 权限控制组件
 const RequirePermission: React.FC<{ 
@@ -11,8 +11,8 @@ const RequirePermission: React.FC<{
   requireAdmin?: boolean; 
   requireMember?: boolean; 
 }> = ({ children, requireAdmin = false, requireMember = false }) => {
-  const { isAdmin, isMember } = useUserStore();
-  
+  const { isAdmin, isMember } = useUserStoreHook();
+
   if (requireAdmin && !isAdmin) {
     return <Navigate to="/home" replace />;
   }
@@ -268,13 +268,31 @@ const routes = [
         ],
       },
   {
-    path: '/chat/:botId/:version?',
+    path: '/chat',
     element: (
-      <Suspense fallback={<Loading />}>
-        <ChatPage />
-      </Suspense>
+        <Suspense fallback={<Loading />}>
+          <Layout showHeader={false} />
+        </Suspense>
     ),
+    children: [
+      {
+        path: '/chat/:botId/:version?',
+        element: (
+            <Suspense fallback={<Loading />}>
+              <ChatPage />
+            </Suspense>
+        ),
+      },
+    ],
   },
+  // {
+  //   path: '/chat/:botId/:version?',
+  //   element: (
+  //     <Suspense fallback={<Loading />}>
+  //       <ChatPage />
+  //     </Suspense>
+  //   ),
+  // },
   // {
   //   path: '/share',
   //   element: (
