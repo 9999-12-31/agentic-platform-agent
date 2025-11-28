@@ -276,7 +276,7 @@ const routes = [
     ),
     children: [
       {
-        path: '/chat/:botId/:version?',
+        path: '/chat/:botId/:chatId?/:version?',
         element: (
             <Suspense fallback={<Loading />}>
               <ChatPage />

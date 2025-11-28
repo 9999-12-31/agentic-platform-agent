@@ -5,7 +5,7 @@ import ChatHeader from './components/chat-header';
 import chatBg from '@/assets/imgs/chat/chat-bg.png';
 import MessageList from './components/message-list';
 import useChatStore from '@/store/chat-store';
-import { useParams, useSearchParams } from 'react-router-dom';
+import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import {
   getChatHistory,
   postCreateChat,
@@ -65,9 +65,10 @@ const ChatPage = (): ReactElement => {
   ); //  设置聊天文件列表
   const [isDataLoading, setIsDataLoading] = useState<boolean>(false); //  数据加载状态
   const [searchParams] = useSearchParams();
-  const { botId: botIdParam, version } = useParams<{
+  const { botId: botIdParam, version, chatId:chilChatId } = useParams<{
     botId: string;
     version?: string;
+    chatId?:string
   }>();
   const sharekey = searchParams.get('sharekey') || ''; //  分享key
   const botId = parseInt(botIdParam || '0', 10) || 0; //  智能体ID
@@ -80,6 +81,7 @@ const ChatPage = (): ReactElement => {
   const [talkAgentConfig, setTalkAgentConfig] = useState<any>({});
   const chatType = useChatStore(state => state.chatType); //  聊天类型
   const setChatType = useChatStore((state: any) => state.setChatType);
+  const navigate = useNavigate();
 
   const vmsInteractiveRefStatus = useChatStore(
     (state: any) => state.vmsInteractiveRefStatus
@@ -94,7 +96,7 @@ const ChatPage = (): ReactElement => {
       vmsInteractionCmpRef.current?.instance &&
         vmsInteractionCmpRef?.current?.dispose();
     };
-  }, [botId]);
+  }, [botId,chilChatId]);
 
   const handleChatTypeChange = (type: string) => {
     setChatType(type);
@@ -114,6 +116,9 @@ const ChatPage = (): ReactElement => {
       vmsInter = null;
     }
   };
+  const redirectPage = () => {
+    navigate(`/chat/${botId}`);
+  }
 
   // 初始化聊天页面
   const initializeChatPage = async (): Promise<void> => {
@@ -195,7 +200,9 @@ const ChatPage = (): ReactElement => {
       });
       setCurrentChatId(botInfo.chatId);
       // 4. 获取对话历史
-      await getChatHistoryData(botInfo.chatId);
+      if (chilChatId){
+        await getChatHistoryData(botInfo.chatId);
+      }
       setIsDataLoading(false);
     } catch (error) {
       console.error(error);
@@ -207,7 +214,11 @@ const ChatPage = (): ReactElement => {
   const getChatHistoryData = async (chatId: number): Promise<void> => {
     const res = await getChatHistory(chatId);
     setChatFileListNoReq(res?.[0]?.chatFileListNoReq || []);
-    const formattedMessages = formatHistoryToMessages(res);
+    let formattedMessages = formatHistoryToMessages(res);
+
+    if (chilChatId){
+      formattedMessages = formattedMessages.filter(item => item.chatId == chilChatId);
+    }
     setMessageList(formattedMessages);
   };
 
@@ -419,6 +430,7 @@ const ChatPage = (): ReactElement => {
         handleSendMessage={handleRecomendClick}
         botInfo={botInfo}
         stopAnswer={stopAnswer}
+        redirectPage = {redirectPage}
       />
       {chatType === 'vms' && (
         <div className={styles.vms_container}>

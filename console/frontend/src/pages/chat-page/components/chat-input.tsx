@@ -24,8 +24,9 @@ const ChatInput = (props: {
   }) => void;
   botInfo: BotInfoType;
   stopAnswer: () => void;
+  redirectPage: () => void;
 }): ReactElement => {
-  const { handleSendMessage, botInfo, stopAnswer } = props;
+  const { handleSendMessage, botInfo, stopAnswer, redirectPage } = props;
   const { t } = useTranslation();
   const messageList = useChatStore(state => state.messageList); //  消息列表
   const streamId = useChatStore(state => state.streamId); //  流式id
@@ -85,6 +86,7 @@ const ChatInput = (props: {
     },
     [inputValue]
   );
+  const setMessageList = useChatStore(state => state.setMessageList); //  设置消息列表
 
   //全新对话
   const handleNewChat = async () => {
@@ -97,13 +99,15 @@ const ChatInput = (props: {
     }
     try {
       await postNewChat(currentChatId);
-      const startMessage: MessageListType = {
-        id: new Date().getTime(),
-        reqType: 'START',
-        message: t('chatPage.chatWindow.freshStart'),
-        updateTime: new Date().toISOString(),
-      };
-      addMessage(startMessage);
+      // const startMessage: MessageListType = {
+      //   id: new Date().getTime(),
+      //   reqType: 'START',
+      //   message: t('chatPage.chatWindow.freshStart'),
+      //   updateTime: new Date().toISOString(),
+      // };
+      // addMessage(startMessage);
+      setMessageList([])
+      redirectPage()
     } catch (error) {
       console.error(error);
     }
@@ -167,15 +171,15 @@ const ChatInput = (props: {
               </span>
             </div>
           )}
-          <div
-            className="flex items-center justify-center w-auto h-8 px-2.5 border border-[#d3dbf8] rounded-2xl mb-3 cursor-pointer mr-3 bg-white text-[#333333] hover:border-[#5895f0]"
-            onClick={handleClearChatList}
-          >
-            <img src={delIcon} alt="" className="w-3.5 h-3.5" />
-            <span className="text-sm ml-2">
-              {t('chatPage.chatWindow.clearChatHistory')}
-            </span>
-          </div>
+          {/*<div*/}
+          {/*  className="flex items-center justify-center w-auto h-8 px-2.5 border border-[#d3dbf8] rounded-2xl mb-3 cursor-pointer mr-3 bg-white text-[#333333] hover:border-[#5895f0]"*/}
+          {/*  onClick={handleClearChatList}*/}
+          {/*>*/}
+          {/*  <img src={delIcon} alt="" className="w-3.5 h-3.5" />*/}
+          {/*  <span className="text-sm ml-2">*/}
+          {/*    {t('chatPage.chatWindow.clearChatHistory')}*/}
+          {/*  </span>*/}
+          {/*</div>*/}
 
           {streamId && (
             <div

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Popover, Modal, message } from 'antd';
+import { Popover, Modal, message, Tooltip } from 'antd';
 import { createMenuList } from '@/constants';
 import useUserStore from '@/store/user-store';
 import eventBus from '@/utils/event-bus';
@@ -194,8 +194,9 @@ interface RecentListProps {
   showRecent: boolean;
   setShowRecent: (show: boolean) => void;
   mixedChatList: any[];
-  handleNavigateToChat: (item: any) => void;
+  handleNavigateToChat: (item: any,i:any) => void;
   handleDeleteChat: (item: any, e: any) => void;
+  onChatHistoryData:(item: any)=> void;
 }
 
 const RecentList: FC<RecentListProps> = ({
@@ -205,10 +206,29 @@ const RecentList: FC<RecentListProps> = ({
   mixedChatList,
   handleNavigateToChat,
   handleDeleteChat,
+  onChatHistoryData
 }) => {
   const { t } = useTranslation();
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   if (isCollapsed) return null;
+
+  useEffect(() => {
+    const info = {}
+    console.log(mixedChatList);
+    mixedChatList.forEach(e=>{
+      info[e.botName] = false
+    })
+    setExpandedGroups(info)
+  }, []);
+  const toggleGroup = (item: any) => {
+    const groupName = item?.botName
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupName]: !prev[groupName]
+    }));
+    onChatHistoryData(item)
+  };
 
   return (
     <div className="flex flex-col pt-4 pb-1 mt-1 flex-shrink-0 overflow-hidden border-t border-[#E7E7F0]">
@@ -237,7 +257,7 @@ const RecentList: FC<RecentListProps> = ({
       </div>
 
       {/* 最近使用列表容器 - 固定padding，避免动画 */}
-      <div className="w-full pr-2.5 overflow-hidden">
+      <div className="w-full pr-2 pl-2 overflow-hidden">
         {/* 内部滚动区域 - 只做高度动画 */}
         <div
           className={`flex flex-col w-full overflow-x-hidden transition-[height,max-height] duration-300 ease-out  ${
@@ -252,30 +272,74 @@ const RecentList: FC<RecentListProps> = ({
         >
           {/* 内容区域 - 固定间距 */}
           <div
-            className={`flex flex-col gap-0.5 w-full ${showRecent ? '' : 'opacity-0'}`}
+            className={`flex flex-col gap-1 w-full ${showRecent ? '' : 'opacity-0'}`}
           >
             {showRecent &&
-              mixedChatList?.length > 0 &&
-              mixedChatList.map((item: any) => (
-                <div
-                  key={item.botId}
-                  className="group flex items-center cursor-pointer px-3 py-1.5 rounded hover:bg-[rgba(39,94,255,0.05)] flex-shrink-0 w-full"
-                  onClick={() => handleNavigateToChat(item)}
+                mixedChatList?.length > 0 &&
+                mixedChatList.map((item: any) => (
+              <div key= {item?.botName}className="w-full">
+                {/* 分组标题行 */}
+                <div 
+                  className="flex items-center justify-between cursor-pointer px-1 py-1 text-xs font-medium text-[#676773]  rounded"
+                  onClick={() => toggleGroup(item)}
                 >
+                  <span>{item?.botName}</span>
                   <img
-                    src={item?.botAvatar}
+                    src={require('@/assets/svgs/arrow-top.svg')}
                     alt=""
-                    className="w-[18px] h-[18px] rounded-full flex-shrink-0"
-                  />
-                  <span className="ml-2 text-sm text-[#333] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
-                    {item?.botName}
-                  </span>
-                  <div
-                    className="hidden group-hover:block w-2 h-2 bg-[url('@/assets/imgs/sidebar/close.svg')] bg-no-repeat bg-center hover:bg-[url('@/assets/imgs/sidebar/close-hover.svg')] flex-shrink-0 ml-1"
-                    onClick={e => handleDeleteChat(item, e)}
+                    className={`w-3 h-3 transition-transform duration-300 ${
+                      expandedGroups[item?.botName] ? '' : 'rotate-180'
+                    }`}
                   />
                 </div>
-              ))}
+                
+
+                <div
+                  className={`transition-all duration-300 ease-in-out overflow-hidden`}
+                  style={{
+                    // maxHeight: expandedGroups[item?.botName] && item.historyList ? `${item.historyList.length * 40 + 10}px` : '40px',
+                    opacity: expandedGroups[item?.botName] ? '1' : '0'
+                  }}
+                >
+                  {expandedGroups[item?.botName] && (
+                    <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
+                      {item.historyList && item.historyList.length>0 && item.historyList.map((i: any) => (
+                          <div
+                              key={item.botId + i.message}
+                              className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200"
+                              onClick={() => handleNavigateToChat(item,i)}
+                          >
+                          <Tooltip title={i.message} placement="top">
+                            <span
+                               className="text-sm text-[#333] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200">
+                              {i.message}
+                            </span>
+                          </Tooltip>
+                            <div
+                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"
+                            >
+                              <img
+                                  src={require('@/assets/imgs/sidebar/close.svg')}
+                                  alt="删除"
+                                  className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
+                                  onClick={e => handleDeleteChat(item, e)}
+                              />
+                            </div>
+                          </div>
+                      ))}
+                      {(!item.historyList || (item.historyList && item.historyList.length === 0)) && (
+                      <div className="group flex items-center cursor-pointer px-1 py-1.5 rounded flex-shrink-0 w-full transition-colors duration-200">
+                            <span
+                                className="text-sm text-[#333] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200">
+                              暂无数据
+                            </span>
+                      </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+                ))}
           </div>
         </div>
       </div>
@@ -287,23 +351,24 @@ interface MenuListProps {
   isCollapsed: boolean;
   mixedChatList: PostChatItem[];
   onRefreshData?: () => void;
+  onChatHistoryData?: (item: any) => void;
 }
 
 // Helper functions for MenuList component
 const useMenuListHelpers = (
-  t: any,
-  user: any,
-  setMobile: any,
-  checkNeedCreateTeamFn: any,
-  setMenuActiveKey: any,
-  setIsShowSpacePopover: any,
-  spaceButtonRef: any,
-  handleToChat: any,
-  setChatListId: any,
-  setDeleteOpen: any,
-  chatListId: string,
-  onRefreshData?: () => void,
-  isAdmin: boolean
+    t: any,
+    user: any,
+    setMobile: any,
+    checkNeedCreateTeamFn: any,
+    setMenuActiveKey: any,
+    setIsShowSpacePopover: any,
+    spaceButtonRef: any,
+    handleToChat: any,
+    setChatListId: any,
+    setDeleteOpen: any,
+    chatListId: string,
+    onRefreshData?: () => void,
+    isAdmin: boolean
 ) => {
   // 动态设置 Popover 的最大高度
   const updatePopoverMaxHeight = () => {
@@ -311,8 +376,8 @@ const useMenuListHelpers = (
       const rect = spaceButtonRef.current.getBoundingClientRect();
       const topPosition = rect.top;
       document.documentElement.style.setProperty(
-        '--popover-top',
-        `${topPosition}px`
+          '--popover-top',
+          `${topPosition}px`
       );
     }
   };
@@ -323,8 +388,8 @@ const useMenuListHelpers = (
   };
 
   // Chat and favorites management
-  const handleNavigateToChat = (item: any) => {
-    handleToChat(item?.botId);
+  const handleNavigateToChat = (item: any, i: any) => {
+    handleToChat(item?.botId,i.chatId);
   };
 
   const handleDeleteChat = (item: any, e: any) => {
@@ -641,6 +706,7 @@ const MenuList: FC<MenuListProps> = ({
   isCollapsed,
   mixedChatList,
   onRefreshData,
+  onChatHistoryData
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -775,6 +841,7 @@ const {
         mixedChatList={mixedChatList}
         handleNavigateToChat={handleNavigateToChat}
         handleDeleteChat={handleDeleteChat}
+        onChatHistoryData={onChatHistoryData}
       />
 
       <DeleteModal

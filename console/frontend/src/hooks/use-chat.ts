@@ -277,8 +277,13 @@ const useChat = () => {
   };
 
   //去对话页面
-  const handleToChat = (botId: number) => {
-    navigate(`/chat/${botId}`);
+  const handleToChat = (botId: number, chatId?:number) => {
+    if (chatId){
+      navigate(`/chat/${botId}/${chatId}`);
+    }else {
+      navigate(`/chat/${botId}`);
+    }
+
   };
 
   const handleFlowToChat = (item: any) => {

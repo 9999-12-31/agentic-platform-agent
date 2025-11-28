@@ -8,13 +8,14 @@ import MenuList from './menu-list';
 import IconEntry from './icon-entry';
 import NoticeModal from './notice-modal';
 import useUserStore from '@/store/user-store';
-import { postChatList } from '@/services/chat';
+import {getChatHistory, postChatList} from '@/services/chat';
 import { getFavoriteList } from '@/services/agent-square';
 import { PostChatItem, FavoriteEntry } from '@/types/chat';
 import eventBus from '@/utils/event-bus';
 import CreateApplicationModal from '@/components/create-application-modal';
 import { getMessageCountApi } from '@/services/notification';
 import {useUserStoreHook} from "@/hooks/use-user-store";
+import {formatHistoryToMessages} from "@/utils";
 
 const PAGE_SIZE = 45;
 const DEFAULT_PAGE_INFO = {
@@ -49,6 +50,21 @@ const Sidebar = (): ReactElement => {
     pageIndex: 1,
     pageSize: PAGE_SIZE,
     botType: '',
+  };
+
+  // 获取对话历史
+  const getChatHistoryData = async (item: any): Promise<void> => {
+    const id = item.id
+    const res = await getChatHistory(id);
+    // 计算新的historyList数据
+    const newHistoryList = res.filter((historyItem: any) => historyItem.historyList.length>0)
+        .map((historyItem: any) => {return historyItem.historyList[0]});
+
+    setMixedChatList(prevList => prevList.map(chatItem => 
+      chatItem.id === id 
+        ? { ...chatItem, historyList: newHistoryList }
+        : chatItem
+    ));
   };
 
   const getChatList = async () => {
@@ -128,6 +144,7 @@ const Sidebar = (): ReactElement => {
             getChatList();
             getFavoriteBotListLocal();
           }}
+          onChatHistoryData={getChatHistoryData}
         />
         {/*<IconEntry*/}
         {/*  onMessageClick={() => {*/}
