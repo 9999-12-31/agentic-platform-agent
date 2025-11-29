@@ -311,7 +311,6 @@ const ExceptionHandlingForm = ({
               }
             }}
             min={0.1}
-            max={120}
             step={0.1}
             className="nodrag w-full "
             controls={false}

@@ -241,7 +241,7 @@ const RecentList: FC<RecentListProps> = ({
           className="text-xs font-medium text-black/50"
           style={{
             fontFamily: 'PingFang SC',
-            fontSize: '12px',
+            fontSize: '14px',
             color: '#676773',
           }}
         >
@@ -280,8 +280,11 @@ const RecentList: FC<RecentListProps> = ({
               <div key= {item?.botName}className="w-full">
                 {/* 分组标题行 */}
                 <div 
-                  className="flex items-center justify-between cursor-pointer px-1 py-1 text-xs font-medium text-[#676773]  rounded"
+                  className="flex items-center justify-between cursor-pointer px-1 py-1 text-xs font-medium text-[#333]  rounded"
                   onClick={() => toggleGroup(item)}
+                  style={{
+                    fontSize: '13px',
+                  }}
                 >
                   <span>{item?.botName}</span>
                   <img
@@ -295,7 +298,7 @@ const RecentList: FC<RecentListProps> = ({
                 
 
                 <div
-                  className={`transition-all duration-300 ease-in-out overflow-hidden`}
+                  className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
                   style={{
                     // maxHeight: expandedGroups[item?.botName] && item.historyList ? `${item.historyList.length * 40 + 10}px` : '40px',
                     opacity: expandedGroups[item?.botName] ? '1' : '0'
@@ -306,25 +309,25 @@ const RecentList: FC<RecentListProps> = ({
                       {item.historyList && item.historyList.length>0 && item.historyList.map((i: any) => (
                           <div
                               key={item.botId + i.message}
-                              className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200"
+                              className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
                               onClick={() => handleNavigateToChat(item,i)}
                           >
                           <Tooltip title={i.message} placement="top">
                             <span
-                               className="text-sm text-[#333] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200">
+                               className="text-xs text-[#333] text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200">
                               {i.message}
                             </span>
                           </Tooltip>
-                            <div
-                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"
-                            >
-                              <img
-                                  src={require('@/assets/imgs/sidebar/close.svg')}
-                                  alt="删除"
-                                  className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
-                                  onClick={e => handleDeleteChat(item, e)}
-                              />
-                            </div>
+                            {/*<div*/}
+                            {/*    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"*/}
+                            {/*>*/}
+                            {/*  <img*/}
+                            {/*      src={require('@/assets/imgs/sidebar/close.svg')}*/}
+                            {/*      alt="删除"*/}
+                            {/*      className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"*/}
+                            {/*      onClick={e => handleDeleteChat(item, e)}*/}
+                            {/*  />*/}
+                            {/*</div>*/}
                           </div>
                       ))}
                       {(!item.historyList || (item.historyList && item.historyList.length === 0)) && (
