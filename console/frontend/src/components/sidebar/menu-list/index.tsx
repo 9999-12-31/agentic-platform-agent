@@ -315,16 +315,16 @@ const RecentList: FC<RecentListProps> = ({
                               {i.message}
                             </span>
                           </Tooltip>
-                            <div
-                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"
-                            >
-                              <img
-                                  src={require('@/assets/imgs/sidebar/close.svg')}
-                                  alt="删除"
-                                  className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
-                                  onClick={e => handleDeleteChat(item, e)}
-                              />
-                            </div>
+                            {/*<div*/}
+                            {/*    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"*/}
+                            {/*>*/}
+                            {/*  <img*/}
+                            {/*      src={require('@/assets/imgs/sidebar/close.svg')}*/}
+                            {/*      alt="删除"*/}
+                            {/*      className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"*/}
+                            {/*      onClick={e => handleDeleteChat(item, e)}*/}
+                            {/*  />*/}
+                            {/*</div>*/}
                           </div>
                       ))}
                       {(!item.historyList || (item.historyList && item.historyList.length === 0)) && (
