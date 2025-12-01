@@ -90,7 +90,7 @@ public class ChatListDataServiceImpl implements ChatListDataService {
     public List<ChatTreeIndex> getListByRootChatId(Long rootChatId, String uid) {
         LambdaQueryWrapper<ChatTreeIndex> chatTreeQuery = new LambdaQueryWrapper<ChatTreeIndex>()
                 .eq(ChatTreeIndex::getRootChatId, rootChatId)
-                .orderByAsc(ChatTreeIndex::getId);
+                .orderByDesc(ChatTreeIndex::getUpdateTime);
         return chatTreeIndexMapper.selectList(chatTreeQuery);
     }
 
