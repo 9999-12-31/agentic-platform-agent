@@ -107,6 +107,11 @@ const MessageList = (props: {
     );
   }, [botInfo]);
 
+  useEffect(() => {
+    // console.log('isLoading   '+isLoading);
+    // console.log('answerPercent   '+answerPercent);
+  }, [isLoading, answerPercent]);
+
   //渲染全新开始
   const renderRestart = (): ReactElement => {
     return (
@@ -208,6 +213,13 @@ const MessageList = (props: {
     const workflowContent = item?.workflowEventData?.content;
     const messageContent = workflowContent ? workflowContent : item.message;
     const isLastMessage = messageIndex === messageList.length - 1; //是否是最后一条消息
+    if (isLastMessage) {
+      console.log('item    ' + !item.sid);
+      console.log('isLoading   ' + isLoading);
+      console.log('answerPercent   ' + !!answerPercent);
+
+      console.log('showLoading   ' + showLoading);
+    }
     return (
       <div
         className="mt-[14px] w-[inherit] max-w-full"

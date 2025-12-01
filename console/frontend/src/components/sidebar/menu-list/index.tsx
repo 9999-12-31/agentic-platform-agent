@@ -194,9 +194,9 @@ interface RecentListProps {
   showRecent: boolean;
   setShowRecent: (show: boolean) => void;
   mixedChatList: any[];
-  handleNavigateToChat: (item: any,i:any) => void;
+  handleNavigateToChat: (item: any, i: any) => void;
   handleDeleteChat: (item: any, e: any) => void;
-  onChatHistoryData:(item: any)=> void;
+  onChatHistoryData: (item: any) => void;
 }
 
 const RecentList: FC<RecentListProps> = ({
@@ -206,28 +206,30 @@ const RecentList: FC<RecentListProps> = ({
   mixedChatList,
   handleNavigateToChat,
   handleDeleteChat,
-  onChatHistoryData
+  onChatHistoryData,
 }) => {
   const { t } = useTranslation();
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  );
 
   if (isCollapsed) return null;
 
   useEffect(() => {
     const info = {}
-    console.log(mixedChatList);
     mixedChatList.forEach(e=>{
       info[e.botName] = false
     })
     setExpandedGroups(info)
   }, []);
+
   const toggleGroup = (item: any) => {
-    const groupName = item?.botName
+    const groupName = item?.botName;
     setExpandedGroups(prev => ({
       ...prev,
-      [groupName]: !prev[groupName]
+      [groupName]: !prev[groupName],
     }));
-    onChatHistoryData(item)
+    onChatHistoryData(item);
   };
 
   return (
@@ -262,7 +264,7 @@ const RecentList: FC<RecentListProps> = ({
         <div
           className={`flex flex-col w-full overflow-x-hidden transition-[height,max-height] duration-300 ease-out  ${
             showRecent
-              ? 'min-h-[50px] max-h-[300px] overflow-y-auto scrollbar-hide'
+              ? 'min-h-[50px] overflow-y-auto scrollbar-hide'
               : 'h-0 max-h-0 overflow-hidden'
           }`}
           style={{
@@ -275,74 +277,91 @@ const RecentList: FC<RecentListProps> = ({
             className={`flex flex-col gap-1 w-full ${showRecent ? '' : 'opacity-0'}`}
           >
             {showRecent &&
-                mixedChatList?.length > 0 &&
-                mixedChatList.map((item: any) => (
-              <div key= {item?.botName}className="w-full">
-                {/* 分组标题行 */}
-                <div 
-                  className="flex items-center justify-between cursor-pointer px-1 py-1 text-xs font-medium text-[#333]  rounded"
-                  onClick={() => toggleGroup(item)}
-                  style={{
-                    fontSize: '13px',
-                  }}
-                >
-                  <span>{item?.botName}</span>
-                  <img
-                    src={require('@/assets/svgs/arrow-top.svg')}
-                    alt=""
-                    className={`w-3 h-3 transition-transform duration-300 ${
-                      expandedGroups[item?.botName] ? '' : 'rotate-180'
-                    }`}
-                  />
-                </div>
-                
+              mixedChatList?.length > 0 &&
+              mixedChatList.map((item: any) => (
+                <div key={item?.botName} className="w-full">
+                  <div
+                    className="flex items-center justify-between cursor-pointer px-1 py-1 text-sm font-medium text-[#333]  rounded"
+                    onClick={() => toggleGroup(item)}
+                    style={{
+                      fontFamily: 'PingFang SC',
+                      fontWeight: 400,
+                    }}
+                  >
+                    <span
+                      className="text-sm"
+                      style={{
+                        fontWeight: '400',
+                      }}
+                    >
+                      {item?.botName}
+                    </span>
+                    <img
+                      src={require('@/assets/svgs/arrow-top.svg')}
+                      alt=""
+                      className={`w-3 h-3 transition-transform duration-300 ${
+                        expandedGroups[item?.botName] ? '' : 'rotate-180'
+                      }`}
+                    />
+                  </div>
 
-                <div
-                  className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
-                  style={{
-                    // maxHeight: expandedGroups[item?.botName] && item.historyList ? `${item.historyList.length * 40 + 10}px` : '40px',
-                    opacity: expandedGroups[item?.botName] ? '1' : '0'
-                  }}
-                >
-                  {expandedGroups[item?.botName] && (
-                    <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
-                      {item.historyList && item.historyList.length>0 && item.historyList.map((i: any) => (
-                          <div
+                  <div
+                    className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
+                    style={{
+                      opacity: expandedGroups[item?.botName] ? '1' : '0',
+                    }}
+                  >
+                    {expandedGroups[item?.botName] && (
+                      <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
+                        {item.historyList &&
+                          item.historyList.length > 0 &&
+                          item.historyList.map((i: any) => (
+                            <div
                               key={item.botId + i.message}
                               className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
-                              onClick={() => handleNavigateToChat(item,i)}
-                          >
-                          <Tooltip title={i.message} placement="top">
+                              onClick={() => handleNavigateToChat(item, i)}
+                            >
+                              <Tooltip title={i.message} placement="top">
+                                <span
+                                  className="text-xs  text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200"
+                                  style={{
+                                    fontSize: '13px',
+                                  }}
+                                >
+                                  {i.message}
+                                </span>
+                              </Tooltip>
+                              {/*<div*/}
+                              {/*    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"*/}
+                              {/*>*/}
+                              {/*  <img*/}
+                              {/*      src={require('@/assets/imgs/sidebar/close.svg')}*/}
+                              {/*      alt="删除"*/}
+                              {/*      className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"*/}
+                              {/*      onClick={e => handleDeleteChat(item, e)}*/}
+                              {/*  />*/}
+                              {/*</div>*/}
+                            </div>
+                          ))}
+                        {(!item.historyList ||
+                          (item.historyList &&
+                            item.historyList.length === 0)) && (
+                          <div className="group flex items-center cursor-pointer px-1 py-1.5 rounded flex-shrink-0 w-full transition-colors duration-200">
                             <span
-                               className="text-xs text-[#333] text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200">
-                              {i.message}
-                            </span>
-                          </Tooltip>
-                            {/*<div*/}
-                            {/*    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"*/}
-                            {/*>*/}
-                            {/*  <img*/}
-                            {/*      src={require('@/assets/imgs/sidebar/close.svg')}*/}
-                            {/*      alt="删除"*/}
-                            {/*      className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"*/}
-                            {/*      onClick={e => handleDeleteChat(item, e)}*/}
-                            {/*  />*/}
-                            {/*</div>*/}
-                          </div>
-                      ))}
-                      {(!item.historyList || (item.historyList && item.historyList.length === 0)) && (
-                      <div className="group flex items-center cursor-pointer px-1 py-1.5 rounded flex-shrink-0 w-full transition-colors duration-200">
-                            <span
-                                className="text-sm text-[#333] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200">
+                              className="text-xs  text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200"
+                              style={{
+                                fontSize: '13px',
+                              }}
+                            >
                               暂无数据
                             </span>
+                          </div>
+                        )}
                       </div>
-                      )}
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-                ))}
+              ))}
           </div>
         </div>
       </div>
@@ -359,19 +378,19 @@ interface MenuListProps {
 
 // Helper functions for MenuList component
 const useMenuListHelpers = (
-    t: any,
-    user: any,
-    setMobile: any,
-    checkNeedCreateTeamFn: any,
-    setMenuActiveKey: any,
-    setIsShowSpacePopover: any,
-    spaceButtonRef: any,
-    handleToChat: any,
-    setChatListId: any,
-    setDeleteOpen: any,
-    chatListId: string,
-    onRefreshData?: () => void,
-    isAdmin: boolean
+  t: any,
+  user: any,
+  setMobile: any,
+  checkNeedCreateTeamFn: any,
+  setMenuActiveKey: any,
+  setIsShowSpacePopover: any,
+  spaceButtonRef: any,
+  handleToChat: any,
+  setChatListId: any,
+  setDeleteOpen: any,
+  chatListId: string,
+  onRefreshData?: () => void,
+  isAdmin: boolean
 ) => {
   // 动态设置 Popover 的最大高度
   const updatePopoverMaxHeight = () => {
@@ -379,8 +398,8 @@ const useMenuListHelpers = (
       const rect = spaceButtonRef.current.getBoundingClientRect();
       const topPosition = rect.top;
       document.documentElement.style.setProperty(
-          '--popover-top',
-          `${topPosition}px`
+        '--popover-top',
+        `${topPosition}px`
       );
     }
   };
@@ -392,7 +411,7 @@ const useMenuListHelpers = (
 
   // Chat and favorites management
   const handleNavigateToChat = (item: any, i: any) => {
-    handleToChat(item?.botId,i.chatId);
+    handleToChat(item?.botId, i.chatId);
   };
 
   const handleDeleteChat = (item: any, e: any) => {
@@ -709,7 +728,7 @@ const MenuList: FC<MenuListProps> = ({
   isCollapsed,
   mixedChatList,
   onRefreshData,
-  onChatHistoryData
+  onChatHistoryData,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -747,28 +766,28 @@ const MenuList: FC<MenuListProps> = ({
   const { handleToChat } = useChat();
 
   // Helper functions
-const {
-  handleShowSpacePopover,
-  handleNavigateToChat,
-  handleDeleteChat,
-  handleDeleteChatConfirm,
-  initializeActiveMenu,
-  initializeApp,
-} = useMenuListHelpers(
-  t,
-  user,
-  setMobile,
-  checkNeedCreateTeamFn,
-  setMenuActiveKey,
-  setIsShowSpacePopover,
-  spaceButtonRef,
-  handleToChat,
-  setChatListId,
-  setDeleteOpen,
-  chatListId,
-  onRefreshData,
-  isAdmin
-);
+  const {
+    handleShowSpacePopover,
+    handleNavigateToChat,
+    handleDeleteChat,
+    handleDeleteChatConfirm,
+    initializeActiveMenu,
+    initializeApp,
+  } = useMenuListHelpers(
+    t,
+    user,
+    setMobile,
+    checkNeedCreateTeamFn,
+    setMenuActiveKey,
+    setIsShowSpacePopover,
+    spaceButtonRef,
+    handleToChat,
+    setChatListId,
+    setDeleteOpen,
+    chatListId,
+    onRefreshData,
+    isAdmin
+  );
 
   // Dynamic menu list
   const getDynamicMenuList = useDynamicMenuList(
