@@ -11,3 +11,6 @@ UPDATE astron_console.bot_type_list SET show_index=0 WHERE id=9;
 UPDATE astron_console.bot_type_list SET show_index=1 WHERE id=10;
 INSERT INTO astron_console.bot_type_list (id,type_key,type_name,order_num,show_index) VALUES (1,1,'运营管理分析',1,1);
 INSERT INTO astron_console.bot_type_list (id,type_key,type_name,order_num,show_index) VALUES (2,2,'科室评价',2,1);
+
+-- chat_tree_index 增加字段 is_delete tinyint
+ALTER TABLE astron_console.chat_tree_index ADD COLUMN is_delete TINYINT DEFAULT 0 COMMENT 'Whether deleted: 0 not delete, 1 delete'  AFTER child_chat_id;

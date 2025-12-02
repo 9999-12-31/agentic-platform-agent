@@ -67,4 +67,6 @@ public interface ChatListService {
     ChatListCreateResponse createRestartChat(String uid, String chatListName, Integer botId);
 
     BotModelDto getBotModelDto(HttpServletRequest request, Long modelId, String model);
+
+    Boolean logicDeleteChatIndex(Long chatId, String uid);
 }

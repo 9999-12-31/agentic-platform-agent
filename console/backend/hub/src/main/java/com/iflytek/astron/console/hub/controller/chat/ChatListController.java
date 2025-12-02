@@ -86,6 +86,23 @@ public class ChatListController {
     }
 
     /**
+     * Delete chat Index
+     */
+    @PostMapping(path = "/del-chat-index")
+    @Operation(summary = "Delete Chat Index")
+    public ApiResult<Boolean> deleteChatIndex(@RequestBody Long chatId) {
+        String uid = RequestContextUtil.getUID();
+        if (uid == null) {
+            throw new BusinessException(ResponseEnum.LOGIN_INFO_ERROR);
+        }
+        if (chatId == null) {
+            throw new BusinessException(ResponseEnum.PARAMS_ERROR);
+        }
+
+        return ApiResult.success(chatListService.logicDeleteChatIndex(chatId, uid));
+    }
+
+    /**
      * Get bot information.
      *
      * @param request HTTP request object

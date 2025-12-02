@@ -94,4 +94,6 @@ public interface ChatListDataService {
     ChatBotBase insertChatBotList(ChatBotBase chatBotBase);
 
     ChatBotBase updateChatBotList(ChatBotBase chatBotBase);
+
+    int deleteByChildChatId(Long childChatId, String uid);
 }

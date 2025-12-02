@@ -28,6 +28,9 @@ public class ChatTreeIndex {
     @Schema(description = "Child session ID")
     private Long childChatId;
 
+    @Schema(description = "Deletion status: 0 Not delete, 1 Delete")
+    private Integer isDelete;
+
     @Schema(description = "User ID")
     private String uid;
 

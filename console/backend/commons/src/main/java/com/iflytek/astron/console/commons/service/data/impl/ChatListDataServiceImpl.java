@@ -90,7 +90,7 @@ public class ChatListDataServiceImpl implements ChatListDataService {
     public List<ChatTreeIndex> getListByRootChatId(Long rootChatId, String uid) {
         LambdaQueryWrapper<ChatTreeIndex> chatTreeQuery = new LambdaQueryWrapper<ChatTreeIndex>()
                 .eq(ChatTreeIndex::getRootChatId, rootChatId)
-                .orderByDesc(ChatTreeIndex::getUpdateTime);
+                .orderByAsc(ChatTreeIndex::getId);
         return chatTreeIndexMapper.selectList(chatTreeQuery);
     }
 
@@ -288,5 +288,22 @@ public class ChatListDataServiceImpl implements ChatListDataService {
         wrapper.set("update_time", LocalDateTime.now());
         chatBotListMapper.update(null, wrapper);
         return chatBotBase;
+    }
+
+    @Override
+    public int deleteByChildChatId(Long childChatId, String uid) {
+        // logical delete
+        LambdaQueryWrapper<ChatTreeIndex> wrapper = Wrappers.lambdaQuery(ChatTreeIndex.class)
+                .eq(ChatTreeIndex::getChildChatId, childChatId)
+                .eq(ChatTreeIndex::getUid, uid);
+
+        ChatTreeIndex updateEntity = ChatTreeIndex.builder()
+                .isDelete(1)
+                .updateTime(LocalDateTime.now())
+                .build();
+
+        int result =  chatTreeIndexMapper.update(updateEntity, wrapper);
+        log.debug("logical deleted chat tree index , affected rows={}", result);
+        return result;
     }
 }

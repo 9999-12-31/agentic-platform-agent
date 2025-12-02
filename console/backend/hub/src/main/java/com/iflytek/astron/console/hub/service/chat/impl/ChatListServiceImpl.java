@@ -349,4 +349,11 @@ public class ChatListServiceImpl implements ChatListService {
         }
         return chatListDataService.deleteBatchIds(chatIds) > 0;
     }
+
+
+    @Override
+    public Boolean logicDeleteChatIndex(Long chatId, String uid) {
+        log.info("***** uid: {} delete single chat index childChatId: {}", uid, chatId);
+        return chatListDataService.deleteByChildChatId(chatId, uid) > 0;
+    }
 }

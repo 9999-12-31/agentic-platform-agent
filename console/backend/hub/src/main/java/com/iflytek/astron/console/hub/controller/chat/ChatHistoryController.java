@@ -74,6 +74,11 @@ public class ChatHistoryController {
         try {
             List<ChatHistoryResponseDto> allTreeHistory = new ArrayList<>(8);
             List<ChatTreeIndex> chatTreeIndexList = chatListDataService.getListByRootChatId(chatId, uid);
+            // order by update time desc
+            chatTreeIndexList.sort((o1, o2) -> o2.getUpdateTime().compareTo(o1.getUpdateTime()));
+            // filter by isDelete = 0
+            chatTreeIndexList.removeIf(e -> e.getIsDelete() == 1);
+
             chatTreeIndexList.forEach(e -> {
                 allTreeHistory.add(getMessageHistory(uid, e.getChildChatId(), chatList));
             });
