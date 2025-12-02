@@ -154,21 +154,21 @@ const ResqBottomButtons = ({
           <ReactSVG wrapper="span" src={copyIcon} />
         </div>
       </Tooltip>
-      <Tooltip
-        title={
-          isPlaying
-            ? t('chatPage.chatBottom.stopReading')
-            : t('chatPage.chatBottom.read')
-        }
-        placement="top"
-      >
-        <div
-          onClick={() => handlePlayAudio()}
-          className="text-sm cursor-pointer mr-3 copy-icon"
-        >
-          <AudioAnimate isPlaying={isPlaying} />
-        </div>
-      </Tooltip>
+      {/*<Tooltip*/}
+      {/*  title={*/}
+      {/*    isPlaying*/}
+      {/*      ? t('chatPage.chatBottom.stopReading')*/}
+      {/*      : t('chatPage.chatBottom.read')*/}
+      {/*  }*/}
+      {/*  placement="top"*/}
+      {/*>*/}
+      {/*  <div*/}
+      {/*    onClick={() => handlePlayAudio()}*/}
+      {/*    className="text-sm cursor-pointer mr-3 copy-icon"*/}
+      {/*  >*/}
+      {/*    <AudioAnimate isPlaying={isPlaying} />*/}
+      {/*  </div>*/}
+      {/*</Tooltip>*/}
     </div>
   );
 };

@@ -4,9 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.iflytek.astron.console.commons.dto.chat.ChatBotListDto;
 import com.iflytek.astron.console.commons.entity.bot.ChatBotBase;
 import com.iflytek.astron.console.commons.entity.bot.ChatBotList;
-import com.iflytek.astron.console.commons.dto.chat.ChatBotListDto;
 import com.iflytek.astron.console.commons.entity.chat.ChatList;
 import com.iflytek.astron.console.commons.entity.chat.ChatTreeIndex;
 import com.iflytek.astron.console.commons.mapper.bot.ChatBotListMapper;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -56,6 +57,24 @@ public class ChatListDataServiceImpl implements ChatListDataService {
 
         ChatList result = chatListMapper.selectOne(wrapper);
         log.debug("Found chat list by uid={} and chatId={}: {}", uid, chatId, result);
+
+        return result;
+    }
+
+    public List<ChatList> findByUidAndChatIdIn(String uid, List<Long> chatIds) {
+        if (uid == null || chatIds == null || chatIds.isEmpty()) {
+            log.warn("Invalid parameters for batch query: uid={}, chatIds={}", uid, chatIds);
+            return Collections.emptyList();
+        }
+
+        // 使用 MyBatis-Plus 的 in 查询
+        LambdaQueryWrapper<ChatList> wrapper = Wrappers.lambdaQuery(ChatList.class)
+                .eq(ChatList::getUid, uid)           // 同一个用户
+                .in(ChatList::getId, chatIds)        // chatId 在集合中
+                .eq(ChatList::getIsDelete, 0);       // 未删除
+
+        List<ChatList> result = chatListMapper.selectList(wrapper);
+        log.debug("Batch query chat lists by uid={} and chatIds={}: count={}", uid, chatIds, result.size());
 
         return result;
     }
