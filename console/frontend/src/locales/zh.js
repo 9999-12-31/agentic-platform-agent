@@ -78,7 +78,7 @@ export const zh = {
   interApp: '星火',
   enter: '进入',
   added: '添加成功',
-  copyDone: '复制成功，内容由讯飞星火AI生成',
+  copyDone: '复制成功',
   copyFail: '复制失败',
   feedbackText: {
     cai: {

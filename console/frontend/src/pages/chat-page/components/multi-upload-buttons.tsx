@@ -78,7 +78,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
     index: number,
     isPopover?: boolean
   ): JSX.Element => {
-    const { accept, limit, type, icon, name } = config;
+    const { accept, limit, type, icon, name, schema } = config;
     const currentCount = fileTypeCounts[name || type] || 0;
     const uploadMaxMB = icon === 'image' ? 20 : icon === 'video' ? 500 : 50;
     const isDisabled = currentCount >= (limit || 1);
@@ -115,7 +115,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
           />
           <div className="flex flex-col">
             <div className="text-xs whitespace-nowrap">
-              {type} ({name})
+              {type} <span>{schema.default?`(${schema.default})`:''}</span>
             </div>
             {isPopover && (
               <div className="text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
