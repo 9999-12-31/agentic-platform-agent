@@ -14,3 +14,19 @@ INSERT INTO astron_console.bot_type_list (id,type_key,type_name,order_num,show_i
 
 -- chat_tree_index 增加字段 is_delete tinyint
 ALTER TABLE astron_console.chat_tree_index ADD COLUMN is_delete TINYINT DEFAULT 0 COMMENT 'Whether deleted: 0 not delete, 1 delete'  AFTER child_chat_id;
+
+
+CREATE TABLE `user_file`
+(
+    `id`                  bigint       NOT NULL AUTO_INCREMENT,
+    `uid`                 varchar(128) NOT NULL COMMENT 'Owner UID',
+    `file_url`            varchar(1024)         DEFAULT NULL COMMENT 'File URL',
+    `file_name`           varchar(128)          DEFAULT NULL COMMENT 'File name',
+    `file_size`           bigint                DEFAULT NULL COMMENT 'File size',
+    `create_time`         datetime              DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    `update_time`         datetime              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update time',
+    `deleted`             tinyint      NOT NULL DEFAULT '0' COMMENT 'Whether deleted: 0 not deleted, 1 deleted',
+    PRIMARY KEY (`id`),
+    KEY                   `user_file_uid_IDX` (`uid`) USING BTREE,
+    KEY                   `user_file_create_time_IDX` (`create_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='User file information';

@@ -243,3 +243,4 @@ coverage.xml
 docker-compose.override.yml
 .dockerignore.local
 *.dockerignore.local
+api.http
