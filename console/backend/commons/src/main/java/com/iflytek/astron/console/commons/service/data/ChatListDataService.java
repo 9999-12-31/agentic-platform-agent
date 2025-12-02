@@ -18,6 +18,8 @@ public interface ChatListDataService {
      */
     ChatList findByUidAndChatId(String uid, Long chatId);
 
+    List<ChatList> findByUidAndChatIdIn(String uid, List<Long> chatIds);
+
     List<ChatTreeIndex> findChatTreeIndexByChatIdOrderById(Long rootChatId);
 
     ChatList createChat(ChatList chatList);

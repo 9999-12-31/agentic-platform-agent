@@ -90,7 +90,7 @@ public class ChatListController {
      */
     @PostMapping(path = "/del-chat-index")
     @Operation(summary = "Delete Chat Index")
-    public ApiResult<Boolean> deleteChatIndex(@RequestBody Long chatId) {
+    public ApiResult<Boolean> deleteChatIndex(@RequestParam Long chatId) {
         String uid = RequestContextUtil.getUID();
         if (uid == null) {
             throw new BusinessException(ResponseEnum.LOGIN_INFO_ERROR);
