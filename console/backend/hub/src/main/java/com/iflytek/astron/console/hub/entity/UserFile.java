@@ -21,6 +21,9 @@ public class UserFile {
     @Schema(description = "Owner UID")
     private String uid;
 
+    @Schema(description = "File ID")
+    private String fileId;
+
     @Schema(description = "File URL")
     private String fileUrl;
 
@@ -29,6 +32,9 @@ public class UserFile {
 
     @Schema(description = "File size")
     private Long fileSize;
+
+    @Schema(description = "File extension")
+    private String fileExtension;
 
     @Schema(description = "Create time")
     private LocalDateTime createTime;

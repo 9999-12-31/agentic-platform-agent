@@ -20,13 +20,17 @@ CREATE TABLE `user_file`
 (
     `id`                  bigint       NOT NULL AUTO_INCREMENT,
     `uid`                 varchar(128) NOT NULL COMMENT 'Owner UID',
+    `file_id`             varchar(128) NOT NULL COMMENT 'File ID',
     `file_url`            varchar(1024)         DEFAULT NULL COMMENT 'File URL',
     `file_name`           varchar(128)          DEFAULT NULL COMMENT 'File name',
     `file_size`           bigint                DEFAULT NULL COMMENT 'File size',
+    `file_extension`      varchar(64)           DEFAULT NULL COMMENT 'File extension',
     `create_time`         datetime              DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
     `update_time`         datetime              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update time',
     `deleted`             tinyint      NOT NULL DEFAULT '0' COMMENT 'Whether deleted: 0 not deleted, 1 deleted',
     PRIMARY KEY (`id`),
     KEY                   `user_file_uid_IDX` (`uid`) USING BTREE,
+    KEY                   `user_file_file_id_IDX` (`file_id`) USING BTREE,
+    KEY                   `user_file_deleted_IDX` (`deleted`) USING BTREE,
     KEY                   `user_file_create_time_IDX` (`create_time`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='User file information';

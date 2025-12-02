@@ -1,11 +1,12 @@
 package com.iflytek.astron.console.hub.controller.user;
 
-import java.util.Map;
+import java.util.List;
 
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iflytek.astron.console.commons.response.ApiResult;
@@ -40,4 +41,17 @@ public class UserFileController {
          return ApiResult.success(userFileService.saveFile(uid, vo));
     }
 
+    @PostMapping(path = "/get-all-files")
+    @Operation(summary = "Get All Files")
+    public ApiResult<List<UserFileVo>> getAllFiles(@RequestBody UserFileVo vo) {
+        String uid = RequestContextUtil.getUID();
+         return ApiResult.success(userFileService.getAllFiles(uid, vo));
+    }
+
+    @DeleteMapping(path = "/delete-file")
+    @Operation(summary = "Delete File")
+    public ApiResult<Boolean> deleteFile(@RequestParam("fileId") String fileId) {
+        String uid = RequestContextUtil.getUID();
+        return ApiResult.success(userFileService.deleteFile(uid, fileId));
+    }
 }

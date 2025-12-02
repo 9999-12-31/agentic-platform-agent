@@ -8,6 +8,11 @@ import lombok.Data;
 
 @Data
 public class UserFileVo {
+
+    /**
+     * File ID
+     */
+    private String fileId;
     /**
      * File URL
      */
@@ -20,8 +25,13 @@ public class UserFileVo {
      * File size
      */
     private Long fileSize;
-
-    
+     /**
+     * File extension
+     */
+    private String fileExtension;
+    /**
+     * Create time
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 }
