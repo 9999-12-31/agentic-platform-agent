@@ -101,7 +101,7 @@ const routes = [
         path: '/management/model',
         element: (
           <Suspense fallback={<Loading />}>
-            <RequirePermission requireMember={true}>
+            <RequirePermission requireAdmin={true}>
               <PersonalModel />
             </RequirePermission>
           </Suspense>
@@ -111,7 +111,7 @@ const routes = [
         path: '/management/model/personalModel',
         element: (
           <Suspense fallback={<Loading />}>
-            <RequirePermission requireMember={true}>
+            <RequirePermission requireAdmin={true}>
               <PersonalModel />
             </RequirePermission>
           </Suspense>
@@ -121,7 +121,7 @@ const routes = [
         path: '/management/model/detail/:id',
         element: (
           <Suspense fallback={<Loading />}>
-            <RequirePermission requireMember={true}>
+            <RequirePermission requireAdmin={true}>
               <ModelDetail />
             </RequirePermission>
           </Suspense>

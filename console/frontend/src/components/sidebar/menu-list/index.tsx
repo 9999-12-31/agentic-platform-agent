@@ -209,19 +209,21 @@ const RecentList: FC<RecentListProps> = ({
   onChatHistoryData,
 }) => {
   const { t } = useTranslation();
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-    {}
-  );
-
-  if (isCollapsed) return null;
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+  });
 
   useEffect(() => {
-    const info = {}
-    mixedChatList.forEach(e=>{
-      info[e.botName] = false
-    })
-    setExpandedGroups(info)
+    if (!mixedChatList || !Array.isArray(mixedChatList)) return;
+    const info = {};
+    mixedChatList.forEach(e => {
+      if (e?.botName) {
+        info[e.botName] = false;
+      }
+    });
+    setExpandedGroups(info);
   }, []);
+
+  if (isCollapsed) return null;
 
   const toggleGroup = (item: any) => {
     const groupName = item?.botName;
@@ -281,7 +283,7 @@ const RecentList: FC<RecentListProps> = ({
               mixedChatList.map((item: any) => (
                 <div key={item?.botName} className="w-full">
                   <div
-                    className="flex items-center justify-between cursor-pointer px-1 py-1 text-sm font-medium text-[#333]  rounded"
+                    className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
                     onClick={() => toggleGroup(item)}
                     style={{
                       fontFamily: 'PingFang SC',
@@ -315,9 +317,9 @@ const RecentList: FC<RecentListProps> = ({
                       <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
                         {item.historyList &&
                           item.historyList.length > 0 &&
-                          item.historyList.map((i: any) => (
+                          item.historyList.map((i: any,idx:number) => (
                             <div
-                              key={item.botId + i.message}
+                              key={item.botId + i.message + idx}
                               className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
                               onClick={() => handleNavigateToChat(item, i)}
                             >
