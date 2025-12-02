@@ -120,14 +120,14 @@ const RecentUsedList: FC<{
             <div title={item.botDesc} className={styles.headDesc}>
               {item.botDesc}
             </div>
-            <div className={styles.itemInfo}>
-              <img className={styles.actImg} src={act} alt="" />
-              <div className={styles.actText}>
-                {item.creatorName || '@讯飞星火'}
-              </div>
-              <img className={styles.fireImg} src={fire} alt="" />
-              <div className={styles.fireText}>{item.hotNum || 0}</div>
-            </div>
+            {/*<div className={styles.itemInfo}>*/}
+            {/*  <img className={styles.actImg} src={act} alt="" />*/}
+            {/*  <div className={styles.actText}>*/}
+            {/*    {item.creatorName || '@讯飞星火'}*/}
+            {/*  </div>*/}
+            {/*  <img className={styles.fireImg} src={fire} alt="" />*/}
+            {/*  <div className={styles.fireText}>{item.hotNum || 0}</div>*/}
+            {/*</div>*/}
             <div
               onClick={e => handleDeleteClick(item, e)}
               className={styles.delete}
@@ -182,14 +182,14 @@ const FavoritesList: FC<{
             <div title={item.bot.botDesc} className={styles.headDesc}>
               {item.bot.botDesc}
             </div>
-            <div className={styles.itemInfo}>
-              <img className={styles.actImg} src={act} alt="" />
-              <div className={styles.actText}>
-                {item.bot.creatorName || '@讯飞星火'}
-              </div>
-              <img className={styles.fireImg} src={fire} alt="" />
-              <div className={styles.fireText}>{item.bot.hotNum || 0}</div>
-            </div>
+            {/*<div className={styles.itemInfo}>*/}
+            {/*  <img className={styles.actImg} src={act} alt="" />*/}
+            {/*  <div className={styles.actText}>*/}
+            {/*    {item.bot.creatorName || '@讯飞星火'}*/}
+            {/*  </div>*/}
+            {/*  <img className={styles.fireImg} src={fire} alt="" />*/}
+            {/*  <div className={styles.fireText}>{item.bot.hotNum || 0}</div>*/}
+            {/*</div>*/}
             <div
               onClick={e => handleDeleteClick(item, e)}
               className={styles.delete}
