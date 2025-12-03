@@ -67,6 +67,7 @@ public class ChatMessageController {
     @PostMapping(path = "/chat", produces = "text/event-stream;charset=UTF-8")
     @Operation(summary = "Conduct chat session based on chatId")
     public SseEmitter chat(@RequestParam Long chatId,
+            @RequestParam(required = false) Long childChatId,
             @RequestParam String text,
             @RequestParam(required = false) String fileUrl,
             @RequestParam(required = false) String workflowOperation,
@@ -84,7 +85,12 @@ public class ChatMessageController {
             SseEmitterUtil.sendEndAndComplete(sseEmitter);
             return sseEmitter;
         }
-        Long lastChatId = chatTreeIndexList.getFirst().getChildChatId();
+        Long lastChatId = null;
+        if (childChatId != null) {
+            lastChatId = childChatId;
+        } else {
+            lastChatId = chatTreeIndexList.getFirst().getChildChatId();
+        }
 
         // Validate request parameters
         ValidationResult validation = validateChatRequest(lastChatId, text, sseId, sseEmitter);
