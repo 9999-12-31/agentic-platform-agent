@@ -6,8 +6,8 @@ server:
 spring:
   config:
     import: optional:classpath:application-toolkit.yml
-  profiles:
-    active: dev
+  # profiles:
+  #   active: dev
   application:
     name: astron-console-hub
   datasource:
