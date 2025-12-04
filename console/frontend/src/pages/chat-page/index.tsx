@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { message, Spin } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import useBotInfoStore from '@/store/bot-info-store';
 import ChatHeader from './components/chat-header';
 import chatBg from '@/assets/imgs/chat/chat-bg.png';
@@ -57,6 +58,7 @@ const ChatPage = (): ReactElement => {
   const messageList = useChatStore(state => state.messageList); //  消息列表
   const streamId = useChatStore(state => state.streamId); //  流式id
   const isLoading = useChatStore(state => state.isLoading); //  加载状态
+  const finishStreamingMessage = useChatStore(state => state.finishStreamingMessage); //  完成流式消息
   const setMessageList = useChatStore(state => state.setMessageList); //  设置消息列表
   const setCurrentChatId = useChatStore(state => state.setCurrentChatId); //  设置当前聊天id
   const initChatStore = useChatStore(state => state.initChatStore); //  初始化聊天store
@@ -239,9 +241,22 @@ const ChatPage = (): ReactElement => {
 
   //stop answer
   const stopAnswer = () => {
+    // 显示"正在停止输出"提示
+    // message.loading({
+    //   content: '正在停止输出',
+    //   duration: 1,
+    //   key: 'stop-output',
+    //   icon: <ExclamationCircleOutlined style={{color:'blue'}}/>
+    // });
+    
     postStopChat(streamId).catch(err => {
       console.error(err);
     });
+    // 关闭前端的 SSE 连接
+    const controllerRef = useChatStore.getState().controllerRef;
+    controllerRef.abort('用户停止');
+    // 清除流式消息状态
+    finishStreamingMessage();
   };
 
   //set color

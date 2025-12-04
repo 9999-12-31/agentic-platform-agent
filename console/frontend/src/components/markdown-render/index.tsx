@@ -8,6 +8,8 @@ import { v4 as uuid } from 'uuid';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { github } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import customFootnotePlugin from './custom-footnote-plugin';
+import ReactECharts from 'echarts-for-react';
+import { isJSON } from '@/utils';
 
 function index({ content, isSending = false }): React.ReactElement {
   const globalMarkdownId = uuid();
@@ -136,6 +138,38 @@ function index({ content, isSending = false }): React.ReactElement {
             const { children, className, node, ...rest } = props;
 
             const match = /language-(\w+)/.exec(className || '');
+            if (match && match[1] === 'echarts' && children) {
+              // 处理ECharts图表
+              let option = null;
+              const codeContent = String(children).trim();
+              try {
+                if (isJSON(codeContent)) {
+                  option = JSON.parse(codeContent);
+                } else {
+                  // 尝试使用更宽松的方式解析（仅在可信环境中使用）
+                  // eslint-disable-next-line no-eval
+                  option = eval(`(${codeContent})`);
+                }
+              } catch (error) {
+                console.error('解析ECharts配置失败:', error);
+                return (
+                  <div className="echarts-error">
+                    <p>图表配置解析失败</p>
+                    <pre>{error.message}</pre>
+                  </div>
+                );
+              }
+
+              if (option) {
+                return (
+                  <div className="echarts-container" style={{ height: '400px', margin: '16px 0',width:'700px' }}>
+                    <ReactECharts option={option} {...rest} />
+                  </div>
+                );
+              }
+            }
+            
+            // 处理其他代码块
             return match && children ? (
               <SyntaxHighlighter
                 {...rest}
