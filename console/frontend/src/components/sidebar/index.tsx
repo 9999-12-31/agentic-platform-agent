@@ -53,8 +53,7 @@ const Sidebar = (): ReactElement => {
   };
 
   // 获取对话历史
-  const getChatHistoryData = async (item: any): Promise<void> => {
-    const id = item.id
+  const getChatHistoryData = async (id: number): Promise<void> => {
     const res = await getChatHistory(id);
     // 计算新的historyList数据
     const newHistoryList = res.filter((historyItem: any) => historyItem.historyList.length>0)
@@ -140,9 +139,12 @@ const Sidebar = (): ReactElement => {
         <MenuList
           isCollapsed={isCollapsed}
           mixedChatList={mixedChatList}
-          onRefreshData={() => {
+          onRefreshData={(chatListId:string) => {
+            console.log(chatListId);
             getChatList();
             getFavoriteBotListLocal();
+            getChatHistoryData(chatListId)
+
           }}
           onChatHistoryData={getChatHistoryData}
         />

@@ -20,6 +20,7 @@ import { cancelFavorite } from '@/services/agent-square';
 import { deleteChatList } from '@/services/chat';
 import { useTranslation } from 'react-i18next';
 import eventBus from '@/utils/event-bus';
+import MyFile from "@/components/my-file";
 
 interface PersonalCenterProps {
   open: boolean;
@@ -37,7 +38,7 @@ interface TabItem {
 }
 
 // 常量定义
-const tabs: TabItem[] = [{ tab: '最近使用' }, { tab: '我的收藏' }];
+const tabs: TabItem[] = [{ tab: '最近使用' }, { tab: '我的收藏' }, { tab: '我的文件' }];
 
 // 内部组件定义
 
@@ -412,7 +413,7 @@ const PersonalCenter: FC<PersonalCenterProps> = ({
   return (
     <Modal
       wrapClassName={styles.open_source_modal}
-      width={837}
+      width={'90%'}
       open={open}
       centered
       onCancel={onCancel}
@@ -457,9 +458,10 @@ const PersonalCenter: FC<PersonalCenterProps> = ({
                 </span>
               </div>
             </Modal>
+          <div className={styles.contentWrapper}>
             {activeIndex === 0 && (
               <RecentUsedList
-                recentList={mixedChatList}
+                recentList={mixedChatList.concat(mixedChatList).concat(mixedChatList)}
                 onItemClick={handleToChat}
                 onDeleteClick={handleDelete}
               />
@@ -470,6 +472,11 @@ const PersonalCenter: FC<PersonalCenterProps> = ({
                 onItemClick={handleToChat}
                 onDeleteClick={handleDelete}
               />
+            )}
+          </div>
+            {activeIndex === 2 && (
+                <MyFile
+                />
             )}
           </div>
         </div>

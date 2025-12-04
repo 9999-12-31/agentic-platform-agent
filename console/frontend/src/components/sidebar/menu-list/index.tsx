@@ -25,7 +25,7 @@ import createSpaceImg from '@/assets/imgs/space/createSpaceImg.png';
 import enterpriseShareCreate from '@/assets/imgs/space/enterpriseShareCreate.png';
 import enterpriseSpaceJoin from '@/assets/imgs/space/enterpriseSpaceJoin.png';
 import arrowRight from '@/assets/imgs/space/arrowRight.png';
-import { deleteChatList } from '@/services/chat';
+import {deleteChatIndex, deleteChatList} from '@/services/chat';
 import { PostChatItem } from '@/types/chat';
 
 // Constants
@@ -231,7 +231,7 @@ const RecentList: FC<RecentListProps> = ({
       ...prev,
       [groupName]: !prev[groupName],
     }));
-    onChatHistoryData(item);
+    onChatHistoryData(item.id);
   };
 
   return (
@@ -333,16 +333,16 @@ const RecentList: FC<RecentListProps> = ({
                                   {i.message}
                                 </span>
                               </Tooltip>
-                              {/*<div*/}
-                              {/*    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"*/}
-                              {/*>*/}
-                              {/*  <img*/}
-                              {/*      src={require('@/assets/imgs/sidebar/close.svg')}*/}
-                              {/*      alt="删除"*/}
-                              {/*      className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"*/}
-                              {/*      onClick={e => handleDeleteChat(item, e)}*/}
-                              {/*  />*/}
-                              {/*</div>*/}
+                              <div
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"
+                              >
+                                <img
+                                    src={require('@/assets/imgs/sidebar/close.svg')}
+                                    alt="删除"
+                                    className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
+                                    onClick={e => handleDeleteChat(item, e, i)}
+                                />
+                              </div>
                             </div>
                           ))}
                         {(!item.historyList ||
@@ -374,7 +374,7 @@ const RecentList: FC<RecentListProps> = ({
 interface MenuListProps {
   isCollapsed: boolean;
   mixedChatList: PostChatItem[];
-  onRefreshData?: () => void;
+  onRefreshData?: (chatListId:string) => void;
   onChatHistoryData?: (item: any) => void;
 }
 
@@ -389,9 +389,11 @@ const useMenuListHelpers = (
   spaceButtonRef: any,
   handleToChat: any,
   setChatListId: any,
+  setChatListIemId: any,
   setDeleteOpen: any,
   chatListId: string,
-  onRefreshData?: () => void,
+  chatListItemId:number,
+  onRefreshData?: (chatListId:string) => void,
   isAdmin: boolean
 ) => {
   // 动态设置 Popover 的最大高度
@@ -416,22 +418,25 @@ const useMenuListHelpers = (
     handleToChat(item?.botId, i.chatId);
   };
 
-  const handleDeleteChat = (item: any, e: any) => {
+  const handleDeleteChat = (item: any, e: any, i:any) => {
+    console.log(item);
+    console.log(i);
+
     e.stopPropagation();
     setChatListId(item?.id);
+    setChatListIemId(i?.chatId);
     setDeleteOpen(true);
   };
 
   const handleDeleteChatConfirm = () => {
-    deleteChatList({
-      chatListId: Number(chatListId),
-    })
+    deleteChatIndex(chatListItemId)
       .then((res: any) => {
         setDeleteOpen(false);
         message.success(t('commonModal.agentDelete.success'));
         // Refresh data after successful deletion
         if (onRefreshData) {
-          onRefreshData();
+          console.log(chatListId);
+          onRefreshData(chatListId);
         }
       })
       .catch((err: any) => {
@@ -758,8 +763,9 @@ const MenuList: FC<MenuListProps> = ({
   const [hoverTab, setHoverTab] = useState('');
   const [menuActiveKey, setMenuActiveKey] = useState('');
   const [showRecent, setShowRecent] = useState(true);
-  const [chatListId, setChatListId] = useState('');
+  const [chatListId, setChatListId] = useState();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [chatListItemId, setChatListIemId] = useState();
 
   // Refs
   const spaceButtonRef = useRef<HTMLDivElement | null>(null);
@@ -785,8 +791,10 @@ const MenuList: FC<MenuListProps> = ({
     spaceButtonRef,
     handleToChat,
     setChatListId,
+    setChatListIemId,
     setDeleteOpen,
     chatListId,
+    chatListItemId,
     onRefreshData,
     isAdmin
   );
