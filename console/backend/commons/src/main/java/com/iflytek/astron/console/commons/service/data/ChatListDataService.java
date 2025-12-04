@@ -98,4 +98,6 @@ public interface ChatListDataService {
     ChatBotBase updateChatBotList(ChatBotBase chatBotBase);
 
     int deleteByChildChatId(Long childChatId, String uid);
+
+    int updateChatListTitleByUidAndChatId(Long chatId, String uid, String title);
 }

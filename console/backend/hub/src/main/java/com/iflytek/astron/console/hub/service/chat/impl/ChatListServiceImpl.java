@@ -1,11 +1,13 @@
 package com.iflytek.astron.console.hub.service.chat.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.iflytek.astron.console.commons.constant.ResponseEnum;
 import com.iflytek.astron.console.commons.dto.bot.BotModelDto;
 import com.iflytek.astron.console.commons.dto.bot.BotInfoDto;
 import com.iflytek.astron.console.commons.dto.chat.ChatListResponseDto;
 import com.iflytek.astron.console.commons.entity.chat.ChatTreeIndex;
 import com.iflytek.astron.console.commons.enums.bot.DefaultBotModelEnum;
+import com.iflytek.astron.console.commons.exception.BusinessException;
 import com.iflytek.astron.console.commons.response.ApiResult;
 import com.iflytek.astron.console.commons.service.bot.BotService;
 import com.iflytek.astron.console.toolkit.entity.vo.LLMInfoVo;
@@ -355,5 +357,14 @@ public class ChatListServiceImpl implements ChatListService {
     public Boolean logicDeleteChatIndex(Long chatId, String uid) {
         log.info("***** uid: {} delete single chat index childChatId: {}", uid, chatId);
         return chatListDataService.deleteByChildChatId(chatId, uid) > 0;
+    }
+
+    @Override
+    public Boolean updateChatListTitle(Long chatId, String uid, String title) {
+        log.info("***** uid: {} update single chat list id: {} title: {}", uid, chatId, title);
+        if (title == null || title.isEmpty()) {
+            return false;
+        }
+        return chatListDataService.updateChatListTitleByUidAndChatId(chatId, uid, title) > 0;
     }
 }

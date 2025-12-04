@@ -30,4 +30,7 @@ public class ChatHistoryResponseDto {
 
     @Schema(description = "Enabled plugin ID list")
     private String enabledPluginIds;
+
+    @Schema(description = "Chat Session Title")
+    private String title;
 }

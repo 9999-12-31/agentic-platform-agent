@@ -1,6 +1,7 @@
 package com.iflytek.astron.console.hub.controller.chat;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.iflytek.astron.console.commons.constant.ResponseEnum;
 import com.iflytek.astron.console.commons.response.ApiResult;
 import com.iflytek.astron.console.commons.util.RequestContextUtil;
@@ -166,6 +167,25 @@ public class ChatHistoryController {
         responseDto.setExistChatFileSize((Integer) chatFileList.get("existChatFileSize"));
         responseDto.setExistChatImage((Boolean) chatFileList.get("existChatImage"));
         responseDto.setEnabledPluginIds(chatList.getEnabledPluginIds());
+
+        // 根据 chatId 查询 chat_list
+        ChatList querychatList = chatListDataService.findByUidAndChatId(uid, chatId);
+        String title = querychatList.getTitle();
+        // 如果是默认title 则将first req 更新
+        if ("New Chat Window".equals(title)) {
+            // 提取第一个消息的 message 字段（如果存在）
+            if (responseDto.getHistoryList() != null && !responseDto.getHistoryList().isEmpty()) {
+                Object firstItem = responseDto.getHistoryList().getFirst();
+                if (firstItem instanceof JSONObject firstReq) {
+                    if (firstReq.containsKey("message")) {
+                        title = firstReq.getString("message");
+                        chatListDataService.updateChatListTitleByUidAndChatId(chatId, uid, title);
+
+                    }
+                }
+            }
+        }
+        responseDto.setTitle(title);
 
         return responseDto;
     }

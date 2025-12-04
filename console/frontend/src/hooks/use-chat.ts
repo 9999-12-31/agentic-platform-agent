@@ -3,7 +3,7 @@ import { getLanguageCode } from '@/utils/http';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useRef } from 'react';
 import type { Option } from '@/types/chat';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { baseURL } from '@/utils/http';
 
 // SSE 数据类型定义
@@ -74,6 +74,9 @@ const useChat = () => {
   const setIsWorkflowOption = useChatStore(state => state.setIsWorkflowOption); //是否是选项
   const setWorkflowOption = useChatStore(state => state.setWorkflowOption); //工作流选项
   const navigate = useNavigate();
+  const { chatId:chilChatId } = useParams<{
+    chatId?:string
+  }>();
   /**
    *
    * @param url 接口url
@@ -259,6 +262,9 @@ const useChat = () => {
     const form = new FormData();
     form.append('text', msg || '');
     form.append('chatId', `${currentChatId}`);
+    if (chilChatId){
+      form.append('childChatId', `${chilChatId}`);
+    }
     form.append('workflowVersion', version || '');
     workflowOperation && form.append('workflowOperation', workflowOperation);
     // 执行回调函数
