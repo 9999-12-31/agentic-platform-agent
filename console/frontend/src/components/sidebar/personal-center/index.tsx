@@ -461,7 +461,7 @@ const PersonalCenter: FC<PersonalCenterProps> = ({
           <div className={styles.contentWrapper}>
             {activeIndex === 0 && (
               <RecentUsedList
-                recentList={mixedChatList.concat(mixedChatList).concat(mixedChatList)}
+                recentList={mixedChatList}
                 onItemClick={handleToChat}
                 onDeleteClick={handleDelete}
               />

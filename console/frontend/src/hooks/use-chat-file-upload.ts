@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   getS3PresignUrl,
   uploadFileBindChat,
-  unBindChatFile,
+  unBindChatFile, uploadFileSave,
 } from '@/services/chat';
 import type {
   BotInfoType,
@@ -27,7 +27,9 @@ type UseChatFileUploadReturn = {
 };
 
 export default function useChatFileUpload(
-  botInfo: BotInfoType
+  botInfo: BotInfoType,
+  isBindChat?:Boolean = true,
+  onUploadComplete?: () => void
 ): UseChatFileUploadReturn {
   const [fileList, setFileList] = useState<UploadFileInfo[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -180,29 +182,29 @@ export default function useChatFileUpload(
     }
 
     // 第三步：验证文件类型
-    const finalValidFiles: File[] = [];
-    const invalidFiles: { file: File; error: string }[] = [];
+      const finalValidFiles: File[] = [];
+      const invalidFiles: { file: File; error: string }[] = [];
 
-    validFiles.forEach(file => {
-      const validationError = validateFile(file, config);
-      if (!validationError) {
-        finalValidFiles.push(file);
-      } else {
-        invalidFiles.push({ file, error: validationError });
-      }
-    });
-
-    // 显示不符合要求的文件提示
-    if (invalidFiles.length > 0) {
-      invalidFiles.forEach(({ file, error }) => {
-        message.error(error);
+      validFiles.forEach(file => {
+        const validationError = validateFile(file, config);
+         if (!validationError || (config.accept && config.accept === '*')) {
+           finalValidFiles.push(file);
+         } else {
+           invalidFiles.push({ file, error: validationError });
+         }
       });
-    }
 
-    // 如果没有任何有效文件，直接返回
-    if (finalValidFiles.length === 0) {
-      return;
-    }
+      // 显示不符合要求的文件提示
+      if (invalidFiles.length > 0) {
+        invalidFiles.forEach(({ file, error }) => {
+          message.error(error);
+        });
+      }
+      // 如果没有任何有效文件，直接返回
+      if (finalValidFiles.length === 0) {
+        return;
+      }
+
 
     // 标记符合要求的文件正在处理中
     processingCountRef.current.set(
@@ -266,28 +268,53 @@ export default function useChatFileUpload(
             const bindController = new AbortController();
             activeBindings.current.set(fileObj.uid, bindController);
             try {
-              const bindResult = await uploadFileBindChat(
-                {
-                  chatId: botInfo.chatId,
+              if (isBindChat) {
+                const bindResult = await uploadFileBindChat(
+                    {
+                      chatId: botInfo.chatId,
+                      fileName: fileObj.fileName,
+                      fileSize: fileObj.fileSize,
+                      fileUrl: realFileUrl,
+                      fileBusinessKey: fileObj.fileBusinessKey,
+                      paramName: fileObj.paramName, // 添加 paramName 参数
+                    },
+                    bindController.signal
+                );
+                activeBindings.current.delete(fileObj.uid);
+                updateFileStatus(
+                    fileObj.uid,
+                    bindResult,
+                    'completed',
+                    100,
+                    realFileUrl,
+                    '',
+                    fileObj.paramName,
+                    fileObj.inputName
+                );
+              }else {
+                const info = await uploadFileSave({
                   fileName: fileObj.fileName,
                   fileSize: fileObj.fileSize,
-                  fileUrl: realFileUrl,
-                  fileBusinessKey: fileObj.fileBusinessKey,
-                  paramName: fileObj.paramName, // 添加 paramName 参数
-                },
-                bindController.signal
-              );
-              activeBindings.current.delete(fileObj.uid);
-              updateFileStatus(
-                fileObj.uid,
-                bindResult,
-                'completed',
-                100,
-                realFileUrl,
-                '',
-                fileObj.paramName,
-                fileObj.inputName
-              );
+                  fileUrl: realFileUrl
+                })
+                console.log(info);
+                activeBindings.current.delete(fileObj.uid);
+                updateFileStatus(
+                    fileObj.uid,
+                    '',
+                    'completed',
+                    100,
+                    realFileUrl,
+                    '',
+                    fileObj.paramName,
+                    fileObj.inputName
+                );
+
+              }
+              // 调用上传完成回调
+              if (onUploadComplete) {
+                onUploadComplete();
+              }
               resolve(true);
             } catch (error: any) {
               activeBindings.current.delete(fileObj.uid);
