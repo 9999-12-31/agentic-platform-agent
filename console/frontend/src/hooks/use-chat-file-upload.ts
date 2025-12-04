@@ -26,11 +26,17 @@ type UseChatFileUploadReturn = {
   hasErrorFiles: () => boolean;
 };
 
-export default function useChatFileUpload(
-  botInfo: BotInfoType,
-  isBindChat?:Boolean = true,
-  onUploadComplete?: () => void
-): UseChatFileUploadReturn {
+type UseChatFileUploadProps = {
+  botInfo: BotInfoType;
+  isBindChat?: boolean;
+  onUploadComplete?: () => void;
+};
+
+export default function useChatFileUpload({
+  botInfo,
+  isBindChat = true,
+  onUploadComplete
+}: UseChatFileUploadProps): UseChatFileUploadReturn {
   const [fileList, setFileList] = useState<UploadFileInfo[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const activeUploads = useRef<Map<string, XMLHttpRequest>>(new Map());

@@ -46,7 +46,7 @@ const ChatInput = (props: {
   const $record = useRef<RecorderRef>(null); //  录音ref
   const recordStartTextRef = useRef<string>(''); //  录音开始时的文本
   const { fileList, setFileList, handleFileSelect, removeFile, hasErrorFiles } =
-    useChatFileUpload(botInfo);
+    useChatFileUpload({botInfo});
 
   // 检查是否有待选择的工作流选项
   const hasWorkflowOptionsToSelect = (): boolean => {
