@@ -107,7 +107,14 @@ export async function postCreateChat(
 export const deleteChatList = (params: { chatListId: number }) => {
   return http.post(`/chat-list/v1/del-chat-list`, params);
 };
-
+/**
+ * 删除单条聊天记录
+ * @param chatId 聊天列表Id
+ * @returns
+ */
+export const deleteChatIndex = ( chatId: number ) => {
+  return http.post(`/chat-list/del-chat-index?chatId=${chatId}`);
+};
 /**
  * 获取语音识别token
  * @returns
