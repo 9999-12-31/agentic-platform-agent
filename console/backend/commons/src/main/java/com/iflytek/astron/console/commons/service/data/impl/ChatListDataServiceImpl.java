@@ -2,12 +2,14 @@ package com.iflytek.astron.console.commons.service.data.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.iflytek.astron.console.commons.dto.chat.ChatBotListDto;
 import com.iflytek.astron.console.commons.entity.bot.ChatBotBase;
 import com.iflytek.astron.console.commons.entity.bot.ChatBotList;
 import com.iflytek.astron.console.commons.entity.chat.ChatList;
+import com.iflytek.astron.console.commons.entity.chat.ChatReqRecords;
 import com.iflytek.astron.console.commons.entity.chat.ChatTreeIndex;
 import com.iflytek.astron.console.commons.mapper.bot.ChatBotListMapper;
 import com.iflytek.astron.console.commons.mapper.chat.ChatListMapper;
@@ -324,5 +326,15 @@ public class ChatListDataServiceImpl implements ChatListDataService {
         int result =  chatTreeIndexMapper.update(updateEntity, wrapper);
         log.debug("logical deleted chat tree index , affected rows={}", result);
         return result;
+    }
+
+    @Override
+    public int updateChatListTitleByUidAndChatId(Long chatId, String uid, String title) {
+        LambdaUpdateWrapper<ChatList> updateWrapper = Wrappers.lambdaUpdate(ChatList.class);
+        updateWrapper.eq(ChatList::getUid, uid);
+        updateWrapper.eq(ChatList::getId, chatId);
+
+        updateWrapper.set(ChatList::getTitle, title);
+        return chatListMapper.update(null, updateWrapper);
     }
 }
