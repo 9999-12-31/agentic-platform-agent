@@ -97,7 +97,7 @@ const translation = {
       'Multi-parameter workflows are only supported for API release, other channels are not supported',
     releasePlatform: 'Release Platform',
     releasePlatformTip:
-      'Please select the platform where your agent needs to be released, Spark will push the final configuration to your selected platform, and the effective time will refer to the audit process of each platform.',
+      'Please select the platform where your agent needs to be released, the system will push the final configuration to your selected platform, and the effective time will refer to the audit process of each platform.',
     agentHub: 'Release to Agent Hub',
     agentHubTip: 'After release, you can experience the agent on Agent Hub',
     release: 'Release',
@@ -105,14 +105,14 @@ const translation = {
     releasePlatformWx:
       'Release Platform Configure WeChat Public Account (Service Number)',
     releasePlatformWxTip:
-      'After configuration, you can use the Spark Assistant to reply to users, helping with WeChat business operations uninterrupted',
+      'After configuration, you can use the assistant to reply to users, helping with WeChat business operations uninterrupted',
     releasePlatformWxTip2:
-      'Configure Developer ID, the public account can use the Spark Assistant to reply to users',
+      'Configure Developer ID, the public account can use the assistant to reply to users',
     bindWxAppId: 'Bound Developer ID (AppID)',
     wxAppId: 'Developer ID (App ID)',
     unBind: 'Unbind',
     wxAppIdTip:
-      'This WeChat public account has already been bound to another Spark publishing channel, please unbind first before retrying',
+      'This WeChat public account has already been bound to another publishing channel, please unbind first before retrying',
     bindWxTip: 'To Bind',
     bindWx: 'Bind Now',
     releaseToApi: 'Release as API',

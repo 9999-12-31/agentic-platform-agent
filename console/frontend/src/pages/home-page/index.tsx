@@ -453,7 +453,7 @@ const HomePage: React.FC = () => {
                 <div className={styles.empty_state}>
                   <img
                     src={
-                      '/assets/xfyun-resources/%E7%BB%841%402x.png'
+                      '/assets/xfyun-resources/组1@2x.png'
                     }
                     alt=""
                   />

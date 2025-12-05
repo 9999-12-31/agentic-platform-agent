@@ -297,7 +297,7 @@ const Personality: React.FC<PersonalityProps> = ({
                 showCount
                 rows={4}
               />
-              <Button
+              {/* <Button
                 className={styles.aiButton}
                 type="link"
                 size="small"
@@ -308,7 +308,7 @@ const Personality: React.FC<PersonalityProps> = ({
                 {personalityInfo
                   ? t('configBase.CapabilityDevelopment.aiPolish')
                   : t('configBase.CapabilityDevelopment.aiGenerate')}
-              </Button>
+              </Button> */}
             </div>
           </div>
 

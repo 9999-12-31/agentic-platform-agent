@@ -97,21 +97,21 @@ const translation = {
     multiParamsTip: '多入参工作流仅支持发布为 API，其他渠道暂不支持',
     releasePlatform: '发布平台',
     releasePlatformTip:
-      '请选择您的智能体需要发布的平台，星火将把智能体的最终配置推送到您选择的平台，具体生效时间参考各平台审核流程。',
+      '请选择您的智能体需要发布的平台，系统将把智能体的最终配置推送到您选择的平台，具体生效时间参考各平台审核流程。',
     agentHub: '发布到智能体广场',
     agentHubTip: '发布后，可在智能体广场体验该智能体',
     release: '发布',
     updateRelease: '更新发布',
     releasePlatformWx: '发布平台配置微信公众号（服务号）',
     releasePlatformWxTip:
-      '配置开发者ID后请进行绑定授权，授权绑定成功后公众号即可使用星火助手回复用户信息，助力微信运营无间断',
+      '配置开发者ID后请进行绑定授权，授权绑定成功后公众号即可使用助手回复用户信息，助力微信运营无间断',
     releasePlatformWxTip2:
-      '配置开发者ID，公众号即可使用星火助手回复用户信息，助力微信运营无间断',
+      '配置开发者ID，公众号即可使用助手回复用户信息，助力微信运营无间断',
     bindWxAppId: '已绑定的开发者ID (AppID)',
     wxAppId: '开发者ID（AppID）',
     unBind: '解除绑定',
     wxAppIdTip:
-      '该公众号已经在星火绑定过其它微信公众号发布渠道，请先解除绑定后重试',
+      '该公众号已经绑定过其它微信公众号发布渠道，请先解除绑定后重试',
     bindWxTip: '去绑定',
     bindWx: '立即绑定',
     releaseToApi: '发布为API',

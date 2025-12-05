@@ -152,7 +152,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
   const name = '123';
   const [mySpeaker, setMySpeaker] = useState<MyVCNItem[]>([]);
   /**
-   * 设置助手发音�?
+   * 设置助手发音�?
    */
   const setBotCreateVcn = (vcn: { cn: string }) => {
     setBotCreateActiveV({
@@ -164,7 +164,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
   };
 
   /**
-   * 渲染助手发音�?
+   * 渲染助手发音�?
    */
   const renderBotVcn = () => {
     const vcnObj =
@@ -814,7 +814,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
               {conversation && (
                 <>
                   <div className="relative">
-                    <div
+                    {/* <div
                       className="absolute bottom-2 right-2.5 inline-flex items-center rounded-lg gap-1 cursor-pointer border border-[#6356EA] py-1 px-2.5 text-[#6356EA] text-sm bg-[#eff1f9] z-20"
                       onClick={() => setOpeningRemarksModal(true)}
                     >
@@ -841,7 +841,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
                       >
                         {t('configBase.CapabilityDevelopment.aiGenerated')}
                       </span>
-                    </div>
+                    </div> */}
                     <Spin
                       spinning={shiliLoading}
                       tip={t('configBase.CapabilityDevelopment.generating')}
@@ -871,7 +871,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
                   <div className="flex text-sm font-medium">
                     {t('configBase.CapabilityDevelopment.inputExample')}
                   </div>
-                  {inputExampFlag && (
+                  {/* {inputExampFlag && (
                     <div
                       onClick={
                         inputExampleLoading ? () => null : getInputExamples
@@ -890,7 +890,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
                         {t('configBase.CapabilityDevelopment.aiGenerated')}
                       </span>
                     </div>
-                  )}
+                  )} */}
                   <p className={styles.threeLabelBox}>
                     <>
                       {inputExampleLoading && (
@@ -966,7 +966,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
               )}
             </div>
 
-            <Personality
+            {/* <Personality
               enablePersonality={personalityData.enablePersonality}
               personalityConfig={personalityData.personalityConfig}
               onPersonalityChange={setPersonalityData}
@@ -974,9 +974,9 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
               botType={baseinfo.botType}
               botDesc={baseinfo.botDesc}
               prompt={prompt}
-            />
+            /> */}
 
-            <div
+            {/* <div
               className="flex justify-between items-center border-b border-[#E9EFF6]"
               style={{
                 padding: '8px 20px 12px 20px',
@@ -1004,7 +1004,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
               >
                 {renderBotVcn()}
               </div>
-            </div>
+            </div> */}
             <div
               className="flex justify-between items-center border-b border-[#E9EFF6]"
               style={{
@@ -1119,7 +1119,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
             />
           </div>
         )}
-        <Checkbox
+        {/* <Checkbox
           style={{ marginTop: '20px' }}
           onChange={onChecked}
           checked={xieyi}
@@ -1135,7 +1135,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
               'configBase.CapabilityDevelopment.xunfeiOpenPlatformServiceAgreement'
             )}
           </a>
-          �?
+          
           <a
             href="https://www.xfyun.cn/doc/policy/privacy.html"
             rel="noreferrer"
@@ -1143,7 +1143,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
           >
             {t('configBase.CapabilityDevelopment.privacyAgreement')}
           </a>
-        </Checkbox>
+        </Checkbox> */}
       </div>
       <SpeakerModal
         vcnList={vcnList}
