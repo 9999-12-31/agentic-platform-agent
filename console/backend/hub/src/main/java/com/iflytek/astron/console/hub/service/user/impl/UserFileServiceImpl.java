@@ -12,11 +12,13 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.iflytek.astron.console.commons.constant.ResponseEnum;
 import com.iflytek.astron.console.commons.entity.user.UserInfo;
 import com.iflytek.astron.console.commons.exception.BusinessException;
+import com.iflytek.astron.console.hub.dto.user.UserFileResponseDto;
 import com.iflytek.astron.console.hub.dto.user.UserFileVo;
 import com.iflytek.astron.console.hub.entity.UserFile;
 import com.iflytek.astron.console.hub.mapper.UserFileMapper;
 import com.iflytek.astron.console.hub.service.user.UserFileService;
 
+import cn.hutool.core.io.unit.DataSizeUtil;
 import cn.hutool.core.lang.UUID;
 
 @Service
@@ -26,7 +28,7 @@ public class UserFileServiceImpl implements UserFileService {
     private UserFileMapper userFileMapper;
 
     @Override
-    public UserFileVo saveFile(String uid, UserFileVo vo) {
+    public UserFileResponseDto saveFile(String uid, UserFileVo vo) {
 
         UserFile entity = new UserFile();
         entity.setFileId(UUID.fastUUID().toString());
@@ -41,11 +43,14 @@ public class UserFileServiceImpl implements UserFileService {
         if (rows <= 0) {
             throw new BusinessException(ResponseEnum.BUSINESS_ERROR);
         }
-        vo.setFileId(entity.getFileId());
-        vo.setCreateTime(entity.getCreateTime());
-        vo.setFileExtension(entity.getFileExtension());
-
-        return vo;
+        UserFileResponseDto dto = new UserFileResponseDto();
+        dto.setFileId(entity.getFileId());
+        dto.setFileName(entity.getFileName());
+        dto.setFileSize(DataSizeUtil.format(entity.getFileSize()));
+        dto.setFileUrl(entity.getFileUrl());
+        dto.setFileExtension(entity.getFileExtension());
+        dto.setCreateTime(entity.getCreateTime());
+        return dto;
     }
 
     private String getFileExtension(String filename) {
@@ -56,7 +61,7 @@ public class UserFileServiceImpl implements UserFileService {
     }
 
     @Override
-    public List<UserFileVo> getAllFiles(String uid, UserFileVo vo) {
+    public List<UserFileResponseDto> getAllFiles(String uid, UserFileVo vo) {
 
         QueryWrapper<UserFile> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
@@ -74,14 +79,14 @@ public class UserFileServiceImpl implements UserFileService {
 
         List<UserFile> entities = userFileMapper.selectList(queryWrapper);
         return entities.stream().map(entity -> {
-            UserFileVo fileVo = new UserFileVo();
-            fileVo.setFileId(entity.getFileId());
-            fileVo.setFileUrl(entity.getFileUrl());
-            fileVo.setFileName(entity.getFileName());
-            fileVo.setFileSize(entity.getFileSize());
-            fileVo.setFileExtension(entity.getFileExtension());
-            fileVo.setCreateTime(entity.getCreateTime());
-            return fileVo;
+            UserFileResponseDto dto = new UserFileResponseDto();
+            dto.setFileId(entity.getFileId());
+            dto.setFileName(entity.getFileName());
+            dto.setFileSize(DataSizeUtil.format(entity.getFileSize()));
+            dto.setFileUrl(entity.getFileUrl());
+            dto.setFileExtension(entity.getFileExtension());
+            dto.setCreateTime(entity.getCreateTime());
+            return dto;
         }).collect(Collectors.toList());
     }
 

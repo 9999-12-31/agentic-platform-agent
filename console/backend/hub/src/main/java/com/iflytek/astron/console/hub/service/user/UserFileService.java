@@ -2,6 +2,7 @@ package com.iflytek.astron.console.hub.service.user;
 
 import java.util.List;
 
+import com.iflytek.astron.console.hub.dto.user.UserFileResponseDto;
 import com.iflytek.astron.console.hub.dto.user.UserFileVo;
 
 public interface UserFileService {
@@ -10,18 +11,18 @@ public interface UserFileService {
      *
      * @param uid User ID
      * @param vo  User file information
-     * @return UserFileVo containing file information
+     * @return UserFileResponseDto containing file information
      */
-    UserFileVo saveFile(String uid, UserFileVo vo);
+    UserFileResponseDto saveFile(String uid, UserFileVo vo);
 
     /**
      * Get all user files
      *
      * @param uid User ID
      * @param vo  User file information
-     * @return List of UserFileVo containing file information
+     * @return List of UserFileResponseDto containing file information
      */
-    List<UserFileVo> getAllFiles(String uid, UserFileVo vo);
+    List<UserFileResponseDto> getAllFiles(String uid, UserFileVo vo);
 
     /**
      * Delete user file

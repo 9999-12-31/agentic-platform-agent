@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iflytek.astron.console.commons.constant.ResponseEnum;
@@ -20,6 +21,7 @@ import com.iflytek.astron.console.commons.service.data.ChatListDataService;
 import com.iflytek.astron.console.commons.util.RequestContextUtil;
 import com.iflytek.astron.console.hub.dto.chat.ChatFileResponseDto;
 
+import cn.hutool.core.io.unit.DataSizeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +38,10 @@ public class ChatFileController {
     @Autowired
     private ChatListDataService chatListDataService;
 
-    @GetMapping("/all/{chatId}/{childChatId}")
+    @GetMapping("/get-all-files")
     @Operation(summary = "Get Chat File by chatId")
-    public ApiResult<List<ChatFileResponseDto>> getAllChatFile(@PathVariable Long chatId,
-            @PathVariable(required = false) Long childChatId) {
+    public ApiResult<List<ChatFileResponseDto>> getAllChatFile(@RequestParam("chatId") Long chatId,
+            @RequestParam(value = "childChatId", required = false) Long childChatId) {
         String uid = RequestContextUtil.getUID();
         // Check if chatId belongs to uid
         ChatList chatList = chatListDataService.findByUidAndChatId(uid, chatId);
@@ -77,9 +79,10 @@ public class ChatFileController {
                 chatFileResponseDto.setChildChatId(e.getChildChatId());
                 chatFileResponseDto.setFileId(chatFileUser.getFileId());
                 chatFileResponseDto.setFileName(chatFileUser.getFileName());
-                chatFileResponseDto.setFileSize(chatFileUser.getFileSize());
+                chatFileResponseDto.setFileSize(DataSizeUtil.format(chatFileUser.getFileSize()));
                 chatFileResponseDto.setFileUrl(chatFileUser.getFileUrl());
                 chatFileResponseDto.setFileExtension(getFileExtension(chatFileUser.getFileName()));
+                chatFileResponseDto.setCreateTime(chatFileUser.getCreateTime());
                 chatFileResponseDtoList.add(chatFileResponseDto);
             }
         }

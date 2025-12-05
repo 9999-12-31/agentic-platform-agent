@@ -1,4 +1,4 @@
-package com.iflytek.astron.console.hub.dto.chat;
+package com.iflytek.astron.console.hub.dto.user;
 
 import java.time.LocalDateTime;
 
@@ -8,15 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(name = "ChatFileResponseDto", description = "Chat file response DTO")
-public class ChatFileResponseDto {
+@Schema(name = "UserFileResponseDto", description = "User file response DTO")
+public class UserFileResponseDto {
 
-    @Schema(description = "Chat ID")
-    private Long chatId;
-
-    @Schema(description = "Child Chat ID")
-    private Long childChatId;
- 
     @Schema(description = "File ID")
     private String fileId;
  
