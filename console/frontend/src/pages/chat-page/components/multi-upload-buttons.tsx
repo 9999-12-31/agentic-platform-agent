@@ -173,7 +173,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         arrow={false}
       >
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2024-12-04/28cc8ea7-e679-47ba-b3e1-810870f79e38/1733276919310/afsddfsadfs.svg"
+          src="/assets/xfyun-resources/afsddfsadfs.svg"
           alt="Upload"
           className="w-5 h-5 cursor-pointer ml-1"
         />
@@ -215,5 +215,6 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
 };
 
 export default MultiUploadButtons;
+
 
 

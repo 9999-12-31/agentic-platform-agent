@@ -65,7 +65,7 @@ const DeepThinkProgress: React.FC<{
       >
         {t('chatPage.deepThinkProgress.title')}
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2025-04-01/52202e3f-c57f-4820-81ee-361335e861f9/1743475056488/vasvasavs.svg"
+          src="/assets/xfyun-resources/vasvasavs.svg"
           alt=""
           className={`w-2 h-auto ml-1 transition-transform duration-200 ${
             !open ? 'rotate-180' : ''
@@ -88,4 +88,5 @@ const DeepThinkProgress: React.FC<{
 };
 
 export default React.memo(DeepThinkProgress);
+
 
