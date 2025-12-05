@@ -328,7 +328,7 @@ export default function BotApi({
             />
             <div className={`${styles.cer_info}`}>
               <span className={styles.info_label}>
-                {t('botApi.serviceUrl')}�?
+                {t('botApi.serviceUrl')}
               </span>
               <span
                 className={styles.info_res}
@@ -346,7 +346,7 @@ export default function BotApi({
               </span>
             </div>
             <div className={`${styles.cer_info}`}>
-              <span className={styles.info_label}>API Key�?/span>
+              <span className={styles.info_label}>API Key:</span>
               <span className={styles.info_res}>
                 {apiInfo?.appKey || t('botApi.bindAppTips2')}
               </span>
