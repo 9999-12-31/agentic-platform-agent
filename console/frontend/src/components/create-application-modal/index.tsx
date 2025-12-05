@@ -88,18 +88,18 @@ const HeaderFeedbackModal: React.FC<HeaderFeedbackModalProps> = ({
             <p>{t('createAgent1.workflowCreation')}</p>
             <span>{t('createAgent1.workflowDesign')}</span>
           </div>
-          <div
-            className={`${styles.virtual} ${
-              selectedBox === 'virtual' ? styles.selected : ''
-            }`}
-            onClick={() => handleBoxClick('virtual')}
-          >
-            <div
-              className={classNames(styles.cueWord_img, styles.virtual_img)}
-            ></div>
-            <p>{t('createAgent1.virtualCreation')}</p>
-            <span>{t('createAgent1.virtualCreationDesc')}</span>
-          </div>
+          {/*<div*/}
+          {/*  className={`${styles.virtual} ${*/}
+          {/*    selectedBox === 'virtual' ? styles.selected : ''*/}
+          {/*  }`}*/}
+          {/*  onClick={() => handleBoxClick('virtual')}*/}
+          {/*>*/}
+          {/*  <div*/}
+          {/*    className={classNames(styles.cueWord_img, styles.virtual_img)}*/}
+          {/*  ></div>*/}
+          {/*  <p>{t('createAgent1.virtualCreation')}</p>*/}
+          {/*  <span>{t('createAgent1.virtualCreationDesc')}</span>*/}
+          {/*</div>*/}
         </div>
       </div>
       {makeModalVisible && (

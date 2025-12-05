@@ -144,7 +144,7 @@ const MyFile = (): ReactElement => {
           />
         </div>
         <div className="text-xs text-gray-500">
-          {formatFileSize(file.fileSize)}
+          {file.fileSize}
         </div>
       </div>
     );

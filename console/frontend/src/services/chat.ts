@@ -299,3 +299,19 @@ export const getAllFiles = (fileName:string): Promise<Record<any, any>[]> => {
 export const deleteFiles = (fileId:string): Promise<Record<any, any>[]> => {
   return http.delete(`/user-file/delete-file?fileId=${fileId}`);
 };
+
+/**
+ * 获取对话所以文件
+ * @returns
+ */
+export const getAllChatFiles = (
+    chatId: number,
+    childChatId: string
+): Promise<Record<any, any>[]> => {
+  return http.get('/chat-file/get-all-files', {
+    params: {
+      chatId: chatId,
+      childChatId: childChatId,
+    },
+  });
+};

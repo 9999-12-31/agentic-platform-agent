@@ -27,6 +27,8 @@ import messageIcon from '@/assets/svgs/icon-message-filled.svg';
 import VmsInteractionCmp from '@/components/vms-interaction-cmp';
 import { getSceneList } from '@/services/spark-common';
 import { getTalkAgentConfig } from '@/services/agent-square';
+import ChatFile from "@/pages/chat-page/components/chat-file";
+import classNames from "classnames";
 
 /** 形象项（后端归一化后的前端结构） */
 interface SceneItem {
@@ -200,6 +202,7 @@ const ChatPage = (): ReactElement => {
         openedTool: workflowBotInfo.openedTool,
         config: workflowBotInfo.config,
       });
+      console.log(botInfo);
       setCurrentChatId(botInfo.chatId);
       // 4. 获取对话历史
       if (chilChatId){
@@ -403,7 +406,8 @@ const ChatPage = (): ReactElement => {
         setBotInfo={setBotInfo}
         isDataLoading={isDataLoading}
       />
-      <div className="overflow-scroll flex flex-1 flex-col pt-[70px] pr-[24px] pl-[24px]">
+      <div className={classNames('overflow-scroll flex flex-1 flex-col pt-[70px] pl-[24px]',
+          botInfo?.supportUploadConfig?.length ? 'pr-[388px]' : 'pr-[24px]')}>
         <div className="flex items-center justify-end gap-4">
           {talkAgentConfig?.sceneEnable === 1 && (
             <>
@@ -440,7 +444,7 @@ const ChatPage = (): ReactElement => {
           />
         </div>
       </div>
-      {/*<ChatSide botInfo={botInfo} />*/}
+      {botInfo?.supportUploadConfig?.length && <ChatFile botInfo={botInfo} />}
       <ChatInput
         handleSendMessage={handleRecomendClick}
         botInfo={botInfo}
