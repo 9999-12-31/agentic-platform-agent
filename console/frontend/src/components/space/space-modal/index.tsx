@@ -36,7 +36,7 @@ interface FormValues {
   avatarUrl: string;
 }
 const defaultAvatar =
-  'https://openres.xfyun.cn/xfyundoc/2025-07-28/1b05a0cf-e3b5-424c-8fd7-7a527488ab70/1753700397686/spaceAvatar.png';
+  '/assets/xfyun-resources/spaceAvatar.png';
 
 const SpaceModal: React.FC<SpaceModalProps> = ({
   open,
@@ -59,7 +59,7 @@ const SpaceModal: React.FC<SpaceModalProps> = ({
   const { spaceType, setSpaceName, setSpaceAvatar, setSpaceId } =
     useSpaceStore();
   const [comboModalVisible, setComboModalVisible] = useState<boolean>(false); //套餐弹窗
-  const [isNeedUpgrade, setIsNeedUpgrade] = useState<boolean>(false); //是否需要升级
+  const [isNeedUpgrade, setIsNeedUpgrade] = useState<boolean>(false); //是否需要升�?
 
   useEffect(() => {
     if (open && initialData) {
@@ -72,7 +72,7 @@ const SpaceModal: React.FC<SpaceModalProps> = ({
     // }
   }, [open, initialData]);
 
-  // 🎯 策略模式：将不同模式的处理逻辑抽取为独立的处理器
+  // 🎯 策略模式：将不同模式的处理逻辑抽取为独立的处理�?
   const modeHandlers = {
     create: {
       handler: createSpace,
@@ -139,19 +139,19 @@ const SpaceModal: React.FC<SpaceModalProps> = ({
     }
   };
 
-  //判断用户是否需要升级
+  //判断用户是否需要升�?
   // const getIsNeedUpgrade = async () => {
   //   try {
   //     const spaceList: any = await getMyCreateSpace();
   //     // const userCombo: any = await getUserMeta();
 
-  //     // // 检查 userCombo 是否为数组，并包含 FREE_EDITION
+  //     // // 检�?userCombo 是否为数组，并包�?FREE_EDITION
   //     // const hasFreeEdition = Array.isArray(userCombo)
   //     //   ? userCombo.some(item => item.menu === 'FREE_EDITION')
   //     //   : userCombo.menu === 'FREE_EDITION';
   //     // TODO: 测试环境，暂时设置为true
   //     const hasFreeEdition = true;
-  //     // // 检查 userCombo 是否为数组，并包含 PERSONAL_EDITION
+  //     // // 检�?userCombo 是否为数组，并包�?PERSONAL_EDITION
   //     // const hasPersonalEdition = Array.isArray(userCombo)
   //     //   ? userCombo.some(item => item.menu === 'PERSONAL_EDITION')
   //     //   : userCombo.menu === 'PERSONAL_EDITION';
@@ -163,7 +163,7 @@ const SpaceModal: React.FC<SpaceModalProps> = ({
   //       spaceType === 'personal' &&
   //       mode === 'create'
   //     ) {
-  //       // 免费版：拥有1个及以上owner空间就需要升级
+  //       // 免费版：拥有1个及以上owner空间就需要升�?
   //       setIsNeedUpgrade(true);
   //     } else if (
   //       hasPersonalEdition &&
@@ -171,7 +171,7 @@ const SpaceModal: React.FC<SpaceModalProps> = ({
   //       spaceList?.length >= 10 &&
   //       mode === 'create'
   //     ) {
-  //       // 个人版：拥有10个及以上owner空间且spaceType为personal才需要升级
+  //       // 个人版：拥有10个及以上owner空间且spaceType为personal才需要升�?
   //       setIsNeedUpgrade(true);
   //     }
   //   } catch (error: any) {
@@ -318,3 +318,4 @@ const SpaceModal: React.FC<SpaceModalProps> = ({
 };
 
 export default SpaceModal;
+

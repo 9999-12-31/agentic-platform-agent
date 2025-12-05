@@ -10,7 +10,7 @@ import NodeList from './components/node-list';
 import FlowContainer from './components/flow-container';
 import FlowModal from './components/flow-modal';
 import FlowDrawer from './components/flow-drawer';
-import CommunityQRCode from './components/community-qr-code';
+
 import { cloneDeep } from 'lodash';
 
 import useFlowsManager from '@/components/workflow/store/use-flows-manager';
@@ -124,7 +124,7 @@ const Index: React.ReactElement = () => {
     <div className="flex flex-col w-full h-full flow-container">
       <FlowModal />
       <FlowDrawer />
-      <CommunityQRCode />
+
       {/* 聊天结果按钮 */}
       <div
         className="fixed right-0 top-[80px] bg-[#EBEFF4] border border-[#DFE4ED] mt-5"

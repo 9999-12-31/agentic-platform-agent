@@ -137,8 +137,8 @@ const BaseConfig: React.FC<ChatProps> = ({
   const { t } = useTranslation();
   const [askValue, setAskValue] = useState('');
   const [sentence, setSentence] = useState(0); //是否是一句话创建
-  const [globalLoading, setGlobalLoading] = useState(false); // 全局loading状态
-  const loadingInstances = useRef(new Set<string>()); // 跟踪正在loading的实例
+  const [globalLoading, setGlobalLoading] = useState(false); // 全局loading状�?
+  const loadingInstances = useRef(new Set<string>()); // 跟踪正在loading的实�?
 
   // PromptTry实例的refs
   const defaultPromptTryRef = useRef<PromptTryRef>(null);
@@ -152,20 +152,20 @@ const BaseConfig: React.FC<ChatProps> = ({
   const [modelList, setModelList]: any = useState([
     {
       modelId: 'null',
-      modelName: '星火大模型 Spark X1',
+      modelName: '星火大模�?Spark X1',
       modelDomain: 'x1',
       model: '', // 将在 modelOptions 加载后初始化
       modelIcon:
-        'https://openres.xfyun.cn/xfyundoc/2025-09-24/e9b74fbb-c2d6-4f4a-8c07-0ea7f03ee03a/1758681839941/icon.png',
+        '/assets/xfyun-resources/icon.png',
       promptAnswerCompleted: true,
     },
     {
       modelId: 'null',
-      modelName: '星火大模型 Spark V4.0 Ultra',
+      modelName: '星火大模�?Spark V4.0 Ultra',
       modelDomain: 'spark',
       model: '', // 将在 modelOptions 加载后初始化
       modelIcon:
-        'https://openres.xfyun.cn/xfyundoc/2025-09-24/e9b74fbb-c2d6-4f4a-8c07-0ea7f03ee03a/1758681839941/icon.png',
+        '/assets/xfyun-resources/icon.png',
       promptAnswerCompleted: true,
     },
   ]);
@@ -195,7 +195,7 @@ const BaseConfig: React.FC<ChatProps> = ({
   const [supportSystemFlag, setSupportSystemFlag] = useState(false);
   const [supportContextFlag, setSupportContextFlag] = useState(false);
   const [promptNow, setPromptNow] = useState();
-  const [coverUrl, setCoverUrl] = useState<string>(''); // 助手封面图
+  const [coverUrl, setCoverUrl] = useState<string>(''); // 助手封面�?
   const isMounted = useRef(false);
   const [isChanged, setIsChanged] = useState(false);
   const [promptData, setPromptData] = useState('');
@@ -206,7 +206,7 @@ const BaseConfig: React.FC<ChatProps> = ({
   const [presetQuestion, setPresetQuestion] = useState(['']);
   const [feedback, setFeedback] = useState(false);
 
-  // 人设相关状态
+  // 人设相关状�?
   const [personalityData, setPersonalityData] = useState({
     enablePersonality: false,
     personalityConfig: null as {
@@ -216,7 +216,7 @@ const BaseConfig: React.FC<ChatProps> = ({
     } | null,
   });
 
-  // 处理人设数据变化，保持enablePersonality的用户选择状态
+  // 处理人设数据变化，保持enablePersonality的用户选择状�?
   const handlePersonalityChange = useCallback(
     (data: {
       enablePersonality: boolean;
@@ -226,7 +226,7 @@ const BaseConfig: React.FC<ChatProps> = ({
         sceneInfo?: string;
       } | null;
     }) => {
-      // 直接保存用户选择的enablePersonality状态，不根据内容自动改变
+      // 直接保存用户选择的enablePersonality状态，不根据内容自动改�?
       setPersonalityData(data);
     },
     []
@@ -270,7 +270,7 @@ const BaseConfig: React.FC<ChatProps> = ({
   const [publishModalShow, setPublishModalShow] = useState(false);
   const [vcnList, setVcnList] = useState<VcnItem[]>([]);
   const [form] = Form.useForm();
-  const [model, setModel] = useState('星火大模型 Spark X1');
+  const [model, setModel] = useState('星火大模�?Spark X1');
   const [modelOptions, setModelOptions] = useState<ModelListData[]>([]);
   const [pendingModelData, setPendingModelData] = useState<{
     modelId?: string;
@@ -284,7 +284,7 @@ const BaseConfig: React.FC<ChatProps> = ({
     });
   };
 
-  // 处理模型回显的函数
+  // 处理模型回显的函�?
   const handleModelDisplay = (modelId?: string, modelDomain?: string): void => {
     if (modelOptions.length === 0) {
       // 如果 modelOptions 还没有加载，保存待处理的数据
@@ -294,7 +294,7 @@ const BaseConfig: React.FC<ChatProps> = ({
 
     const matchedModel = findModelOption(modelId, modelDomain);
     if (matchedModel) {
-      // 找到匹配的模型，需要找到其在 modelOptions 中的索引
+      // 找到匹配的模型，需要找到其�?modelOptions 中的索引
       const modelIndex = modelOptions.findIndex(
         option => option === matchedModel
       );
@@ -309,17 +309,17 @@ const BaseConfig: React.FC<ChatProps> = ({
     setModel(value);
   };
 
-  // 生成模型的唯一标识符
+  // 生成模型的唯一标识�?
   const getModelUniqueKey = (option: ModelListData, index?: number): string => {
     if (option.isCustom && option.modelId) {
-      // 自定义模型使用 modelId 作为唯一标识
+      // 自定义模型使�?modelId 作为唯一标识
       return option.modelId;
     }
-    // 默认模型使用 modelDomain + index 作为唯一标识，确保唯一性
+    // 默认模型使用 modelDomain + index 作为唯一标识，确保唯一�?
     return `${option.modelDomain}_${index ?? 0}`;
   };
 
-  // 根据 modelId 或 modelDomain 查找对应的模型选项
+  // 根据 modelId �?modelDomain 查找对应的模型选项
   const findModelOption = (
     modelId?: string,
     modelDomain?: string
@@ -345,7 +345,7 @@ const BaseConfig: React.FC<ChatProps> = ({
     );
   };
 
-  // 获取模型配置信息（model, modelId, isCustom）
+  // 获取模型配置信息（model, modelId, isCustom�?
   const getModelConfig = (modelKey: string) => {
     const selectedModel = findModelOptionByUniqueKey(modelKey);
     return {
@@ -361,7 +361,7 @@ const BaseConfig: React.FC<ChatProps> = ({
     setModelList(updatedModelList);
   };
 
-  // 提取处理接口调用的函数 -- NOTE: 修改 handleApiCall 函数以包含 handleApiNew 的功能
+  // 提取处理接口调用的函�?-- NOTE: 修改 handleApiCall 函数以包�?handleApiNew 的功�?
   const handleApiCall = async (
     obj: any,
     api: (params: any) => Promise<any>,
@@ -529,13 +529,13 @@ const BaseConfig: React.FC<ChatProps> = ({
         detailInfo.botStatus === 4
       ) {
         const isRag = selectSource[0]?.tag === 'SparkDesk-RAG';
-        const obj = buildRequestObject(isRag, false, true); // 第三个参数表示用于发布
+        const obj = buildRequestObject(isRag, false, true); // 第三个参数表示用于发�?
         handleApiCall(
           obj,
           updateBot,
           t('configBase.updatePublishSuccess'),
           true
-        ); // 第四个参数为 true 表示导航到 /space/agent
+        ); // 第四个参数为 true 表示导航�?/space/agent
       } else {
         const isRag = selectSource[0]?.tag === 'SparkDesk-RAG';
         const obj = buildRequestObject(isRag, true, true);
@@ -602,16 +602,16 @@ const BaseConfig: React.FC<ChatProps> = ({
     });
   }, []);
 
-  // 监听 modelOptions 加载完成，处理待回显的模型数据
+  // 监听 modelOptions 加载完成，处理待回显的模型数�?
   useEffect(() => {
     if (modelOptions.length > 0) {
       if (pendingModelData) {
-        // 更新模式：处理待回显的模型数据
+        // 更新模式：处理待回显的模型数�?
         const { modelId, modelDomain } = pendingModelData;
         handleModelDisplay(modelId, modelDomain);
-        setPendingModelData(null); // 清除待处理数据
-      } else if (model === '星火大模型 Spark X1' || !model) {
-        // 创建模式：如果 model 还是初始值或为空，设置为第一个模型的 uniqueKey
+        setPendingModelData(null); // 清除待处理数�?
+      } else if (model === '星火大模�?Spark X1' || !model) {
+        // 创建模式：如�?model 还是初始值或为空，设置为第一个模型的 uniqueKey
         const firstModel = modelOptions[0];
         if (firstModel) {
           setModel(getModelUniqueKey(firstModel, 0));
@@ -623,11 +623,11 @@ const BaseConfig: React.FC<ChatProps> = ({
       if (firstModel) {
         setModelList((prevList: any[]) =>
           prevList.map((item, index) => {
-            // 如果已经有 model 字段且不是初始默认值，就不更新
+            // 如果已经�?model 字段且不是初始默认值，就不更新
             if (item.model && item.model !== '') {
               return item;
             }
-            // 否则，设置为第一个 modelOption 的 uniqueKey
+            // 否则，设置为第一�?modelOption �?uniqueKey
             return {
               ...item,
               model: getModelUniqueKey(firstModel, 0),
@@ -1025,13 +1025,13 @@ const BaseConfig: React.FC<ChatProps> = ({
     }
   }, [chatModelList]);
 
-  // 提示词、模型对比涉及状态 start
+  // 提示词、模型对比涉及状�?start
   const [showTipPk, setShowTipPk] = useState(false);
   const [showModelPk, setShowModelPk] = useState(0);
 
-  // 提示词、模型对比涉及状态 over
+  // 提示词、模型对比涉及状�?over
 
-  /** 处理InputBox发送消息 */
+  /** 处理InputBox发送消�?*/
   const handleInputBoxSend = useCallback(
     (text: string) => {
       // 根据当前模式触发相应的PromptTry实例
@@ -1056,7 +1056,7 @@ const BaseConfig: React.FC<ChatProps> = ({
         }
       }
 
-      // 清空相关状态
+      // 清空相关状�?
       setInputExampleTip('');
       setInputExampleModel('');
     },
@@ -1066,7 +1066,7 @@ const BaseConfig: React.FC<ChatProps> = ({
   useEffect(() => {
     eventBus.on('eventSavebot', savebot);
 
-    // 监听PromptTry实例的loading状态变化
+    // 监听PromptTry实例的loading状态变�?
     const handleLoadingChange = (data: {
       instanceId: string;
       loading: boolean;
@@ -1089,7 +1089,7 @@ const BaseConfig: React.FC<ChatProps> = ({
       eventBus.off('promptTry.loadingChange', handleLoadingChange);
     };
   }, [
-    handleInputBoxSend, // 添加 handleInputBoxSend 作为依赖项
+    handleInputBoxSend, // 添加 handleInputBoxSend 作为依赖�?
     coverUrl,
     baseinfo,
     searchParams,
@@ -1106,7 +1106,7 @@ const BaseConfig: React.FC<ChatProps> = ({
     choosedAlltool,
   ]);
 
-  /** 提示词对比 */
+  /** 提示词对�?*/
   const handleShowTipPk = (type: string) => {
     setShowModelPk(0); // 提示词对比时隐藏模型对比
     if (type === 'show') {
@@ -1137,12 +1137,12 @@ const BaseConfig: React.FC<ChatProps> = ({
       ...modelList,
       {
         modelId: firstModel?.modelId || 'null',
-        modelName: firstModel?.modelName || '星火大模型 Spark X1',
+        modelName: firstModel?.modelName || '星火大模�?Spark X1',
         modelDomain: firstModel?.modelDomain || 'x1',
         model: firstModel ? getModelUniqueKey(firstModel, 0) : 'x1_0',
         modelIcon:
           firstModel?.modelIcon ||
-          'https://openres.xfyun.cn/xfyundoc/2025-09-24/e9b74fbb-c2d6-4f4a-8c07-0ea7f03ee03a/1758681839941/icon.png',
+          '/assets/xfyun-resources/icon.png',
         promptAnswerCompleted: true,
       },
     ]);
@@ -1833,7 +1833,7 @@ const BaseConfig: React.FC<ChatProps> = ({
               <div className={styles.testName}>
                 {t('configBase.debugPreview')}
               </div>
-              {/* 模型对比才显示 */}
+              {/* 模型对比才显�?*/}
               {showModelPk !== 0 && !showTipPk && (
                 <div className={styles.testBtn}>
                   <Button onClick={() => setShowModelPk(0)}>
@@ -1846,7 +1846,7 @@ const BaseConfig: React.FC<ChatProps> = ({
               )}
             </div>
             <div className={styles.testInputModal}>
-              {/* 提示词对比 样式区域 */}
+              {/* 提示词对�?样式区域 */}
               {showModelPk === 0 && (
                 <>
                   {!showTipPk && (
@@ -1990,7 +1990,7 @@ const BaseConfig: React.FC<ChatProps> = ({
               )}
             </div>
 
-            {/* 统一输入框 */}
+            {/* 统一输入�?*/}
             <InputBox
               onSend={handleInputBoxSend}
               onClear={handleInputBoxClear}
@@ -2006,3 +2006,4 @@ const BaseConfig: React.FC<ChatProps> = ({
 };
 
 export default BaseConfig;
+

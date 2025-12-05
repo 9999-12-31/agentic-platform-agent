@@ -42,7 +42,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         // 排除失败状态的文件
         const status = file.status || 'success';
         if (status === 'error') {
-          return; // 跳过失败的文件
+          return; // 跳过失败的文�?
         }
 
         // 根据 inputName (config.name) 进行计数
@@ -61,13 +61,13 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   }, [fileList, botInfo]);
 
   /**
-   * 获取文件类型对应的图标
+   * 获取文件类型对应的图�?
    */
   const getIconUrl = (icon?: string): string => {
     if (icon === 'image') {
-      return 'https://openres.xfyun.cn/xfyundoc/2024-10-23/d260123d-aa1d-4d1e-a575-22fa427deae0/1729648164577/fvadsdfgb.svg';
+      return '/assets/xfyun-resources/fvadsdfgb.svg';
     }
-    return 'https://openres.xfyun.cn/xfyundoc/2024-10-23/eb1e209f-e13f-4722-8561-8c564658e46d/1729648162929/adfsa.svg';
+    return '/assets/xfyun-resources/adfsa.svg';
   };
 
   /**
@@ -156,7 +156,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   };
 
   /**
-   * 渲染合并的上传按钮（当配置项超过3个时使用）
+   * 渲染合并的上传按钮（当配置项超过3个时使用�?
    */
   const renderMergedUploadButton = (
     uploadConfigs: SupportUploadConfig[]
@@ -173,7 +173,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         arrow={false}
       >
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2024-12-04/28cc8ea7-e679-47ba-b3e1-810870f79e38/1733276919310/afsddfsadfs.svg"
+          src="/assets/xfyun-resources/afsddfsadfs.svg"
           alt="Upload"
           className="w-5 h-5 cursor-pointer ml-1"
         />
@@ -182,7 +182,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   };
 
   /**
-   * 渲染所有上传按钮
+   * 渲染所有上传按�?
    */
   const renderUploadButtons = (): JSX.Element => {
     const uploadConfigs: SupportUploadConfig[] =
@@ -201,7 +201,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
       );
     }
 
-    // 配置项不超过3个时，并排显示
+    // 配置项不超过3个时，并排显�?
     return (
       <div className="flex items-center">
         {uploadConfigs.map((config: SupportUploadConfig, index: number) =>
@@ -215,3 +215,6 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
 };
 
 export default MultiUploadButtons;
+
+
+

@@ -69,18 +69,18 @@ interface FormValues {
 
 /** 音色选项（来自后端） */
 interface VoiceOption {
-  /** 音色编码，与形象的 defaultVCN 对齐（后端字段 vcn） */
+  /** 音色编码，与形象�?defaultVCN 对齐（后端字�?vcn�?*/
   id: string;
-  /** 展示名称（后端字段 vcnName） */
+  /** 展示名称（后端字�?vcnName�?*/
   name: string;
   /** 性别：男/女（后端字段 gender，可选） */
   gender?: string;
-  /** 支持语言（后端字段 language，可选） */
+  /** 支持语言（后端字�?language，可选） */
   language?: string[];
   /** 试听地址（若后端提供 demo/previewUrl 可映射） */
   previewUrl?: string;
   vcn?: string;
-  /** 默认形象（后端字段 defaultVCN） */
+  /** 默认形象（后端字�?defaultVCN�?*/
   defaultVCN?: string;
   sampleAvatar?: string;
 }
@@ -91,7 +91,7 @@ interface SceneItem {
   name: string;
   gender?: string;
   posture?: string;
-  /** 场景类型：可能是中文字符串、字符串数组或字符串化的数组（例如 "[\"教育学习\"]"） */
+  /** 场景类型：可能是中文字符串、字符串数组或字符串化的数组（例�?"[\"教育学习\"]"�?*/
   type?: string | string[];
   avatar?: string;
   defaultVCN?: string;
@@ -112,7 +112,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
   // 头像加载完成后再展示，避免加载过程出现破损图
   const [avatarLoaded, setAvatarLoaded] = useState<boolean>(false);
 
-  // 声音和形象相关状态
+  // 声音和形象相关状�?
   const [enableAvatar, setEnableAvatar] = useState<boolean>(true);
   /** 当前选中形象 sceneId（来源后端） */
   const [selectedAvatar, setSelectedAvatar] = useState<string>('');
@@ -125,10 +125,10 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
   const [sceneMode, setSceneMode] = useState<number>(0);
   const [sceneVcn, setSceneVcn] = useState<string>('');
 
-  // 折叠状态
+  // 折叠状�?
   const [voiceExpanded, setVoiceExpanded] = useState<boolean>(false);
 
-  // 形象选择弹窗与尺寸
+  // 形象选择弹窗与尺�?
   const [avatarModalVisible, setAvatarModalVisible] = useState<boolean>(false);
   // 弹窗内的临时选择（未点击“使用”前不提交到正式状态）
   const [tempSelectedAvatar, setTempSelectedAvatar] = useState<string>('');
@@ -140,7 +140,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
     emotion: '',
   });
 
-  /** 正在播放的音色 ID（保证单声源） */
+  /** 正在播放的音�?ID（保证单声源�?*/
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   /** 性别筛选：'male' | 'female' | 'all' */
   const [genderFilter, setGenderFilter] = useState<'male' | 'female' | 'all'>(
@@ -199,12 +199,12 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
   const [showModal, setShowModal] = useState(false);
 
   const [officialVcnList, setOfficialVcnList] = useState<VcnItem[]>([]);
-  const [mySpeaker, setMySpeaker]: any = useState([]); //我的发音人数组
+  const [mySpeaker, setMySpeaker]: any = useState([]); //我的发音人数�?
 
   const defVcnList = [
     {
       avatar:
-        'https://openres.xfyun.cn/xfyundoc/2024-10-21/0969f0d7-519b-45c0-b006-2765fa8f79f7/1729496233283/lingxiaoyue.jpg',
+        '/assets/xfyun-resources/lingxiaoyue.jpg',
       defaultVCN: 'x5_lingxiaoyue_flow',
       gender: t('virtualConfig.defVcnList.gender1'),
       name: t('virtualConfig.defVcnList.name1'),
@@ -212,11 +212,11 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
       sceneId: 'avatar_wmy001',
       type: [t('virtualConfig.defVcnList.scene')],
       sampleAvatar:
-        'https://openres.xfyun.cn/xfyundoc/2024-10-21/0969f0d7-519b-45c0-b006-2765fa8f79f7/1729496233283/lingxiaoyue.jpg',
+        '/assets/xfyun-resources/lingxiaoyue.jpg',
     },
     {
       avatar:
-        'https://openres.xfyun.cn/xfyundoc/2025-01-10/072d1c04-b23b-4feb-9728-091207773145/1736479064040/20250110-111727.jpg',
+        '/assets/xfyun-resources/20250110-111727.jpg',
       defaultVCN: 'x5_lingfeiyi_flow',
       gender: t('virtualConfig.defVcnList.gender2'),
       name: t('virtualConfig.defVcnList.name2'),
@@ -224,7 +224,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
       sceneId: 'avatar_lfy',
       type: [t('virtualConfig.defVcnList.scene')],
       sampleAvatar:
-        'https://openres.xfyun.cn/xfyundoc/2025-01-10/072d1c04-b23b-4feb-9728-091207773145/1736479064040/20250110-111727.jpg',
+        '/assets/xfyun-resources/20250110-111727.jpg',
     },
   ];
   const currentAvatarList = useMemo(
@@ -263,7 +263,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
     }
   }, [formValues]);
 
-  // 头像地址变化时重置加载状态
+  // 头像地址变化时重置加载状�?
   useEffect(() => {
     setAvatarLoaded(false);
     if (avatarUrl) {
@@ -276,13 +276,13 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
    * 形象摘要点击：打开弹窗（用当前已选初始化临时值）
    */
   const toggleAvatarExpanded = useCallback(() => {
-    // 打开前确保筛选与临时选择为初始态，避免沿用上次状态
+    // 打开前确保筛选与临时选择为初始态，避免沿用上次状�?
     setGenderFilter('all');
     setPostureFilter('all');
     setTypeFilter('all');
     setTempSelectedAvatar('');
     setTempSelectedVoice('');
-    // 用当前已选初始化临时值，供用户快速确认
+    // 用当前已选初始化临时值，供用户快速确�?
     setTempSelectedAvatar(currentType || '');
     setTempSelectedVoice(selectedVoice);
     setAvatarModalVisible(true);
@@ -297,9 +297,9 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
   }, [sceneMode, selectedVoice]);
 
   /**
-   * 重置“虚拟人形象”弹窗的筛选与临时选择状态
+   * 重置“虚拟人形象”弹窗的筛选与临时选择状�?
    * - 性别/姿势/场景筛选重置为 'all'
-   * - 临时选择清空，避免保留上次状态
+   * - 临时选择清空，避免保留上次状�?
    */
   const resetAvatarModalState = useCallback((): void => {
     setGenderFilter('all');
@@ -317,7 +317,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
 
   /**
    * 提交表单
-   * @param values 表单值
+   * @param values 表单�?
    */
   const handleSubmit = async (values: {
     name?: string;
@@ -433,7 +433,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
       setAvatarList([]);
     }
   };
-  /** 头像筛选后的列表（基于选择） */
+  /** 头像筛选后的列表（基于选择项）*/
   const filteredAvatarList = useMemo(() => {
     const genderMap: Record<'male' | 'female', '男' | '女'> = {
       male: '男',
@@ -509,7 +509,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
     getAvatarList();
     getBotTypeList();
     if (!avatarIcon?.length) {
-      getAvatarConfig(); // 获取图标库
+      getAvatarConfig(); // 获取图标�?
     }
   }, []);
 
@@ -518,7 +518,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
     setSelectedVoice(vcn.cn);
   };
   /**
-   * 渲染助手发音人
+   * 渲染助手发音�?
    */
   const renderBotVcn = useCallback(() => {
     let vcnObj =
@@ -665,7 +665,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                 </div>
               </div>
 
-              {/* 声音和形象 */}
+              {/* 声音和形�?*/}
               <div className={styles.sectionHeader}>
                 <div className={styles.sectionTitle}>
                   {t('virtualConfig.voiceAndAvatar')}
@@ -678,7 +678,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                 </Tooltip>
               </div>
               <div className={styles.configSection}>
-                {/* 虚拟人开关 */}
+                {/* 虚拟人开�?*/}
                 <div className={styles.toggleRow}>
                   <span className={styles.toggleLabel}>
                     {t('virtualConfig.virtualHuman')}
@@ -709,7 +709,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                 <div className={styles.sectionHeaderHelp}>
                   {t('virtualConfig.virtualHumanTip2')}
                 </div>
-                {/* 播报通话开关 */}
+                {/* 播报通话开�?*/}
 
                 <div className={styles.toggleSwitch}>
                   <div
@@ -815,7 +815,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                         setEnableVoice(checked);
                       } else {
                         if (!enableAvatar) {
-                          message.warning('请保证虚拟人和角色声音至少选择一种');
+                          message.warning('请保证虚拟人和角色声音至少选择一�?);
                           form.setFieldValue('interactType', 0);
                           setEnableVoice(true);
                         } else {
@@ -837,7 +837,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                     gap: 12,
                   }}
                 >
-                  {/* 摘要胶囊：当前音色 */}
+                  {/* 摘要胶囊：当前音�?*/}
                   <span className={styles.toggleLabel}>
                     {t('virtualConfig.currentVoice')}
                   </span>
@@ -879,7 +879,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                 </div>
               </div>
 
-              {/* 虚拟人形象弹窗 */}
+              {/* 虚拟人形象弹�?*/}
               {avatarModalVisible && (
                 <Modal
                   open={avatarModalVisible}
@@ -1190,7 +1190,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                         if (tempSelectedVoice) {
                           setSelectedVoice(tempSelectedVoice);
                         } else {
-                          // 若未选临时音色但形象有默认音色且在可选列表中，则应用之
+                          // 若未选临时音色但形象有默认音色且在可选列表中，则应用�?
                           const cur = avatarList.find(
                             a => a.sceneId === tempSelectedAvatar
                           );
@@ -1245,7 +1245,7 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
                   <div className={styles.footerContinerLeft}>
                     <div className="flex items-center gap-3">
                       <p className="text-desc text-[#7F7F7F]">
-                        {t('workflow.nodes.flowModal.flowId')}：
+                        {t('workflow.nodes.flowModal.flowId')}�?
                         {formValues?.flowId}
                       </p>
                       <img
@@ -1312,3 +1312,5 @@ const VirtualConfig: React.FC<HeaderFeedbackModalProps> = ({
 };
 
 export default VirtualConfig;
+
+
