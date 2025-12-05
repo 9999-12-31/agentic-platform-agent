@@ -12,7 +12,7 @@ import { message } from 'antd';
 import AudioAnimate from './audio-animate';
 import { ReactSVG } from 'react-svg';
 
-// 录音状态类型
+// 录音状态类�?
 type RecorderStatus = 'ready' | 'start' | 'end' | 'play';
 
 // 组件Props类型
@@ -22,7 +22,7 @@ interface RecorderProps {
   disabled?: boolean;
 }
 
-// 暴露给父组件的方法接口
+// 暴露给父组件的方法接�?
 export interface RecorderRef {
   stopAudio: () => void;
 }
@@ -59,7 +59,7 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
       }
     }, [changeStatus]);
 
-    // 开始录音事件处理
+    // 开始录音事件处�?
     const handleStartRecord = useCallback(async (): Promise<void> => {
       if (disabled || (status !== 'ready' && status !== 'end')) {
         return;
@@ -69,13 +69,13 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
         const tokenResponse = await getRtasrToken();
 
         if (!record.current) {
-          throw new Error('录音器未初始化');
+          throw new Error('录音器未初始�?);
         }
 
         await record.current.recStart(tokenResponse);
         setStatus('start');
         changeStatus && changeStatus('play');
-        // 设置60秒超时
+        // 设置60秒超�?
         timer = setTimeout(() => {
           stopAudio();
           changeStatus && changeStatus('end');
@@ -83,7 +83,7 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
       } catch (error) {
         console.warn('录音启动失败:', error);
 
-        // 类型安全的错误处理
+        // 类型安全的错误处�?
         if (error && typeof error === 'object' && 'detail' in error) {
           const errorDetail = error.detail as { code?: number };
           if (errorDetail.code && [80000, 90000].includes(errorDetail.code)) {
@@ -101,7 +101,7 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
       }
     }, [status, disabled, changeStatus, stopAudio]);
 
-    // 暴露给父组件的方法
+    // 暴露给父组件的方�?
     useImperativeHandle(
       ref,
       () => ({
@@ -112,7 +112,7 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
 
     return (
       <div className="cursor-pointer bg-contain rounded-lg border-transparent text-xl flex justify-center items-center relative">
-        {/* 录音中状态 */}
+        {/* 录音中状�?*/}
         {status === 'start' && (
           <div
             onClick={disabled ? undefined : stopAudio}
@@ -124,7 +124,7 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
           </div>
         )}
 
-        {/* 准备/结束状态 */}
+        {/* 准备/结束状�?*/}
         {(status === 'ready' || status === 'end') && (
           <div
             className={`relative w-full h-full text-gray-700 z-10 flex items-center justify-center transition-colors duration-200 ${
@@ -136,7 +136,7 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
           >
             <div className="h-full flex items-center justify-center">
               <ReactSVG
-                src="https://openres.xfyun.cn/xfyundoc/2024-10-21/c4fd1b99-1011-48de-8085-990ff99500da/1729522975912/zsfdzfsd.svg"
+                src="/assets/xfyun-resources/zsfdzfsd.svg"
                 className="w-6 h-6"
               />
             </div>
@@ -150,3 +150,4 @@ const RecorderCom = forwardRef<RecorderRef, RecorderProps>(
 RecorderCom.displayName = 'RecorderCom';
 
 export default RecorderCom;
+

@@ -152,7 +152,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
   const name = '123';
   const [mySpeaker, setMySpeaker] = useState<MyVCNItem[]>([]);
   /**
-   * 设置助手发音人
+   * 设置助手发音�?
    */
   const setBotCreateVcn = (vcn: { cn: string }) => {
     setBotCreateActiveV({
@@ -164,7 +164,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
   };
 
   /**
-   * 渲染助手发音人
+   * 渲染助手发音�?
    */
   const renderBotVcn = () => {
     const vcnObj =
@@ -196,7 +196,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
             <img
               className={'w-[14px] h-3 mt-1.5 mr-1.5'}
               src={
-                'https://openres.xfyun.cn/xfyundoc/2024-05-13/6c7b581a-e2f1-43fc-a73f-f63307df8150/1715581373857/1123213.png'
+                '/assets/xfyun-resources/1123213.png'
               }
               alt=""
             />
@@ -702,7 +702,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
                         setVisible(true);
                       }}
                     >
-                      <img src="https://openres.xfyun.cn/xfyundoc/2024-01-22/47883fae-7d3e-46e2-bde0-e46b4753351b/1705888336589/addDatasetIcon.svg" />
+                      <img src="/assets/xfyun-resources/addDatasetIcon.svg" />
                       {t('configBase.CapabilityDevelopment.addDataset')}
                     </div>
                     <div className={styles.datasetList}>
@@ -711,7 +711,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
                           <div key={item.id} className={styles.dataset}>
                             <div className={styles.datasetNameBox}>
                               <span className={styles.datasetName}>
-                                <img src="https://openres.xfyun.cn/xfyundoc/2024-01-19/79de3a69-71e9-4e5a-b3cb-188df402f443/1705654589331/selectDatasetBtnIcon.svg" />
+                                <img src="/assets/xfyun-resources/selectDatasetBtnIcon.svg" />
                                 {item.name}
                               </span>
                               <img
@@ -732,7 +732,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
                                     setSelectSource(filterSource);
                                   }
                                 }}
-                                src="https://openres.xfyun.cn/xfyundoc/2024-01-22/83a641b6-1132-4105-88f9-1d11b5f2d376/1705889402708/deleteDatasetIcon.svg"
+                                src="/assets/xfyun-resources/deleteDatasetIcon.svg"
                               />
                             </div>
                             <div className={styles.datasetInfo}>
@@ -1135,7 +1135,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
               'configBase.CapabilityDevelopment.xunfeiOpenPlatformServiceAgreement'
             )}
           </a>
-          与
+          �?
           <a
             href="https://www.xfyun.cn/doc/policy/privacy.html"
             rel="noreferrer"
@@ -1159,3 +1159,7 @@ const CapabilityDevelopment: React.FC<CapabilityDevelopmentProps> = props => {
 };
 
 export default CapabilityDevelopment;
+
+
+
+

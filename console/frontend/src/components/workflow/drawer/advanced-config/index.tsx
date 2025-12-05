@@ -26,7 +26,7 @@ import { Icons } from '@/components/workflow/icons';
 import SpeakerModal, { MyVCNItem, VcnItem } from '@/components/speaker-modal';
 import { getVcnList } from '@/services/chat';
 
-// 获取 Advanced Config 模块的图标
+// 获取 Advanced Config 模块的图�?
 const icons = Icons.advancedConfig;
 
 const { Dragger } = Upload;
@@ -254,7 +254,7 @@ const CharacterVoice: React.FC<CommonComponentProps> = ({
     });
   };
 
-  // 渲染发音人显示
+  // 渲染发音人显�?
   const renderBotVcn = () => {
     const vcnObj =
       vcnList.find((item: VcnItem) => item.voiceType === botCreateActiveV.cn) ||
@@ -283,7 +283,7 @@ const CharacterVoice: React.FC<CommonComponentProps> = ({
           <>
             <img
               src={
-                'https://openres.xfyun.cn/xfyundoc/2024-05-13/6c7b581a-e2f1-43fc-a73f-f63307df8150/1715581373857/1123213.png'
+                '/assets/xfyun-resources/1123213.png'
               }
               alt=""
               className="w-3.5 h-3.5 mr-2"
@@ -778,3 +778,4 @@ function AdvancedConfiguration(): React.ReactElement {
 }
 
 export default AdvancedConfiguration;
+

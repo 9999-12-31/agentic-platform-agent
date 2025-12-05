@@ -2,7 +2,7 @@ import { batchImportEnterpriseUsername } from '@/services/enterprise';
 import { message } from 'antd';
 
 const templateUrl =
-  'https://openres.xfyun.cn/xfyundoc/2025-09-30/c7044679-2817-4d22-b470-353012d55efd/1759213793509/%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx';
+  '/assets/xfyun-resources/%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx';
 
 // 批量导入成员接口类型
 export interface BatchImportParams {
@@ -51,7 +51,7 @@ export async function batchImportMembers(
 ): Promise<BatchImportResult> {
   try {
     const response: any = await batchImportEnterpriseUsername(params, {
-      signal, // 传递 AbortSignal
+      signal, // 传�?AbortSignal
     });
     console.log(response, '======== batchImportMembers =======');
     const { chatUserVOS, resultUrl } = response;
@@ -73,3 +73,4 @@ export async function batchImportMembers(
 export const downloadResult = (url: string, filename?: string) => {
   downloadExcelByUrl(url, filename);
 };
+

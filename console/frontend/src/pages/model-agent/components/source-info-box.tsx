@@ -37,7 +37,7 @@ const SourceInfoBox: FC<{ traceSource?: string }> = ({ traceSource }) => {
         open ? 'max-h-[230px]' : 'max-h-[38px]'
       }`}
     >
-      {/* 标题栏 */}
+      {/* 标题�?*/}
       <div
         className="flex items-center px-3 h-[38px] w-fit rounded-md leading-[38px] bg-[#f6f7f9] text-[#6985bb] cursor-pointer text-xs"
         onClick={handleTitleClick}
@@ -48,7 +48,7 @@ const SourceInfoBox: FC<{ traceSource?: string }> = ({ traceSource }) => {
           })}
         </span>
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2024-04-11/22f3b4aa-daab-4b0c-a4d7-c42a7aff03d6/1712803618079/aaaaaa.png"
+          src="/assets/xfyun-resources/aaaaaa.png"
           alt="展开/收起"
           className={`w-[10px] h-[6px] ml-[30px] transition-transform duration-300 ${
             !open ? 'rotate-x-180' : ''
@@ -79,3 +79,4 @@ const SourceInfoBox: FC<{ traceSource?: string }> = ({ traceSource }) => {
 };
 
 export default memo(SourceInfoBox);
+

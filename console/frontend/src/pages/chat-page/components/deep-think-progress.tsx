@@ -33,7 +33,7 @@ const DeepThinkProgress: React.FC<{
           ) : (
             <div className="flex justify-center items-center w-full h-7">
               <img
-                src="https://openres.xfyun.cn/xfyundoc/2025-03-31/1c2b6582-14d3-4741-8361-286401473663/1743423234749/scaasc.svg"
+                src="/assets/xfyun-resources/scaasc.svg"
                 alt=""
                 className="w-[13px] h-[13px] flex-shrink-0"
               />
@@ -76,7 +76,7 @@ const DeepThinkProgress: React.FC<{
       {thinkComplete ? (
         <div className="flex items-center">
           <img
-            src="https://openres.xfyun.cn/xfyundoc/2025-03-31/1c2b6582-14d3-4741-8361-286401473663/1743423234749/scaasc.svg"
+            src="/assets/xfyun-resources/scaasc.svg"
             alt=""
             className="mr-2.5"
           />
@@ -88,3 +88,4 @@ const DeepThinkProgress: React.FC<{
 };
 
 export default React.memo(DeepThinkProgress);
+

@@ -21,7 +21,7 @@ export interface FileGridDisplayProps {
 
 /**
  * 通用的文件网格展示组件，支持展开收起功能
- * 包含文件预览和删除功能
+ * 包含文件预览和删除功�?
  */
 const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
   files,
@@ -33,7 +33,7 @@ const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
   const [previewFile, setPreviewFile] = useState<UploadFileInfo | undefined>();
   const { t } = useTranslation();
   /**
-   * 渲染单个文件项
+   * 渲染单个文件�?
    */
   const renderFileItem = (file: UploadFileInfo, index: number): JSX.Element => {
     const loading = !file.fileId && file.status !== 'error';
@@ -68,7 +68,7 @@ const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
             {file.fileName}
           </div>
 
-          {/* 状态信息 */}
+          {/* 状态信�?*/}
           <div
             className="text-[11px] overflow-hidden text-ellipsis whitespace-nowrap leading-[1.4]"
             style={{ color: file.status === 'error' ? '#ff4d4f' : '#939393' }}
@@ -124,7 +124,7 @@ const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2024-03-27/2111528e-44a4-493e-baf2-1c3f7dd20812/1711540006742/%E7%BC%96%E7%BB%84%202%402x.png"
+          src="/assets/xfyun-resources/%E7%BC%96%E7%BB%84%202%402x.png"
           className={clsx(
             'w-3 h-3 transition-transform',
             isExpanded && 'rotate-180'
@@ -144,7 +144,7 @@ const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
     return null;
   }
 
-  // 计算实际显示的文件数量
+  // 计算实际显示的文件数�?
   const displayCount = isExpanded
     ? files.length
     : Math.min(files.length, maxVisibleFiles);
@@ -168,7 +168,7 @@ const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
           {renderFileGrid()}
         </div>
 
-        {/* 展开/收起按钮 - 固定在右侧 */}
+        {/* 展开/收起按钮 - 固定在右�?*/}
         {renderToggleButton()}
       </div>
 
@@ -184,3 +184,4 @@ const FileGridDisplay: React.FC<FileGridDisplayProps> = ({
 };
 
 export default FileGridDisplay;
+

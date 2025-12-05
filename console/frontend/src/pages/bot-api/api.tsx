@@ -32,7 +32,7 @@ export default function BotApi({
   const { t } = useTranslation();
   const [createAppForm] = Form.useForm(); //创建应用表单
   const navigate = useNavigate();
-  // 新增状态，标记是否已经获取过 API 列表
+  // 新增状态，标记是否已经获取�?API 列表
   const [hasFetchedApiList, setHasFetchedApiList] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
   const [botId, setBotId]: any = useState('');
@@ -128,7 +128,7 @@ export default function BotApi({
       setBotId(searchParams.get('id'));
     }
 
-    // NOTE: 指令型和工作流类型的智能体文档不同 -- 0715补充
+    // NOTE: 指令型和工作流类型的智能体文档不�?-- 0715补充
     const url =
       searchParams.get('version') !== '1'
         ? 'https://www.xfyun.cn/doc/spark/Agent04-API%E6%8E%A5%E5%85%A5.html'
@@ -304,13 +304,13 @@ export default function BotApi({
                 <div style={{ marginTop: '4px' }}>
                   <a
                     className={styles.appid_download}
-                    href="https://openres.xfyun.cn/xfyundoc/2025-03-25/1fa7e299-25ab-4128-92c9-a56928caea49/1742887223777/workflow_openapi_demo_python.py.zip"
+                    href="/assets/xfyun-resources/workflow_openapi_demo_python.py.zip"
                   >
                     {t('botApi.pythonDemoDownload')}
                   </a>
                   <a
                     className={styles.appid_download}
-                    href="https://openres.xfyun.cn/xfyundoc/2025-03-25/ae1c647f-9d9e-4bdf-b50a-7f5e683aa6ad/1742887220264/workflow_openapi_demo_java.java.zip"
+                    href="/assets/xfyun-resources/workflow_openapi_demo_java.java.zip"
                   >
                     {t('botApi.javaDemoDownload')}
                   </a>
@@ -328,7 +328,7 @@ export default function BotApi({
             />
             <div className={`${styles.cer_info}`}>
               <span className={styles.info_label}>
-                {t('botApi.serviceUrl')}：
+                {t('botApi.serviceUrl')}�?
               </span>
               <span
                 className={styles.info_res}
@@ -346,7 +346,7 @@ export default function BotApi({
               </span>
             </div>
             <div className={`${styles.cer_info}`}>
-              <span className={styles.info_label}>API Key：</span>
+              <span className={styles.info_label}>API Key�?/span>
               <span className={styles.info_res}>
                 {apiInfo?.appKey || t('botApi.bindAppTips2')}
               </span>
@@ -476,3 +476,5 @@ export default function BotApi({
     </section>
   );
 }
+
+
