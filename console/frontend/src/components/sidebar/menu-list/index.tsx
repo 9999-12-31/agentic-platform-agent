@@ -25,7 +25,7 @@ import createSpaceImg from '@/assets/imgs/space/createSpaceImg.png';
 import enterpriseShareCreate from '@/assets/imgs/space/enterpriseShareCreate.png';
 import enterpriseSpaceJoin from '@/assets/imgs/space/enterpriseSpaceJoin.png';
 import arrowRight from '@/assets/imgs/space/arrowRight.png';
-import {deleteChatIndex, deleteChatList} from '@/services/chat';
+import { deleteChatIndex, deleteChatList } from '@/services/chat';
 import { PostChatItem } from '@/types/chat';
 
 // Constants
@@ -196,6 +196,7 @@ interface RecentListProps {
   mixedChatList: any[];
   handleNavigateToChat: (item: any, i: any) => void;
   handleDeleteChat: (item: any, e: any) => void;
+  handleDeleteAgent:(item: any, e: any) => void;
   onChatHistoryData: (item: any) => void;
 }
 
@@ -206,11 +207,13 @@ const RecentList: FC<RecentListProps> = ({
   mixedChatList,
   handleNavigateToChat,
   handleDeleteChat,
+  handleDeleteAgent,
   onChatHistoryData,
 }) => {
   const { t } = useTranslation();
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-  });
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  );
 
   useEffect(() => {
     if (!mixedChatList || !Array.isArray(mixedChatList)) return;
@@ -283,42 +286,54 @@ const RecentList: FC<RecentListProps> = ({
               mixedChatList.map((item: any) => (
                 <div key={item?.botName} className="w-full">
                   <div
-                    className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
-                    onClick={() => toggleGroup(item)}
-                    style={{
-                      fontFamily: 'PingFang SC',
-                      fontWeight: 400,
-                    }}
+                      className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
+                      onClick={() => toggleGroup(item)}
+                      style={{
+                        fontFamily: 'PingFang SC',
+                        fontWeight: 400,
+                      }}
                   >
                     <span
-                      className="text-sm"
-                      style={{
-                        fontWeight: '400',
-                      }}
+                        className="text-sm"
+                        style={{
+                          fontWeight: '400',
+                        }}
                     >
                       {item?.botName}
                     </span>
-                    <img
-                      src={require('@/assets/svgs/arrow-top.svg')}
-                      alt=""
-                      className={`w-3 h-3 transition-transform duration-300 ${
-                        expandedGroups[item?.botName] ? '' : 'rotate-180'
-                      }`}
-                    />
+
+                    <div
+                        className="transition-opacity duration-200 h-4 flex items-center justify-center rounded-full flex-shrink-0">
+                      <img
+                          src={require('@/assets/svgs/arrow-top.svg')}
+                          alt=""
+                          className={`w-3 h-3 transition-transform duration-300 mr-2 ${
+                              expandedGroups[item?.botName] ? '' : 'rotate-180'
+                          }`}
+                      />
+                      <img
+                          src={require('@/assets/imgs/sidebar/close.svg')}
+                          alt="删除"
+                          className="w-2 h-2 transition-all duration-200 "
+                          onClick={e => handleDeleteAgent(item, e)}
+                      />
+                    </div>
+
+
                   </div>
 
                   <div
-                    className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
-                    style={{
-                      opacity: expandedGroups[item?.botName] ? '1' : '0',
-                    }}
+                      className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
+                      style={{
+                        opacity: expandedGroups[item?.botName] ? '1' : '0',
+                      }}
                   >
-                    {expandedGroups[item?.botName] && (
-                      <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
-                        {item.historyList &&
-                          item.historyList.length > 0 &&
-                          item.historyList.map((i: any,idx:number) => (
-                            <div
+                  {expandedGroups[item?.botName] && (
+                        <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
+                          {item.historyList &&
+                              item.historyList.length > 0 &&
+                              item.historyList.map((i: any, idx: number) => (
+                                  <div
                               key={item.botId + i.message + idx}
                               className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
                               onClick={() => handleNavigateToChat(item, i)}
@@ -333,14 +348,12 @@ const RecentList: FC<RecentListProps> = ({
                                   {i.message}
                                 </span>
                               </Tooltip>
-                              <div
-                                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0"
-                              >
+                              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0">
                                 <img
-                                    src={require('@/assets/imgs/sidebar/close.svg')}
-                                    alt="删除"
-                                    className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
-                                    onClick={e => handleDeleteChat(item, e, i)}
+                                  src={require('@/assets/imgs/sidebar/close.svg')}
+                                  alt="删除"
+                                  className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
+                                  onClick={e => handleDeleteChat(item, e, i)}
                                 />
                               </div>
                             </div>
@@ -374,7 +387,7 @@ const RecentList: FC<RecentListProps> = ({
 interface MenuListProps {
   isCollapsed: boolean;
   mixedChatList: PostChatItem[];
-  onRefreshData?: (chatListId:string) => void;
+  onRefreshData?: (chatListId: string) => void;
   onChatHistoryData?: (item: any) => void;
 }
 
@@ -389,11 +402,13 @@ const useMenuListHelpers = (
   spaceButtonRef: any,
   handleToChat: any,
   setChatListId: any,
+  setDelType:any,
+  delType:string,
   setChatListIemId: any,
   setDeleteOpen: any,
   chatListId: string,
-  chatListItemId:number,
-  onRefreshData?: (chatListId:string) => void,
+  chatListItemId: number,
+  onRefreshData?: (chatListId?: number) => void,
   isAdmin: boolean
 ) => {
   // 动态设置 Popover 的最大高度
@@ -417,33 +432,55 @@ const useMenuListHelpers = (
   const handleNavigateToChat = (item: any, i: any) => {
     handleToChat(item?.botId, i.chatId);
   };
-
-  const handleDeleteChat = (item: any, e: any, i:any) => {
-    console.log(item);
-    console.log(i);
-
+  const handleDeleteAgent = (item: any, e: any) => {
     e.stopPropagation();
     setChatListId(item?.id);
-    setChatListIemId(i?.chatId);
+    setDelType('agent');
     setDeleteOpen(true);
   };
 
+  const handleDeleteChat = (item: any, e: any, i: any) => {
+    e.stopPropagation();
+    setChatListId(item?.id);
+    setChatListIemId(i?.chatId);
+    setDelType('chat');
+    setDeleteOpen(true);
+  };
+
+  //删除智能体对话
   const handleDeleteChatConfirm = () => {
-    deleteChatIndex(chatListItemId)
-      .then((res: any) => {
-        setDeleteOpen(false);
-        message.success(t('commonModal.agentDelete.success'));
-        // Refresh data after successful deletion
-        if (onRefreshData) {
-          console.log(chatListId);
-          onRefreshData(chatListId);
-        }
-      })
-      .catch((err: any) => {
-        console.log(err);
-        setDeleteOpen(false);
-        message.error(t('commonModal.agentDelete.failed'));
-      });
+   if (delType === 'chat'){
+     deleteChatIndex(chatListItemId)
+         .then((res: any) => {
+           setDeleteOpen(false);
+           message.success(t('commonModal.agentDelete.success'));
+           if (onRefreshData) {
+             onRefreshData(chatListId);
+           }
+         })
+         .catch((err: any) => {
+           console.log(err);
+           setDeleteOpen(false);
+           message.error(t('commonModal.agentDelete.failed'));
+         });
+   }else {
+     deleteChatList({
+       chatListId: Number(chatListId),
+     })
+         .then((res: any) => {
+           setDeleteOpen(false);
+           message.success(t('commonModal.agentDelete.success'));
+           if (onRefreshData) {
+             onRefreshData();
+           }
+         })
+         .catch((err: any) => {
+           console.log(err);
+           setDeleteOpen(false);
+           message.error(t('commonModal.agentDelete.failed'));
+         });
+   }
+
   };
 
   // Get messages/notifications
@@ -493,6 +530,7 @@ const useMenuListHelpers = (
     handleShowSpacePopover,
     handleNavigateToChat,
     handleDeleteChat,
+    handleDeleteAgent,
     handleDeleteChatConfirm,
     initializeActiveMenu,
     initializeApp,
@@ -708,8 +746,9 @@ const DeleteModal: FC<{
   deleteOpen: boolean;
   setDeleteOpen: (open: boolean) => void;
   handleDeleteChatConfirm: () => void;
+  delType:string;
   t: any;
-}> = ({ deleteOpen, setDeleteOpen, handleDeleteChatConfirm, t }) => (
+}> = ({ deleteOpen, setDeleteOpen, handleDeleteChatConfirm,delType, t }) => (
   <Modal
     open={deleteOpen}
     onCancel={() => setDeleteOpen(false)}
@@ -726,7 +765,7 @@ const DeleteModal: FC<{
         alt=""
         className="w-[22px] h-[22px]"
       />
-      <span>{t('sidebar.confirmRemove')}</span>
+      <span>{delType==='agent'?t('sidebar.confirmRemoveAgent'):t('sidebar.confirmRemove')}</span>
     </div>
   </Modal>
 );
@@ -766,6 +805,7 @@ const MenuList: FC<MenuListProps> = ({
   const [chatListId, setChatListId] = useState();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [chatListItemId, setChatListIemId] = useState();
+  const [delType, setDelType] = useState('');
 
   // Refs
   const spaceButtonRef = useRef<HTMLDivElement | null>(null);
@@ -778,6 +818,7 @@ const MenuList: FC<MenuListProps> = ({
     handleShowSpacePopover,
     handleNavigateToChat,
     handleDeleteChat,
+    handleDeleteAgent,
     handleDeleteChatConfirm,
     initializeActiveMenu,
     initializeApp,
@@ -791,6 +832,8 @@ const MenuList: FC<MenuListProps> = ({
     spaceButtonRef,
     handleToChat,
     setChatListId,
+    setDelType,
+    delType,
     setChatListIemId,
     setDeleteOpen,
     chatListId,
@@ -873,6 +916,7 @@ const MenuList: FC<MenuListProps> = ({
         mixedChatList={mixedChatList}
         handleNavigateToChat={handleNavigateToChat}
         handleDeleteChat={handleDeleteChat}
+        handleDeleteAgent={handleDeleteAgent}
         onChatHistoryData={onChatHistoryData}
       />
 
@@ -880,6 +924,7 @@ const MenuList: FC<MenuListProps> = ({
         deleteOpen={deleteOpen}
         setDeleteOpen={setDeleteOpen}
         handleDeleteChatConfirm={handleDeleteChatConfirm}
+        delType={delType}
         t={t}
       />
     </div>

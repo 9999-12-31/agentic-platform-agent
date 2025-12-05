@@ -139,11 +139,14 @@ const Sidebar = (): ReactElement => {
         <MenuList
           isCollapsed={isCollapsed}
           mixedChatList={mixedChatList}
-          onRefreshData={(chatListId:string) => {
+          onRefreshData={(chatListId?:number) => {
             console.log(chatListId);
             getChatList();
             getFavoriteBotListLocal();
-            getChatHistoryData(chatListId)
+            if (chatListId) {
+              getChatHistoryData(chatListId)
+            }
+            
 
           }}
           onChatHistoryData={getChatHistoryData}

@@ -1,11 +1,19 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { DeleteOutlined, UploadOutlined, LoadingOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  UploadOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import styles from '../sidebar/personal-center/index.module.scss';
-import {Input, Button, Progress, Modal} from 'antd';
+import { Input, Button, Progress, Modal } from 'antd';
 import useChatFileUpload from '@/hooks/use-chat-file-upload';
-import type { BotInfoType, UploadFileInfo, SupportUploadConfig } from '@/types/chat';
-import {deleteFiles, getAllFiles} from "@/services/chat";
-import {getFileIcon} from "@/utils";
+import type {
+  BotInfoType,
+  UploadFileInfo,
+  SupportUploadConfig,
+} from '@/types/chat';
+import { deleteFiles, getAllFiles } from '@/services/chat';
+import { getFileIcon } from '@/utils';
 
 const { Search } = Input;
 
@@ -18,7 +26,6 @@ interface FileItem {
   fileSize: number;
   fileUrl: string;
 }
-
 
 const mockBotInfo: BotInfoType = {
   pcBackground: '',
@@ -34,8 +41,8 @@ const mockBotInfo: BotInfoType = {
       limit: 10,
       required: false,
       name: 'general_file',
-      type: 'file'
-    }
+      type: 'file',
+    },
   ],
   model: 'default',
   botId: 1,
@@ -49,7 +56,7 @@ const mockBotInfo: BotInfoType = {
   inputExample: [],
   supportContext: true,
   isFavorite: 0,
-  vcnCn: 'default'
+  vcnCn: 'default',
 };
 
 // 模拟上传配置（支持所有文件类型）
@@ -62,17 +69,17 @@ const mockUploadConfig: SupportUploadConfig = {
   limit: 10,
   required: false,
   name: 'general_file',
-  type: 'file'
+  type: 'file',
 };
 
 // 格式化文件大小
 const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  if (bytes < 1024 * 1024 * 1024)
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
 };
-
 
 const MyFile = (): ReactElement => {
   const [allFiles, setAllFiles] = useState([]);
@@ -80,24 +87,22 @@ const MyFile = (): ReactElement => {
   const [itemIdToDelete, setItemIdToDelete] = useState<string>('');
   const [searchValue, setSearchValue] = useState('');
 
-  const getList = async ()=>{
-    const res = await getAllFiles(searchValue||'')
-    setAllFiles(res)
-  }
-  useEffect( () => {
-    getList()
+  const getList = async () => {
+    const res = await getAllFiles(searchValue || '');
+    setAllFiles(res);
+  };
+  useEffect(() => {
+    getList();
   }, []);
 
-  const handleDeleteChatConfirm = async ()=>{
-    await deleteFiles(itemIdToDelete)
-    await getList()
+  const handleDeleteChatConfirm = async () => {
+    await deleteFiles(itemIdToDelete);
+    await getList();
     setDeleteOpen(false);
     setItemIdToDelete(null);
-  }
+  };
 
-  const toOpen = ()=>{
-
-  }
+  const toOpen = () => {};
   const {
     fileList: uploadedFileList,
     fileInputRef,
@@ -106,7 +111,7 @@ const MyFile = (): ReactElement => {
   } = useChatFileUpload({
     botInfo: mockBotInfo,
     isBindChat: false,
-    onUploadComplete: getList // 文件上传完成后重新获取文件列表
+    onUploadComplete: getList, // 文件上传完成后重新获取文件列表
   });
 
   // 上传最大文件大小（MB）
@@ -121,7 +126,7 @@ const MyFile = (): ReactElement => {
             <img
               src={getFileIcon(file)}
               alt={file.fileExtension}
-              className="w-10 h-10 mr-2" 
+              className="w-10 h-10 mr-2"
             />
             <div className="flex flex-col">
               <div className="text-sm font-medium text-gray-800 truncate max-w-[150px]">
@@ -130,15 +135,17 @@ const MyFile = (): ReactElement => {
               <div className="text-xs text-gray-500">{file.createTime}</div>
             </div>
           </div>
-          <DeleteOutlined 
+          <DeleteOutlined
             className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
             onClick={async () => {
-             setItemIdToDelete(file.fileId)
-              setDeleteOpen(true)
+              setItemIdToDelete(file.fileId);
+              setDeleteOpen(true);
             }}
           />
         </div>
-        <div className="text-xs text-gray-500">{formatFileSize(file.fileSize)}</div>
+        <div className="text-xs text-gray-500">
+          {formatFileSize(file.fileSize)}
+        </div>
       </div>
     );
   };
@@ -148,18 +155,24 @@ const MyFile = (): ReactElement => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-800">我的文件</h2>
         <div className="flex items-center">
-          <Search placeholder="输入文件名" size={'large'} onChange={e => setSearchValue(e.target.value)}  onSearch={getList} enterButton />
+          <Search
+            placeholder="输入文件名"
+            size={'large'}
+            onChange={e => setSearchValue(e.target.value)}
+            onSearch={getList}
+            enterButton
+          />
           <div className="ml-2">
             <input
               ref={fileInputRef}
               type="file"
               multiple
-              onChange={(e) => handleFileSelect(e, mockUploadConfig, uploadMaxMB)}
+              onChange={e => handleFileSelect(e, mockUploadConfig, uploadMaxMB)}
               style={{ display: 'none' }}
             />
-            <Button 
-              type="primary" 
-              icon={<UploadOutlined />} 
+            <Button
+              type="primary"
+              icon={<UploadOutlined />}
               size="large"
               onClick={triggerFileSelect}
             >
@@ -169,33 +182,28 @@ const MyFile = (): ReactElement => {
         </div>
       </div>
 
-
       <div className="mb-8">
-        <div  className={styles.contentWrapper}>
+        <div className={styles.contentWrapper}>
           {allFiles.map(renderFileItem)}
         </div>
       </div>
+
       <Modal
-          open={deleteOpen}
-          onCancel={() => {
-            setDeleteOpen(false);
-            setItemIdToDelete(null);
-          }}
-          closeIcon={null}
-          wrapClassName={styles.delete_mode}
-          centered
-          width={352}
-          maskClosable={false}
-          onOk={handleDeleteChatConfirm}
+        open={deleteOpen}
+        onCancel={() => {
+          setDeleteOpen(false);
+          setItemIdToDelete(null);
+        }}
+        closeIcon={null}
+        wrapClassName={styles.delete_mode}
+        centered
+        width={352}
+        maskClosable={false}
+        onOk={handleDeleteChatConfirm}
       >
         <div className={styles.delete_mode_title}>
-          <img
-              src={require('@/assets/imgs/sidebar/warning.svg')}
-              alt=""
-          />
-          <span>
-            确定移除该文件？
-          </span>
+          <img src={require('@/assets/imgs/sidebar/warning.svg')} alt="" />
+          <span>确定移除该文件？</span>
         </div>
       </Modal>
     </div>
