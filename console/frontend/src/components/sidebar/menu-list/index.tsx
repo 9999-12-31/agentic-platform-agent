@@ -25,7 +25,7 @@ import createSpaceImg from '@/assets/imgs/space/createSpaceImg.png';
 import enterpriseShareCreate from '@/assets/imgs/space/enterpriseShareCreate.png';
 import enterpriseSpaceJoin from '@/assets/imgs/space/enterpriseSpaceJoin.png';
 import arrowRight from '@/assets/imgs/space/arrowRight.png';
-import { deleteChatIndex, deleteChatList } from '@/services/chat';
+import { deleteChatIndex, deleteChatList, updateTitle } from '@/services/chat';
 import { PostChatItem } from '@/types/chat';
 
 // Constants
@@ -195,9 +195,12 @@ interface RecentListProps {
   setShowRecent: (show: boolean) => void;
   mixedChatList: any[];
   handleNavigateToChat: (item: any, i: any) => void;
+  handleRenameChat: (item: any, e: any) => void;
   handleDeleteChat: (item: any, e: any) => void;
-  handleDeleteAgent:(item: any, e: any) => void;
+  handleDeleteAgent: (item: any, e: any) => void;
   onChatHistoryData: (item: any) => void;
+  activePopoverKey: string | null;
+  setActivePopoverKey: (key: string | null) => void;
 }
 
 const RecentList: FC<RecentListProps> = ({
@@ -206,9 +209,12 @@ const RecentList: FC<RecentListProps> = ({
   setShowRecent,
   mixedChatList,
   handleNavigateToChat,
+  handleRenameChat,
   handleDeleteChat,
   handleDeleteAgent,
   onChatHistoryData,
+  activePopoverKey,
+  setActivePopoverKey,
 }) => {
   const { t } = useTranslation();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
@@ -286,75 +292,109 @@ const RecentList: FC<RecentListProps> = ({
               mixedChatList.map((item: any) => (
                 <div key={item?.botName} className="w-full">
                   <div
-                      className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
-                      onClick={() => toggleGroup(item)}
-                      style={{
-                        fontFamily: 'PingFang SC',
-                        fontWeight: 400,
-                      }}
+                    className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
+                    onClick={() => toggleGroup(item)}
+                    style={{
+                      fontFamily: 'PingFang SC',
+                      fontWeight: 400,
+                    }}
                   >
                     <span
-                        className="text-sm"
-                        style={{
-                          fontWeight: '400',
-                        }}
+                      className="text-sm"
+                      style={{
+                        fontWeight: '400',
+                      }}
                     >
                       {item?.botName}
                     </span>
 
-                    <div
-                        className="transition-opacity duration-200 h-4 flex items-center justify-center rounded-full flex-shrink-0">
+                    <div className="transition-opacity duration-200 h-4 flex items-center justify-center rounded-full flex-shrink-0">
                       <img
-                          src={require('@/assets/svgs/arrow-top.svg')}
-                          alt=""
-                          className={`w-3 h-3 transition-transform duration-300 mr-2 ${
-                              expandedGroups[item?.botName] ? '' : 'rotate-180'
-                          }`}
+                        src={require('@/assets/svgs/arrow-top.svg')}
+                        alt=""
+                        className={`w-3 h-3 transition-transform duration-300 mr-2 ${
+                          expandedGroups[item?.botName] ? '' : 'rotate-180'
+                        }`}
                       />
                       <img
-                          src={require('@/assets/imgs/sidebar/close.svg')}
-                          alt="删除"
-                          className="w-2 h-2 transition-all duration-200 "
-                          onClick={e => handleDeleteAgent(item, e)}
+                        src={require('@/assets/imgs/sidebar/close.svg')}
+                        alt="删除"
+                        className="w-2 h-2 transition-all duration-200 "
+                        onClick={e => handleDeleteAgent(item, e)}
                       />
                     </div>
-
-
                   </div>
 
                   <div
-                      className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
-                      style={{
-                        opacity: expandedGroups[item?.botName] ? '1' : '0',
-                      }}
+                    className={`transition-all duration-300 ease-in-out overflow-hidden pl-1`}
+                    style={{
+                      opacity: expandedGroups[item?.botName] ? '1' : '0',
+                    }}
                   >
-                  {expandedGroups[item?.botName] && (
-                        <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
-                          {item.historyList &&
-                              item.historyList.length > 0 &&
-                              item.historyList.map((i: any, idx: number) => (
-                                  <div
-                              key={item.botId + i.message + idx}
+                    {expandedGroups[item?.botName] && (
+                      <div className="flex flex-col gap-0.5 mt-1 pt-1 pb-0.5">
+                        {item.historyList &&
+                          item.historyList.length > 0 &&
+                          item.historyList.map((i: any, idx: number) => (
+                            <div
+                              key={`${item.botId}-${i.message}-${idx}`}
                               className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
                               onClick={() => handleNavigateToChat(item, i)}
                             >
-                              <Tooltip title={i.message} placement="top">
+                              <Tooltip title={i.title} placement="top">
                                 <span
                                   className="text-xs  text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200"
                                   style={{
                                     fontSize: '13px',
                                   }}
                                 >
-                                  {i.message}
+                                  {i.title}
                                 </span>
                               </Tooltip>
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0">
-                                <img
-                                  src={require('@/assets/imgs/sidebar/close.svg')}
-                                  alt="删除"
-                                  className="w-2 h-2 hover:w-2.5 hover:h-2.5 transition-all duration-200"
-                                  onClick={e => handleDeleteChat(item, e, i)}
-                                />
+                                <Popover
+                                  content={
+                                    <div className="flex flex-col space-y-2 p-1" onClick={e => e.stopPropagation()}>
+                                      <div
+                                        className="px-3 py-1 text-sm cursor-pointer hover:bg-[#f5f5f5] rounded transition-colors"
+                                        onClick={e =>
+                                          handleRenameChat(item, e, i)
+                                        }
+                                      >
+                                        重命名
+                                      </div>
+                                      <div
+                                        className="px-3 py-1 text-sm cursor-pointer text-red-500 hover:bg-[#fff1f0] rounded transition-colors"
+                                        onClick={e =>
+                                          handleDeleteChat(item, e, i)
+                                        }
+                                      >
+                                        删除
+                                      </div>
+                                    </div>
+                                  }
+                                  trigger="click"
+                                  placement="bottomRight"
+                                  open={activePopoverKey === `${item.id}-${i.chatId}`}
+                                  onOpenChange={(visible) => {
+                                    if (visible) {
+                                      setActivePopoverKey(`${item.id}-${i.chatId}`);
+                                    } else {
+                                      setActivePopoverKey(null);
+                                    }
+                                  }}
+                                >
+                                  <img
+                                    src={spaceMore}
+                                    alt="更多"
+                                    className="w-4 h-3 hover:w-2.5 hover:h-2.5 transition-all duration-200"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      // 切换Popover状态
+                                      setActivePopoverKey(activePopoverKey === `${item.id}-${i.chatId}` ? null : `${item.id}-${i.chatId}`);
+                                    }}
+                                  />
+                                </Popover>
                               </div>
                             </div>
                           ))}
@@ -409,7 +449,14 @@ const useMenuListHelpers = (
   chatListId: string,
   chatListItemId: number,
   onRefreshData?: (chatListId?: number) => void,
-  isAdmin: boolean
+  isAdmin: boolean,
+  // Rename props
+  setRenameOpen: any,
+  setRenameChatItem: any,
+  setRenameValue: any,
+  renameChatItem: any,
+  renameValue: any,
+  setActivePopoverKey: any
 ) => {
   // 动态设置 Popover 的最大高度
   const updatePopoverMaxHeight = () => {
@@ -445,42 +492,61 @@ const useMenuListHelpers = (
     setChatListIemId(i?.chatId);
     setDelType('chat');
     setDeleteOpen(true);
+    setActivePopoverKey(null);
+  };
+
+  const handleRenameChat = (item: any, e: any, i: any) => {
+    e.stopPropagation();
+    setChatListId(item?.id);
+    setRenameChatItem({ item, chat: i });
+    setRenameValue(i.title);
+    setRenameOpen(true);
+    setActivePopoverKey(null);
+  };
+
+  const handleRenameChatConfirm = () => {
+    if (!renameValue) return message.warning('名称不能为空！');
+    updateTitle(renameChatItem?.chat.chatId, renameValue).then(res => {
+      setRenameOpen(false);
+      message.success('重命名成功');
+      if (onRefreshData) {
+        onRefreshData(chatListId);
+      }
+    });
   };
 
   //删除智能体对话
   const handleDeleteChatConfirm = () => {
-   if (delType === 'chat'){
-     deleteChatIndex(chatListItemId)
-         .then((res: any) => {
-           setDeleteOpen(false);
-           message.success(t('commonModal.agentDelete.success'));
-           if (onRefreshData) {
-             onRefreshData(chatListId);
-           }
-         })
-         .catch((err: any) => {
-           console.log(err);
-           setDeleteOpen(false);
-           message.error(t('commonModal.agentDelete.failed'));
-         });
-   }else {
-     deleteChatList({
-       chatListId: Number(chatListId),
-     })
-         .then((res: any) => {
-           setDeleteOpen(false);
-           message.success(t('commonModal.agentDelete.success'));
-           if (onRefreshData) {
-             onRefreshData();
-           }
-         })
-         .catch((err: any) => {
-           console.log(err);
-           setDeleteOpen(false);
-           message.error(t('commonModal.agentDelete.failed'));
-         });
-   }
-
+    if (delType === 'chat') {
+      deleteChatIndex(chatListItemId)
+        .then((res: any) => {
+          setDeleteOpen(false);
+          message.success(t('commonModal.agentDelete.success'));
+          if (onRefreshData) {
+            onRefreshData(chatListId);
+          }
+        })
+        .catch((err: any) => {
+          setDeleteOpen(false);
+          message.error(t('commonModal.agentDelete.failed'));
+        });
+    } else {
+      deleteChatList({
+        chatListId: Number(chatListId),
+      })
+        .then((res: any) => {
+          setDeleteOpen(false);
+          message.success(t('commonModal.agentDelete.success'));
+          if (onRefreshData) {
+            onRefreshData();
+          }
+        })
+        .catch((err: any) => {
+          console.log(err);
+          setDeleteOpen(false);
+          message.error(t('commonModal.agentDelete.failed'));
+        });
+    }
   };
 
   // Get messages/notifications
@@ -532,6 +598,8 @@ const useMenuListHelpers = (
     handleDeleteChat,
     handleDeleteAgent,
     handleDeleteChatConfirm,
+    handleRenameChat,
+    handleRenameChatConfirm,
     initializeActiveMenu,
     initializeApp,
   };
@@ -746,9 +814,9 @@ const DeleteModal: FC<{
   deleteOpen: boolean;
   setDeleteOpen: (open: boolean) => void;
   handleDeleteChatConfirm: () => void;
-  delType:string;
+  delType: string;
   t: any;
-}> = ({ deleteOpen, setDeleteOpen, handleDeleteChatConfirm,delType, t }) => (
+}> = ({ deleteOpen, setDeleteOpen, handleDeleteChatConfirm, delType, t }) => (
   <Modal
     open={deleteOpen}
     onCancel={() => setDeleteOpen(false)}
@@ -765,7 +833,11 @@ const DeleteModal: FC<{
         alt=""
         className="w-[22px] h-[22px]"
       />
-      <span>{delType==='agent'?t('sidebar.confirmRemoveAgent'):t('sidebar.confirmRemove')}</span>
+      <span>
+        {delType === 'agent'
+          ? t('sidebar.confirmRemoveAgent')
+          : t('sidebar.confirmRemove')}
+      </span>
     </div>
   </Modal>
 );
@@ -806,6 +878,13 @@ const MenuList: FC<MenuListProps> = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [chatListItemId, setChatListIemId] = useState();
   const [delType, setDelType] = useState('');
+  // Rename state
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [renameChatItem, setRenameChatItem] = useState<any>(null);
+  const [renameValue, setRenameValue] = useState('');
+  // Popover state
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [activePopoverKey, setActivePopoverKey] = useState<string | null>(null);
 
   // Refs
   const spaceButtonRef = useRef<HTMLDivElement | null>(null);
@@ -820,6 +899,8 @@ const MenuList: FC<MenuListProps> = ({
     handleDeleteChat,
     handleDeleteAgent,
     handleDeleteChatConfirm,
+    handleRenameChat,
+    handleRenameChatConfirm,
     initializeActiveMenu,
     initializeApp,
   } = useMenuListHelpers(
@@ -839,7 +920,14 @@ const MenuList: FC<MenuListProps> = ({
     chatListId,
     chatListItemId,
     onRefreshData,
-    isAdmin
+    isAdmin,
+    // Rename props
+    setRenameOpen,
+    setRenameChatItem,
+    setRenameValue,
+    renameChatItem,
+    renameValue,
+    setActivePopoverKey
   );
 
   // Dynamic menu list
@@ -916,8 +1004,11 @@ const MenuList: FC<MenuListProps> = ({
         mixedChatList={mixedChatList}
         handleNavigateToChat={handleNavigateToChat}
         handleDeleteChat={handleDeleteChat}
+        handleRenameChat={handleRenameChat}
         handleDeleteAgent={handleDeleteAgent}
         onChatHistoryData={onChatHistoryData}
+        activePopoverKey={activePopoverKey}
+        setActivePopoverKey={setActivePopoverKey}
       />
 
       <DeleteModal
@@ -927,6 +1018,29 @@ const MenuList: FC<MenuListProps> = ({
         delType={delType}
         t={t}
       />
+
+      {/* Rename Modal */}
+      <Modal
+        open={renameOpen}
+        onCancel={() => setRenameOpen(false)}
+        closeIcon={null}
+        className="[&_.ant-modal-content]:!py-8 [&_.ant-modal-content]:!px-8 [&_.ant-btn]:mt-3 [&_.ant-btn]:w-[63px] [&_.ant-btn]:h-8"
+        centered
+        width={352}
+        maskClosable={false}
+        onOk={handleRenameChatConfirm}
+      >
+        <div className="text-black/85 flex items-center gap-2.5 text-base font-medium leading-[1.4] overflow-hidden mb-4">
+          <span>{t('sidebar.confirmRename')}</span>
+        </div>
+        <input
+          type="text"
+          value={renameValue}
+          onChange={e => setRenameValue(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder={t('sidebar.enterNewName')}
+        />
+      </Modal>
     </div>
   );
 };

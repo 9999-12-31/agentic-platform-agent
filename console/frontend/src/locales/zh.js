@@ -339,6 +339,8 @@ export const zh = {
     logout: '退出登录',
     confirmRemove: '确定移除该智能体对话？',
     confirmRemoveAgent: '确定移除该智能体？',
+    confirmRename:"重命名",
+    enterNewName:'输入名称',
     // menuList 相关翻译
     personalSpace: '个人空间',
     teamSpace: '团队空间',

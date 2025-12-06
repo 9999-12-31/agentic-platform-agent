@@ -112,7 +112,7 @@ export const deleteChatList = (params: { chatListId: number }) => {
  * @param chatId 聊天列表Id
  * @returns
  */
-export const deleteChatIndex = ( chatId: number ) => {
+export const deleteChatIndex = (chatId: number) => {
   return http.post(`/chat-list/del-chat-index?chatId=${chatId}`);
 };
 /**
@@ -242,13 +242,11 @@ export const uploadFileBindChat = (
  * @param params
  * @returns
  */
-export const uploadFileSave = (
-    params: {
-      fileSize: number;
-      fileName: string;
-      fileUrl: string;
-    },
-): Promise<string> => {
+export const uploadFileSave = (params: {
+  fileSize: number;
+  fileName: string;
+  fileUrl: string;
+}): Promise<string> => {
   return http.post('/user-file/save-file', params);
 };
 
@@ -285,18 +283,18 @@ export const getVcnList = (): Promise<VcnItem[]> => {
  * 获取文件
  * @returns
  */
-export const getAllFiles = (fileName:string): Promise<Record<any, any>[]> => {
+export const getAllFiles = (fileName: string): Promise<Record<any, any>[]> => {
   const params = {
-    fileName
-  }
-  return http.post(`/user-file/get-all-files `,params);
+    fileName,
+  };
+  return http.post(`/user-file/get-all-files `, params);
 };
 
 /**
  * 删除文件
  * @returns
  */
-export const deleteFiles = (fileId:string): Promise<Record<any, any>[]> => {
+export const deleteFiles = (fileId: string): Promise<Record<any, any>[]> => {
   return http.delete(`/user-file/delete-file?fileId=${fileId}`);
 };
 
@@ -305,8 +303,8 @@ export const deleteFiles = (fileId:string): Promise<Record<any, any>[]> => {
  * @returns
  */
 export const getAllChatFiles = (
-    chatId: number,
-    childChatId: string
+  chatId: number,
+  childChatId: string
 ): Promise<Record<any, any>[]> => {
   return http.get('/chat-file/get-all-files', {
     params: {
@@ -314,4 +312,16 @@ export const getAllChatFiles = (
       childChatId: childChatId,
     },
   });
+};
+
+/**
+ * 重命名
+ * @returns
+ */
+export const updateTitle = (
+  chatId: string,
+  title: string
+): Promise<Record<any, any>[]> => {
+
+  return http.post(`/chat-list/update-chat-title?chatId=${chatId}&title=${title}`);
 };

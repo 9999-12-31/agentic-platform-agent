@@ -56,14 +56,15 @@ const Sidebar = (): ReactElement => {
   const getChatHistoryData = async (id: number): Promise<void> => {
     const res = await getChatHistory(id);
     // 计算新的historyList数据
-    const newHistoryList = res.filter((historyItem: any) => historyItem.historyList.length>0)
-        .map((historyItem: any) => {return historyItem.historyList[0]});
+    console.log(res);
+    const newHistoryList = res.filter((historyItem: any) => historyItem.historyList.length>0);
 
     setMixedChatList(prevList => prevList.map(chatItem => 
       chatItem.id === id 
         ? { ...chatItem, historyList: newHistoryList }
         : chatItem
     ));
+    console.log(mixedChatList);
   };
 
   const getChatList = async () => {
