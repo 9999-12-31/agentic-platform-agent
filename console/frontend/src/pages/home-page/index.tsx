@@ -27,6 +27,9 @@ import { BotType, Bot, SearchBotParam, Banner } from '@/types/agent-square';
 import type { ResponseResultPage } from '@/types/global';
 import { handleShare } from '@/utils';
 import { useLocaleStore } from '@/store/spark-store/locale-store';
+import dayjs from 'dayjs';
+import chatIcon from '@/assets/imgs/main/chat-bot.svg';
+import { getInputsType } from '@/services/flow';
 
 const PAGE_SIZE = 10;
 
@@ -45,36 +48,31 @@ const HomePage: React.FC = () => {
     // NOTE: isOpen: open new page
     {
       src: '/assets/xfyun-resources/agentRewardBanner.png',
-      srcEn:
-        '/assets/xfyun-resources/agentRewardBanner.png',
+      srcEn: '/assets/xfyun-resources/agentRewardBanner.png',
       url: `${window.location.origin}/activitySummer`,
       isOpen: false,
     },
     {
       src: '/assets/xfyun-resources/banner01-07.28.jpg',
-      srcEn:
-        '/assets/xfyun-resources/banner-en02.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en02.jpg',
       url: `${window.location.origin}/chat?sharekey=e1e62e4027b882aa7a43d4b25ed4974c&botId=2963659`,
       isOpen: false,
     },
     {
       src: '/assets/xfyun-resources/banner02-07.28.jpg',
-      srcEn:
-        '/assets/xfyun-resources/banner-en03.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en03.jpg',
       url: `${window.location.origin}/chat?sharekey=b17abc6f0d4a356ed09a9fe1631ffd2c&botId=2958065`,
       isOpen: false,
     },
     {
       src: '/assets/xfyun-resources/banner03-07.28.jpg',
-      srcEn:
-        '/assets/xfyun-resources/banner-en04.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en04.jpg',
       url: `${window.location.origin}/chat?sharekey=003e4873f478e5f1f9ed82930d0bb4e7&botId=2216831`,
       isOpen: false,
     },
     {
       src: '/assets/xfyun-resources/banner04-07.28.jpg',
-      srcEn:
-        '/assets/xfyun-resources/banner-en05.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en05.jpg',
       url: `${window.location.origin}/chat?sharekey=9991b23791117619a3c3608a44c1c499&botId=2813049`,
       isOpen: false,
     },
@@ -130,12 +128,15 @@ const HomePage: React.FC = () => {
   const loadAgentTypeList = async (): Promise<void> => {
     setBotTypes([]);
     const res: BotType[] = await getAgentType();
-    const botList: BotType[] = [{
+    const botList: BotType[] = [
+      {
         typeKey: null,
-        typeName: "全部",
-        icon: "",
-        typeNameEn: null
-    },...res]
+        typeName: '全部',
+        icon: '',
+        typeNameEn: null,
+      },
+      ...res,
+    ];
     setBotTypes(botList || []);
     setBotType(botList[0]?.typeKey || null);
     setPageInfo({
@@ -201,7 +202,8 @@ const HomePage: React.FC = () => {
     getAgentList({ ...pageInfo })
       .then((res: ResponseResultPage<Bot>) => {
         setAgentList(prevList => {
-          const newList = [...prevList, ...res.pageData];
+          // 当加载第一页时，清空现有列表，避免重复内容
+          const newList = pageInfo.page === 1 ? res.pageData : [...prevList, ...res.pageData];
           setHasMore(res.totalCount > newList.length);
           return newList;
         });
@@ -418,27 +420,75 @@ const HomePage: React.FC = () => {
 
                         <div className={styles.author}>
                           <div className={styles.author_info}>
-                            <img
-                              src={require('@/assets/imgs/home/author.svg')}
-                              alt=""
-                            />
+                            {/*<img*/}
+                            {/*  src={require('@/assets/imgs/home/author.svg')}*/}
+                            {/*  alt=""*/}
+                            {/*/>*/}
+                            {/*<span>*/}
+                            {/*  {item?.creator || t('home.officialAssistant')}*/}
+                            {/*</span>*/}
                             <span>
-                              {item?.creator || t('home.officialAssistant')}
+                              更新于
+                              {dayjs(item?.updateTime).format('YYYY-MM-DD')}
                             </span>
                           </div>
-                          <div className={styles.tags}>
-                            {item?.version &&
-                              [1, 5].includes(item?.version) && (
-                                <div className={styles.itag}>
-                                  {t('home.instructionType')}
-                                </div>
-                              )}
-                            {item?.version &&
-                              [2, 3, 4].includes(item?.version) && (
-                                <div className={styles.itag}>
-                                  {t('home.workflowType')}
-                                </div>
-                              )}
+                          {/*<div className={styles.tags}>*/}
+                          {/*  {item?.version &&*/}
+                          {/*    [1, 5].includes(item?.version) && (*/}
+                          {/*      <div className={styles.itag}>*/}
+                          {/*        {t('home.instructionType')}*/}
+                          {/*      </div>*/}
+                          {/*    )}*/}
+                          {/*  {item?.version &&*/}
+                          {/*    [2, 3, 4].includes(item?.version) && (*/}
+                          {/*      <div className={styles.itag}>*/}
+                          {/*        {t('home.workflowType')}*/}
+                          {/*      </div>*/}
+                          {/*    )}*/}
+                          {/*</div>*/}
+                          <div
+                            className="card-chat cursor-pointer flex justify-center items-center mr-2"
+                            style={{
+                              width: '76px',
+                              height: '32px',
+                              background: '#F1F0FF',
+                              borderRadius: '6px',
+                              textAlign: 'center',
+                            }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (item.version === 3) {
+                                getInputsType({ botId: item.botId }).then(
+                                  (res: any) => {
+                                    // 合并不支持对话的条件
+                                    if (
+                                      res.length > 1 &&
+                                      res
+                                        .slice(1)
+                                        .some(
+                                          (inputItem: { fileType?: string }) =>
+                                            inputItem.fileType !== 'file'
+                                        )
+                                    ) {
+                                      return message.info(
+                                        t('agentPage.agentPage.notSupported')
+                                      );
+                                    }
+                                    handleToChat(item.botId);
+                                  }
+                                );
+                              } else {
+                                handleToChat(item.botId);
+                              }
+                            }}
+                          >
+                            <img src={chatIcon} alt="" />
+                            <span
+                              className="ml-1 whitespace-nowrap"
+                              style={{ color: '#222529', fontSize: '14px' }}
+                            >
+                              {t('agentPage.agentPage.chat')}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -451,12 +501,7 @@ const HomePage: React.FC = () => {
             ) : (
               <div className={styles.good_card_list}>
                 <div className={styles.empty_state}>
-                  <img
-                    src={
-                      '/assets/xfyun-resources/组1@2x.png'
-                    }
-                    alt=""
-                  />
+                  <img src={'/assets/xfyun-resources/组1@2x.png'} alt="" />
                   <span
                     onClick={() => {
                       eventBus.emit('createBot');
@@ -474,7 +519,7 @@ const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-     loadAgentListAll();
+    loadAgentListAll();
   }, [pageInfo]);
 
   return (
@@ -487,7 +532,7 @@ const HomePage: React.FC = () => {
                 <div
                   key={item.typeKey}
                   className={classnames(styles.bot_type_item, 'relative', {
-                    [styles.activeTab as string]: botType === item.typeKey ,
+                    [styles.activeTab as string]: botType === item.typeKey,
                   })}
                   onClick={() => {
                     handleBotTypeChange(item.typeKey);
@@ -516,13 +561,3 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-
-
-
-
-
-
-
-
-
-
