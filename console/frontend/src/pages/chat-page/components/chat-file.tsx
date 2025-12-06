@@ -31,7 +31,7 @@ const ChatFile: React.FC<ChatSideProps> = ({ botInfo }) => {
 
   useEffect(() => {
     getList();
-  }, [botInfo, chilChatId]);
+  }, [botId,chilChatId]);
 
   return (
     <div className="fixed top-[84px] right-6 w-[340px] h-[calc(100vh-108px)] bg-white rounded-2xl py-10 px-6 overflow-y-auto scrollbar-hide">

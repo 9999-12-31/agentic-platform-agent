@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, FC } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Popover, Modal, message, Tooltip } from 'antd';
 import { createMenuList } from '@/constants';
 import useUserStore from '@/store/user-store';
@@ -18,6 +18,8 @@ import { useSpaceType } from '@/hooks/use-space-type';
 import useEnterpriseStore from '@/store/enterprise-store';
 import { MEMBER_ROLE, OWNER_ROLE } from '@/pages/space/config';
 import { useUserStoreHook } from '@/hooks/use-user-store';
+import useBotInfoStore from '@/store/bot-info-store';
+import useChatStore from '@/store/chat-store';
 
 // Assets
 import spaceMore from '@/assets/imgs/space/space-more.svg';
@@ -201,6 +203,8 @@ interface RecentListProps {
   onChatHistoryData: (item: any) => void;
   activePopoverKey: string | null;
   setActivePopoverKey: (key: string | null) => void;
+  expandedGroups: Record<string, boolean>;
+  onToggleGroup: (item: any) => void;
 }
 
 const RecentList: FC<RecentListProps> = ({
@@ -215,32 +219,15 @@ const RecentList: FC<RecentListProps> = ({
   onChatHistoryData,
   activePopoverKey,
   setActivePopoverKey,
+  expandedGroups,
+  onToggleGroup,
 }) => {
   const { t } = useTranslation();
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-    {}
-  );
-
-  useEffect(() => {
-    if (!mixedChatList || !Array.isArray(mixedChatList)) return;
-    const info = {};
-    mixedChatList.forEach(e => {
-      if (e?.botName) {
-        info[e.botName] = false;
-      }
-    });
-    setExpandedGroups(info);
-  }, []);
 
   if (isCollapsed) return null;
 
   const toggleGroup = (item: any) => {
-    const groupName = item?.botName;
-    setExpandedGroups(prev => ({
-      ...prev,
-      [groupName]: !prev[groupName],
-    }));
-    onChatHistoryData(item.id);
+    onToggleGroup(item);
   };
 
   return (
@@ -289,8 +276,8 @@ const RecentList: FC<RecentListProps> = ({
           >
             {showRecent &&
               mixedChatList?.length > 0 &&
-              mixedChatList.map((item: any) => (
-                <div key={item?.botName} className="w-full">
+              mixedChatList.map((item: any, index) => (
+                <div key={item?.botName + index} className="w-full">
                   <div
                     className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
                     onClick={() => toggleGroup(item)}
@@ -337,7 +324,7 @@ const RecentList: FC<RecentListProps> = ({
                           item.historyList.length > 0 &&
                           item.historyList.map((i: any, idx: number) => (
                             <div
-                              key={`${item.botId}-${i.message}-${idx}`}
+                              key={item.botId + i.message + idx + index}
                               className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
                               onClick={() => handleNavigateToChat(item, i)}
                             >
@@ -354,7 +341,10 @@ const RecentList: FC<RecentListProps> = ({
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0">
                                 <Popover
                                   content={
-                                    <div className="flex flex-col space-y-2 p-1" onClick={e => e.stopPropagation()}>
+                                    <div
+                                      className="flex flex-col space-y-2 p-1"
+                                      onClick={e => e.stopPropagation()}
+                                    >
                                       <div
                                         className="px-3 py-1 text-sm cursor-pointer hover:bg-[#f5f5f5] rounded transition-colors"
                                         onClick={e =>
@@ -375,10 +365,15 @@ const RecentList: FC<RecentListProps> = ({
                                   }
                                   trigger="click"
                                   placement="bottomRight"
-                                  open={activePopoverKey === `${item.id}-${i.chatId}`}
-                                  onOpenChange={(visible) => {
+                                  open={
+                                    activePopoverKey ===
+                                    `${item.id}-${i.chatId}`
+                                  }
+                                  onOpenChange={visible => {
                                     if (visible) {
-                                      setActivePopoverKey(`${item.id}-${i.chatId}`);
+                                      setActivePopoverKey(
+                                        `${item.id}-${i.chatId}`
+                                      );
                                     } else {
                                       setActivePopoverKey(null);
                                     }
@@ -388,10 +383,15 @@ const RecentList: FC<RecentListProps> = ({
                                     src={spaceMore}
                                     alt="更多"
                                     className="w-4 h-3 hover:w-2.5 hover:h-2.5 transition-all duration-200"
-                                    onClick={(e) => {
+                                    onClick={e => {
                                       e.stopPropagation();
                                       // 切换Popover状态
-                                      setActivePopoverKey(activePopoverKey === `${item.id}-${i.chatId}` ? null : `${item.id}-${i.chatId}`);
+                                      setActivePopoverKey(
+                                        activePopoverKey ===
+                                          `${item.id}-${i.chatId}`
+                                          ? null
+                                          : `${item.id}-${i.chatId}`
+                                      );
                                     }}
                                   />
                                 </Popover>
@@ -427,8 +427,10 @@ const RecentList: FC<RecentListProps> = ({
 interface MenuListProps {
   isCollapsed: boolean;
   mixedChatList: PostChatItem[];
-  onRefreshData?: (chatListId: string) => void;
+  onRefreshData?: (chatListId?: string | number) => Promise<void>;
   onChatHistoryData?: (item: any) => void;
+  expandedGroups: Record<string, boolean>;
+  onToggleGroup: (item: any) => void;
 }
 
 // Helper functions for MenuList component
@@ -442,13 +444,15 @@ const useMenuListHelpers = (
   spaceButtonRef: any,
   handleToChat: any,
   setChatListId: any,
-  setDelType:any,
-  delType:string,
+  setChatBotId: any,
+  setDelType: any,
+  delType: string,
   setChatListIemId: any,
   setDeleteOpen: any,
   chatListId: string,
+  chatBotId: string,
   chatListItemId: number,
-  onRefreshData?: (chatListId?: number) => void,
+  onRefreshData?: (chatListId?: number | string) => Promise<void>,
   isAdmin: boolean,
   // Rename props
   setRenameOpen: any,
@@ -482,6 +486,7 @@ const useMenuListHelpers = (
   const handleDeleteAgent = (item: any, e: any) => {
     e.stopPropagation();
     setChatListId(item?.id);
+    setChatBotId(item?.botId);
     setDelType('agent');
     setDeleteOpen(true);
   };
@@ -516,14 +521,32 @@ const useMenuListHelpers = (
   };
 
   //删除智能体对话
-  const handleDeleteChatConfirm = () => {
+  // 获取当前页面的botId和chatId
+  const currentBotId = useBotInfoStore(state => state.botInfo.botId);
+  const currentChatId = useChatStore(state => state.currentChatId);
+  const navigate = useNavigate();
+  const {
+    botId: botIdParam,
+    version,
+    chatId: chilChatId,
+  } = useParams<{
+    botId: string;
+    version?: string;
+    chatId?: string;
+  }>();
+
+  const handleDeleteChatConfirm = async () => {
     if (delType === 'chat') {
       deleteChatIndex(chatListItemId)
-        .then((res: any) => {
+        .then(async (res: any) => {
           setDeleteOpen(false);
           message.success(t('commonModal.agentDelete.success'));
           if (onRefreshData) {
-            onRefreshData(chatListId);
+            await onRefreshData(chatListId);
+          }
+          // 如果删除的记录与当前页面的chilChatId一致，则跳转到该bot的聊天页面
+          if (Number(chatListItemId) === Number(chilChatId)) {
+            navigate(`/chat/${botIdParam}`);
           }
         })
         .catch((err: any) => {
@@ -534,11 +557,14 @@ const useMenuListHelpers = (
       deleteChatList({
         chatListId: Number(chatListId),
       })
-        .then((res: any) => {
+        .then(async (res: any) => {
           setDeleteOpen(false);
           message.success(t('commonModal.agentDelete.success'));
           if (onRefreshData) {
-            onRefreshData();
+            await onRefreshData();
+          }
+          if ((Number(chatBotId) === Number(botIdParam)) && chilChatId) {
+            navigate(`/chat/${botIdParam}`);
           }
         })
         .catch((err: any) => {
@@ -847,6 +873,8 @@ const MenuList: FC<MenuListProps> = ({
   mixedChatList,
   onRefreshData,
   onChatHistoryData,
+  expandedGroups,
+  onToggleGroup,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -875,6 +903,8 @@ const MenuList: FC<MenuListProps> = ({
   const [menuActiveKey, setMenuActiveKey] = useState('');
   const [showRecent, setShowRecent] = useState(true);
   const [chatListId, setChatListId] = useState();
+  const [chatBotId, setChatBotId] = useState();
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [chatListItemId, setChatListIemId] = useState();
   const [delType, setDelType] = useState('');
@@ -913,11 +943,13 @@ const MenuList: FC<MenuListProps> = ({
     spaceButtonRef,
     handleToChat,
     setChatListId,
+    setChatBotId,
     setDelType,
     delType,
     setChatListIemId,
     setDeleteOpen,
     chatListId,
+    chatBotId,
     chatListItemId,
     onRefreshData,
     isAdmin,
@@ -1009,6 +1041,8 @@ const MenuList: FC<MenuListProps> = ({
         onChatHistoryData={onChatHistoryData}
         activePopoverKey={activePopoverKey}
         setActivePopoverKey={setActivePopoverKey}
+        expandedGroups={expandedGroups}
+        onToggleGroup={onToggleGroup}
       />
 
       <DeleteModal

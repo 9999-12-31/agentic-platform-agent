@@ -2,6 +2,7 @@ import useChatStore from '@/store/chat-store';
 import { getLanguageCode } from '@/utils/http';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useRef } from 'react';
+import eventBus from '@/utils/event-bus';
 import type { Option } from '@/types/chat';
 import {useNavigate, useParams} from 'react-router-dom';
 import { baseURL } from '@/utils/http';
@@ -74,8 +75,9 @@ const useChat = () => {
   const setIsWorkflowOption = useChatStore(state => state.setIsWorkflowOption); //是否是选项
   const setWorkflowOption = useChatStore(state => state.setWorkflowOption); //工作流选项
   const navigate = useNavigate();
-  const { chatId:chilChatId } = useParams<{
-    chatId?:string
+  const { chatId: chilChatId, botId: botIdParam } = useParams<{
+    chatId?: string;
+    botId?: string;
   }>();
   /**
    *
@@ -222,6 +224,11 @@ const useChat = () => {
             }
             // 完成流式消息，添加sid和id
             finishStreamingMessage(sidRef.current, reqIdRef.current);
+            // 触发回答完成事件，供侧边栏刷新历史
+            eventBus.emit('answerCompleted', {
+              botId: Number(botIdParam || 0),
+              chatId: currentChatId,
+            });
             controller.abort('结束');
             return;
           }
@@ -232,6 +239,11 @@ const useChat = () => {
           //统一的报错处理
           updateStreamingMessage(ERROR_TEXT);
           finishStreamingMessage(sidRef.current, reqIdRef.current);
+          // 错误结束也触发一次完成事件，保持刷新一致性
+          eventBus.emit('answerCompleted', {
+            botId: Number(botIdParam || 0),
+            chatId: currentChatId,
+          });
           controller.abort('错误结束');
           return;
         }

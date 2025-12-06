@@ -444,7 +444,7 @@ const ChatPage = (): ReactElement => {
           />
         </div>
       </div>
-      {botInfo?.supportUploadConfig?.length && <ChatFile botInfo={botInfo} />}
+      {botInfo?.supportUploadConfig && botInfo?.supportUploadConfig.length>0 && <ChatFile botInfo={botInfo} />}
       <ChatInput
         handleSendMessage={handleRecomendClick}
         botInfo={botInfo}
