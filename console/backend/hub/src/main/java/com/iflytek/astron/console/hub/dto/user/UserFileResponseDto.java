@@ -23,6 +23,9 @@ public class UserFileResponseDto {
     @Schema(description = "File size")
     private String fileSize;
 
+    @Schema(description = "File size raw")
+    private Long fileSizeRaw;
+
     @Schema(description = "File extension")
     private String fileExtension;
 

@@ -46,6 +46,7 @@ public class UserFileServiceImpl implements UserFileService {
         UserFileResponseDto dto = new UserFileResponseDto();
         dto.setFileId(entity.getFileId());
         dto.setFileName(entity.getFileName());
+        dto.setFileSizeRaw(entity.getFileSize());
         dto.setFileSize(DataSizeUtil.format(entity.getFileSize()));
         dto.setFileUrl(entity.getFileUrl());
         dto.setFileExtension(entity.getFileExtension());
@@ -83,6 +84,7 @@ public class UserFileServiceImpl implements UserFileService {
             dto.setFileId(entity.getFileId());
             dto.setFileName(entity.getFileName());
             dto.setFileSize(DataSizeUtil.format(entity.getFileSize()));
+            dto.setFileSizeRaw(entity.getFileSize());
             dto.setFileUrl(entity.getFileUrl());
             dto.setFileExtension(entity.getFileExtension());
             dto.setCreateTime(entity.getCreateTime());
