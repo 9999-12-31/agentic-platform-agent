@@ -4,9 +4,9 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useRef } from 'react';
 import eventBus from '@/utils/event-bus';
 import type { Option } from '@/types/chat';
-import {useNavigate, useParams} from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { baseURL } from '@/utils/http';
-import {postNewChat} from "@/services/chat";
+import { getBotInfoApi, postCreateChat, postNewChat } from '@/services/chat';
 
 // SSE 数据类型定义
 interface SSEData {
@@ -76,12 +76,16 @@ const useChat = () => {
   const setIsWorkflowOption = useChatStore(state => state.setIsWorkflowOption); //是否是选项
   const setWorkflowOption = useChatStore(state => state.setWorkflowOption); //工作流选项
   const navigate = useNavigate();
-  const { chatId: chilChatId, botId: botIdParam } = useParams<{
-    chatId?: string;
-    botId?: string;
-  }>();
   const setMessageList = useChatStore(state => state.setMessageList); //  设置消息列表
-
+  const {
+    botId: botIdParam,
+    version,
+    chatId: chilChatId,
+  } = useParams<{
+    botId: string;
+    version?: string;
+    chatId?: string;
+  }>();
   /**
    *
    * @param url 接口url
@@ -277,7 +281,7 @@ const useChat = () => {
     const form = new FormData();
     form.append('text', msg || '');
     form.append('chatId', `${currentChatId}`);
-    if (chilChatId){
+    if (chilChatId) {
       form.append('childChatId', `${chilChatId}`);
     }
     form.append('workflowVersion', version || '');
@@ -298,20 +302,33 @@ const useChat = () => {
   };
 
   //去对话页面
-  const handleToChat = async (botId: number, chatId?:number) => {
-    if (chatId){
-      navigate(`/chat/${botId}/${chatId}`);
-    }else {
-      // navigate(`/chat/${botId}`);
+  const handleToChat = async (
+    botId: number,
+    chatId?: string,
+    chilChatId?: number
+  ) => {
+    if (chilChatId) {
+      navigate(`/chat/${botId}/${chilChatId}`);
+    } else {
+      // await navigate(`/chat/${botId}`);
       try {
-        const info = await postNewChat(currentChatId);
-        setMessageList([])
-        navigate(`/chat/${botId}/${info?.id}`);
+        // const botInfo = await getBotInfoApi(
+        //     botId,
+        //     version !== 'debugger' ? version || '' : ''
+        // );
+        if (chatId) {
+          const info = await postNewChat(chatId);
+          setMessageList([]);
+          navigate(`/chat/${botId}/${info?.id}`);
+        } else {
+          const creatInfo = await postCreateChat(botId);
+          setMessageList([]);
+          navigate(`/chat/${botId}/${creatInfo?.id}`, { replace: true });
+        }
       } catch (error) {
         console.error(error);
       }
     }
-
   };
 
   const handleFlowToChat = (item: any) => {

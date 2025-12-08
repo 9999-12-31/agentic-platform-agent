@@ -382,7 +382,7 @@ const HomePage: React.FC = () => {
                     <div
                       className={styles.recent_card_item}
                       key={index}
-                      onClick={() => handleToChat(item?.botId)}
+                      onClick={() => handleToChat(item?.botId,item.chatId)}
                     >
                       <div className={styles.info}>
                         <div className={styles.bot_info}>
@@ -457,7 +457,7 @@ const HomePage: React.FC = () => {
                             }}
                             onClick={e => {
                               e.stopPropagation();
-                              handleToChat(item.botId);
+                              handleToChat(item.botId,item.chatId);
                             }}
                           >
                             <img src={chatIcon} alt="" />
