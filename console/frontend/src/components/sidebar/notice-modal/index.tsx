@@ -24,8 +24,8 @@ interface NoticeModalProps {
 const initCoverImg = (messageItem: Notification): string => {
   const systemCover = [
     '',
-    'https://openres.xfyun.cn/xfyundoc/2023-12-20/d2285839-d0c5-481c-860a-f65e1dce63ee/1703071130174/picon-bell.png',
-    'https://openres.xfyun.cn/xfyundoc/2023-12-20/9a15bf49-175c-42f0-ab53-7bce59249750/1703073213967/picon-notice.png',
+    '/assets/xfyun-resources/picon-bell.png',
+    '/assets/xfyun-resources/picon-notice.png',
   ];
   const typeIndex = messageItem.type === 'SYSTEM' ? 1 : 2;
   return systemCover[typeIndex] || '';
@@ -213,7 +213,7 @@ const NoticeModal: React.FC<NoticeModalProps> = ({
     }
 
     getMessages(selectType);
-    // 调用父组件的回调，更新消息数量
+    // 调用父组件的回调，更新消息数�?
     onMessageRead?.();
   };
 
@@ -222,7 +222,7 @@ const NoticeModal: React.FC<NoticeModalProps> = ({
       .then(res => {
         message.success(t('systemMessage.deleteSuccess'));
         getMessages(selectType);
-        // 调用父组件的回调，更新消息数量
+        // 调用父组件的回调，更新消息数�?
         onMessageRead?.();
       })
       .catch(() => {
@@ -240,7 +240,7 @@ const NoticeModal: React.FC<NoticeModalProps> = ({
     })
       .then(res => {
         getMessages(selectType);
-        // 调用父组件的回调，更新消息数量
+        // 调用父组件的回调，更新消息数�?
         onMessageRead?.();
       })
       .catch(e => {
@@ -310,3 +310,5 @@ const NoticeModal: React.FC<NoticeModalProps> = ({
   );
 };
 export default NoticeModal;
+
+

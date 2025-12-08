@@ -27,6 +27,9 @@ import { BotType, Bot, SearchBotParam, Banner } from '@/types/agent-square';
 import type { ResponseResultPage } from '@/types/global';
 import { handleShare } from '@/utils';
 import { useLocaleStore } from '@/store/spark-store/locale-store';
+import dayjs from 'dayjs';
+import chatIcon from '@/assets/imgs/main/chat-bot.svg';
+import { getInputsType } from '@/services/flow';
 
 const PAGE_SIZE = 10;
 
@@ -44,37 +47,32 @@ const HomePage: React.FC = () => {
   const [bannerList] = useState<Banner[]>([
     // NOTE: isOpen: open new page
     {
-      src: 'https://openres.xfyun.cn/xfyundoc/2025-09-01/ec2409cf-17cc-4276-b8f3-acdca4abac42/1756696685915/agentRewardBanner.png',
-      srcEn:
-        'https://openres.xfyun.cn/xfyundoc/2025-09-01/ec2409cf-17cc-4276-b8f3-acdca4abac42/1756696685915/agentRewardBanner.png',
+      src: '/assets/xfyun-resources/agentRewardBanner.png',
+      srcEn: '/assets/xfyun-resources/agentRewardBanner.png',
       url: `${window.location.origin}/activitySummer`,
       isOpen: false,
     },
     {
-      src: 'https://openres.xfyun.cn/xfyundoc/2025-07-28/1b4d1b3b-5fc0-44e5-938a-f11cd399ea09/1753666916737/banner01-07.28.jpg',
-      srcEn:
-        'https://openres.xfyun.cn/xfyundoc/2025-07-29/e6c12f1d-9e5c-4623-b668-d05d2d826a1f/1753771451925/banner-en02.jpg',
+      src: '/assets/xfyun-resources/banner01-07.28.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en02.jpg',
       url: `${window.location.origin}/chat?sharekey=e1e62e4027b882aa7a43d4b25ed4974c&botId=2963659`,
       isOpen: false,
     },
     {
-      src: 'https://openres.xfyun.cn/xfyundoc/2025-07-28/057e265c-d206-42a0-bcc4-e35d1a5950ad/1753666916740/banner02-07.28.jpg',
-      srcEn:
-        'https://openres.xfyun.cn/xfyundoc/2025-07-29/453698ff-0f08-41d7-b847-9db6640852c6/1753771451926/banner-en03.jpg',
+      src: '/assets/xfyun-resources/banner02-07.28.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en03.jpg',
       url: `${window.location.origin}/chat?sharekey=b17abc6f0d4a356ed09a9fe1631ffd2c&botId=2958065`,
       isOpen: false,
     },
     {
-      src: 'https://openres.xfyun.cn/xfyundoc/2025-07-28/d88084c2-16c8-4210-b5cb-7ef3e298a1bb/1753666916741/banner03-07.28.jpg',
-      srcEn:
-        'https://openres.xfyun.cn/xfyundoc/2025-07-29/0d319c45-816c-4d5b-a94c-91bc489c374d/1753771451926/banner-en04.jpg',
+      src: '/assets/xfyun-resources/banner03-07.28.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en04.jpg',
       url: `${window.location.origin}/chat?sharekey=003e4873f478e5f1f9ed82930d0bb4e7&botId=2216831`,
       isOpen: false,
     },
     {
-      src: 'https://openres.xfyun.cn/xfyundoc/2025-07-28/79576df5-7d4c-4cf0-b7cf-b1c343acc11a/1753666916742/banner04-07.28.jpg',
-      srcEn:
-        'https://openres.xfyun.cn/xfyundoc/2025-07-29/4818e1ba-8af5-4374-8238-db7250a14e84/1753771451927/banner-en05.jpg',
+      src: '/assets/xfyun-resources/banner04-07.28.jpg',
+      srcEn: '/assets/xfyun-resources/banner-en05.jpg',
       url: `${window.location.origin}/chat?sharekey=9991b23791117619a3c3608a44c1c499&botId=2813049`,
       isOpen: false,
     },
@@ -130,12 +128,15 @@ const HomePage: React.FC = () => {
   const loadAgentTypeList = async (): Promise<void> => {
     setBotTypes([]);
     const res: BotType[] = await getAgentType();
-    const botList: BotType[] = [{
+    const botList: BotType[] = [
+      {
         typeKey: null,
-        typeName: "全部",
-        icon: "",
-        typeNameEn: null
-    },...res]
+        typeName: '全部',
+        icon: '',
+        typeNameEn: null,
+      },
+      ...res,
+    ];
     setBotTypes(botList || []);
     setBotType(botList[0]?.typeKey || null);
     setPageInfo({
@@ -201,7 +202,8 @@ const HomePage: React.FC = () => {
     getAgentList({ ...pageInfo })
       .then((res: ResponseResultPage<Bot>) => {
         setAgentList(prevList => {
-          const newList = [...prevList, ...res.pageData];
+          // 当加载第一页时，清空现有列表，避免重复内容
+          const newList = pageInfo.page === 1 ? res.pageData : [...prevList, ...res.pageData];
           setHasMore(res.totalCount > newList.length);
           return newList;
         });
@@ -418,27 +420,53 @@ const HomePage: React.FC = () => {
 
                         <div className={styles.author}>
                           <div className={styles.author_info}>
-                            <img
-                              src={require('@/assets/imgs/home/author.svg')}
-                              alt=""
-                            />
+                            {/*<img*/}
+                            {/*  src={require('@/assets/imgs/home/author.svg')}*/}
+                            {/*  alt=""*/}
+                            {/*/>*/}
+                            {/*<span>*/}
+                            {/*  {item?.creator || t('home.officialAssistant')}*/}
+                            {/*</span>*/}
                             <span>
-                              {item?.creator || t('home.officialAssistant')}
+                              更新于
+                              {dayjs(item?.updateTime).format('YYYY-MM-DD')}
                             </span>
                           </div>
-                          <div className={styles.tags}>
-                            {item?.version &&
-                              [1, 5].includes(item?.version) && (
-                                <div className={styles.itag}>
-                                  {t('home.instructionType')}
-                                </div>
-                              )}
-                            {item?.version &&
-                              [2, 3, 4].includes(item?.version) && (
-                                <div className={styles.itag}>
-                                  {t('home.workflowType')}
-                                </div>
-                              )}
+                          {/*<div className={styles.tags}>*/}
+                          {/*  {item?.version &&*/}
+                          {/*    [1, 5].includes(item?.version) && (*/}
+                          {/*      <div className={styles.itag}>*/}
+                          {/*        {t('home.instructionType')}*/}
+                          {/*      </div>*/}
+                          {/*    )}*/}
+                          {/*  {item?.version &&*/}
+                          {/*    [2, 3, 4].includes(item?.version) && (*/}
+                          {/*      <div className={styles.itag}>*/}
+                          {/*        {t('home.workflowType')}*/}
+                          {/*      </div>*/}
+                          {/*    )}*/}
+                          {/*</div>*/}
+                          <div
+                            className="card-chat cursor-pointer flex justify-center items-center mr-2"
+                            style={{
+                              width: '76px',
+                              height: '32px',
+                              background: '#F1F0FF',
+                              borderRadius: '6px',
+                              textAlign: 'center',
+                            }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleToChat(item.botId);
+                            }}
+                          >
+                            <img src={chatIcon} alt="" />
+                            <span
+                              className="ml-1 whitespace-nowrap"
+                              style={{ color: '#222529', fontSize: '14px' }}
+                            >
+                              {t('agentPage.agentPage.chat')}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -451,12 +479,7 @@ const HomePage: React.FC = () => {
             ) : (
               <div className={styles.good_card_list}>
                 <div className={styles.empty_state}>
-                  <img
-                    src={
-                      'https://openres.xfyun.cn/xfyundoc/2024-01-03/2e6bdf58-f307-4765-9dfa-157813ea5875/1704248820240/%E7%BB%841%402x.png'
-                    }
-                    alt=""
-                  />
+                  <img src={'/assets/xfyun-resources/组1@2x.png'} alt="" />
                   <span
                     onClick={() => {
                       eventBus.emit('createBot');
@@ -474,7 +497,7 @@ const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-     loadAgentListAll();
+    loadAgentListAll();
   }, [pageInfo]);
 
   return (
@@ -487,7 +510,7 @@ const HomePage: React.FC = () => {
                 <div
                   key={item.typeKey}
                   className={classnames(styles.bot_type_item, 'relative', {
-                    [styles.activeTab as string]: botType === item.typeKey ,
+                    [styles.activeTab as string]: botType === item.typeKey,
                   })}
                   onClick={() => {
                     handleBotTypeChange(item.typeKey);

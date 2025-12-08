@@ -16,7 +16,7 @@ import { SDKEvents } from '@/utils/avatar-sdk-web_3.1.2.1002/index.js';
 import { message as AntdMessage } from 'antd';
 
 /**
- * 每个回复内容下面的按钮
+ * 每个回复内容下面的按�?
  */
 const ResqBottomButtons = ({
   message,
@@ -34,7 +34,7 @@ const ResqBottomButtons = ({
   const setCurrentPlayingId = useVoicePlayStore(
     state => state.setCurrentPlayingId
   );
-  const botInfo = useBotInfoStore(state => state.botInfo); //  智能体信息
+  const botInfo = useBotInfoStore(state => state.botInfo); //  智能体信�?
   const vmsInteractiveRef = useChatStore(state => state.vmsInteractiveRef);
   const vmsInteractiveRefStatus = useChatStore(
     (state: any) => state.vmsInteractiveRefStatus
@@ -113,7 +113,7 @@ const ResqBottomButtons = ({
     }
   };
 
-  // 监听全局播放ID，更新本地播放状态
+  // 监听全局播放ID，更新本地播放状�?
   useEffect(() => {
     setIsPlaying(currentPlayingId === message?.id);
   }, [currentPlayingId, message?.id]);
@@ -140,7 +140,7 @@ const ResqBottomButtons = ({
             <ReactSVG
               wrapper="span"
               src={
-                'https://openres.xfyun.cn/xfyundoc/2025-08-28/ead19985-ae09-4fd0-9c05-d993ec65d7a2/1756369724570/rotate-cw.svg'
+                '/assets/xfyun-resources/rotate-cw.svg'
               }
             />
           </div>
@@ -174,3 +174,4 @@ const ResqBottomButtons = ({
 };
 
 export default ResqBottomButtons;
+

@@ -639,20 +639,20 @@ function index() {
                                   </a>
                                 )}
 
-                                {k?.version === 3 && (
-                                  <div
-                                    className="p-1 rounded hover:bg-[#F2F5FE] text-[#666666]"
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      setCopyParams({ ...k, name: k.botName });
-                                      setVirtualModal(true);
-                                    }}
-                                  >
-                                    {t(
-                                      'agentPage.agentPage.copyToVirtualAgent'
-                                    )}
-                                  </div>
-                                )}
+                                {/*{k?.version === 3 && (*/}
+                                {/*  <div*/}
+                                {/*    className="p-1 rounded hover:bg-[#F2F5FE] text-[#666666]"*/}
+                                {/*    onClick={e => {*/}
+                                {/*      e.stopPropagation();*/}
+                                {/*      setCopyParams({ ...k, name: k.botName });*/}
+                                {/*      setVirtualModal(true);*/}
+                                {/*    }}*/}
+                                {/*  >*/}
+                                {/*    {t(*/}
+                                {/*      'agentPage.agentPage.copyToVirtualAgent'*/}
+                                {/*    )}*/}
+                                {/*  </div>*/}
+                                {/*)}*/}
                                 {![1, 4].includes(k?.botStatus) && (
                                   <div
                                     className="p-1 rounded hover:bg-[#F2F5FE] text-[#F74E43]"

@@ -1,11 +1,12 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { message, Spin } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import useBotInfoStore from '@/store/bot-info-store';
 import ChatHeader from './components/chat-header';
 import chatBg from '@/assets/imgs/chat/chat-bg.png';
 import MessageList from './components/message-list';
 import useChatStore from '@/store/chat-store';
-import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   getChatHistory,
   postCreateChat,
@@ -26,6 +27,8 @@ import messageIcon from '@/assets/svgs/icon-message-filled.svg';
 import VmsInteractionCmp from '@/components/vms-interaction-cmp';
 import { getSceneList } from '@/services/spark-common';
 import { getTalkAgentConfig } from '@/services/agent-square';
+import ChatFile from '@/pages/chat-page/components/chat-file';
+import classNames from 'classnames';
 
 /** 形象项（后端归一化后的前端结构） */
 interface SceneItem {
@@ -57,6 +60,9 @@ const ChatPage = (): ReactElement => {
   const messageList = useChatStore(state => state.messageList); //  消息列表
   const streamId = useChatStore(state => state.streamId); //  流式id
   const isLoading = useChatStore(state => state.isLoading); //  加载状态
+  const finishStreamingMessage = useChatStore(
+    state => state.finishStreamingMessage
+  ); //  完成流式消息
   const setMessageList = useChatStore(state => state.setMessageList); //  设置消息列表
   const setCurrentChatId = useChatStore(state => state.setCurrentChatId); //  设置当前聊天id
   const initChatStore = useChatStore(state => state.initChatStore); //  初始化聊天store
@@ -65,10 +71,14 @@ const ChatPage = (): ReactElement => {
   ); //  设置聊天文件列表
   const [isDataLoading, setIsDataLoading] = useState<boolean>(false); //  数据加载状态
   const [searchParams] = useSearchParams();
-  const { botId: botIdParam, version, chatId:chilChatId } = useParams<{
+  const {
+    botId: botIdParam,
+    version,
+    chatId: chilChatId,
+  } = useParams<{
     botId: string;
     version?: string;
-    chatId?:string
+    chatId?: string;
   }>();
   const sharekey = searchParams.get('sharekey') || ''; //  分享key
   const botId = parseInt(botIdParam || '0', 10) || 0; //  智能体ID
@@ -96,7 +106,7 @@ const ChatPage = (): ReactElement => {
       vmsInteractionCmpRef.current?.instance &&
         vmsInteractionCmpRef?.current?.dispose();
     };
-  }, [botId,chilChatId]);
+  }, [botId, chilChatId]);
 
   const handleChatTypeChange = (type: string) => {
     setChatType(type);
@@ -116,10 +126,9 @@ const ChatPage = (): ReactElement => {
       vmsInter = null;
     }
   };
-  const redirectPage = () => {
-    navigate(`/chat/${botId}`);
-  }
-
+  const redirectPage = (id: string) => {
+    navigate(`/chat/${botId}/${id}`);
+  };
   // 初始化聊天页面
   const initializeChatPage = async (): Promise<void> => {
     try {
@@ -198,9 +207,10 @@ const ChatPage = (): ReactElement => {
         openedTool: workflowBotInfo.openedTool,
         config: workflowBotInfo.config,
       });
+      console.log(botInfo);
       setCurrentChatId(botInfo.chatId);
       // 4. 获取对话历史
-      if (chilChatId){
+      if (chilChatId) {
         await getChatHistoryData(botInfo.chatId);
       }
       setIsDataLoading(false);
@@ -216,8 +226,11 @@ const ChatPage = (): ReactElement => {
     setChatFileListNoReq(res?.[0]?.chatFileListNoReq || []);
     let formattedMessages = formatHistoryToMessages(res);
 
-    if (chilChatId){
-      formattedMessages = formattedMessages.filter(item => item.chatId == chilChatId);
+    if (chilChatId) {
+      // 确保只有在消息有chatId字段时才进行过滤
+      formattedMessages = formattedMessages.filter(
+        item => !item.chatId || item.chatId == chilChatId
+      );
     }
     setMessageList(formattedMessages);
   };
@@ -239,9 +252,22 @@ const ChatPage = (): ReactElement => {
 
   //stop answer
   const stopAnswer = () => {
+    // 显示"正在停止输出"提示
+    // message.loading({
+    //   content: '正在停止输出',
+    //   duration: 1,
+    //   key: 'stop-output',
+    //   icon: <ExclamationCircleOutlined style={{color:'blue'}}/>
+    // });
+
     postStopChat(streamId).catch(err => {
       console.error(err);
     });
+    // 关闭前端的 SSE 连接
+    const controllerRef = useChatStore.getState().controllerRef;
+    controllerRef.abort('用户停止');
+    // 清除流式消息状态
+    finishStreamingMessage();
   };
 
   //set color
@@ -388,7 +414,12 @@ const ChatPage = (): ReactElement => {
         setBotInfo={setBotInfo}
         isDataLoading={isDataLoading}
       />
-      <div className="overflow-scroll flex flex-1 flex-col pt-[70px] pr-[24px] pl-[24px]">
+      <div
+        className={classNames(
+          'overflow-scroll flex flex-1 flex-col pt-[70px] pl-[24px]',
+          botInfo?.supportUploadConfig?.length ? 'pr-[388px]' : 'pr-[24px]'
+        )}
+      >
         <div className="flex items-center justify-end gap-4">
           {talkAgentConfig?.sceneEnable === 1 && (
             <>
@@ -425,12 +456,15 @@ const ChatPage = (): ReactElement => {
           />
         </div>
       </div>
-      {/*<ChatSide botInfo={botInfo} />*/}
+      {botInfo?.supportUploadConfig &&
+        botInfo?.supportUploadConfig.length > 0 && (
+          <ChatFile botInfo={botInfo} />
+        )}
       <ChatInput
         handleSendMessage={handleRecomendClick}
         botInfo={botInfo}
         stopAnswer={stopAnswer}
-        redirectPage = {redirectPage}
+        redirectPage={redirectPage}
       />
       {chatType === 'vms' && (
         <div className={styles.vms_container}>

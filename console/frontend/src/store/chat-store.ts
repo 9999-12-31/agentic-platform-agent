@@ -109,10 +109,12 @@ const useChatStore = create<ChatState & ChatActions>((set, get) => ({
 
       // 完成流式消息，添加sid和id
       if (lastMessage && !lastMessage.sid) {
+        // 即使没有传入sid，也生成一个唯一标识来标记消息已完成
+        const finalSid = sid || `stopped_${Date.now()}`;
         updatedMessageList[updatedMessageList.length - 1] = {
           ...lastMessage,
           message: lastMessage.message || '', // 确保message字段存在
-          sid,
+          sid: finalSid,
           reqId,
           workflowEventData: {
             workflowOperation: state.workflowOperation,

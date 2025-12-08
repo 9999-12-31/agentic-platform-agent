@@ -1,8 +1,13 @@
-import React, { useState, useEffect, JSX } from 'react';
-import { Tooltip, Popover } from 'antd';
+import React, { useState, useEffect, JSX, useRef } from 'react';
+import { Tooltip, Popover, Modal, Button, Input, Empty } from 'antd';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { BotInfoType, SupportUploadConfig, UploadFileInfo } from '@/types/chat';
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { getAllFiles, uploadFileBindChat } from '@/services/chat';
+import styles from '@/components/sidebar/personal-center/index.module.scss';
+import { getFileIcon } from '@/utils';
+import useChatFileUpload from '@/hooks/use-chat-file-upload';
 
 interface MultiUploadButtonsProps {
   botInfo: BotInfoType;
@@ -12,17 +17,47 @@ interface MultiUploadButtonsProps {
     uploadMaxMB?: number
   ) => void;
   fileList: UploadFileInfo[];
+  setFileList?: (
+    files:
+      | UploadFileInfo[]
+      | ((prevFiles: UploadFileInfo[]) => UploadFileInfo[])
+  ) => void;
 }
+const { Search } = Input;
 
 const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   botInfo,
   handleFileSelect,
   fileList,
+  setFileList,
 }) => {
   const { t } = useTranslation();
   const [fileTypeCounts, setFileTypeCounts] = useState<Record<string, number>>(
     {}
   );
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [currentUploadConfig, setCurrentUploadConfig] =
+    useState<SupportUploadConfig | null>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [allFiles, setAllFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, boolean>>(
+    {}
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const generateFileBusinessKey = (): string => {
+    const randomBytes = new Uint8Array(10);
+    window.crypto.getRandomValues(randomBytes);
+    const randomStr = Array.from(randomBytes, byte => byte.toString(36))
+      .join('')
+      .substring(2, 15);
+
+    return `${Date.now()}-${randomStr}`;
+  };
+
+  useEffect(() => {
+    getList();
+  }, []);
+
   // 统计各文件类型的数量
   useEffect(() => {
     const uploadConfigs: SupportUploadConfig[] =
@@ -42,7 +77,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         // 排除失败状态的文件
         const status = file.status || 'success';
         if (status === 'error') {
-          return; // 跳过失败的文件
+          return; // 跳过失败的文�?
         }
 
         // 根据 inputName (config.name) 进行计数
@@ -61,13 +96,166 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   }, [fileList, botInfo]);
 
   /**
-   * 获取文件类型对应的图标
+   * 获取文件类型对应的图�?
    */
   const getIconUrl = (icon?: string): string => {
     if (icon === 'image') {
-      return 'https://openres.xfyun.cn/xfyundoc/2024-10-23/d260123d-aa1d-4d1e-a575-22fa427deae0/1729648164577/fvadsdfgb.svg';
+      return '/assets/xfyun-resources/fvadsdfgb.svg';
     }
-    return 'https://openres.xfyun.cn/xfyundoc/2024-10-23/eb1e209f-e13f-4722-8561-8c564658e46d/1729648162929/adfsa.svg';
+    return '/assets/xfyun-resources/adfsa.svg';
+  };
+  const getList = async () => {
+    const res = await getAllFiles(searchValue || '');
+    setAllFiles(res);
+  };
+  // 打开上传弹窗
+  const handleOpenUploadModal = (config: SupportUploadConfig) => {
+    setCurrentUploadConfig(config);
+    setSelectedFiles({}); // 重置选择状态
+    setUploadModalVisible(true);
+  };
+
+  // 关闭上传弹窗
+  const handleCloseUploadModal = () => {
+    setUploadModalVisible(false);
+    setCurrentUploadConfig(null);
+    setSelectedFiles({}); // 重置选择状态
+  };
+
+  // 检查文件类型是否匹配accept规则
+  const isFileTypeAllowed = (file: any): boolean => {
+    if (!currentUploadConfig || !currentUploadConfig.accept) return true;
+
+    const { accept } = currentUploadConfig;
+    const fileExtension = file.fileName?.split('.').pop()?.toLowerCase();
+    const fileType = file.type?.toLowerCase();
+
+    // 解析accept字符串，支持逗号分隔的格式，如".pdf,.doc,image/*"
+    const acceptRules = accept.split(',').map(rule => rule.trim().toLowerCase());
+
+    for (const rule of acceptRules) {
+      if (rule === '*/*') return true;
+      if (rule.startsWith('.')) {
+        // 文件扩展名规则
+        if (fileExtension === rule.slice(1)) return true;
+      } else if (rule.includes('/')) {
+        // MIME类型规则
+        if (rule.endsWith('/*')) {
+          // 如image/*
+          const mainType = rule.split('/')[0];
+          if (fileType?.startsWith(mainType + '/')) return true;
+        } else {
+          // 具体MIME类型
+          if (fileType === rule) return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  // 处理文件项选择
+  const handleFileItemSelect = (fileId: string) => {
+    if (!currentUploadConfig) return;
+
+    const { limit } = currentUploadConfig;
+    const currentSelectionCount = Object.values(selectedFiles).filter(Boolean).length;
+    const file = allFiles.find(f => f.fileId === fileId);
+
+    // 如果文件已选中，则取消选择
+    if (selectedFiles[fileId]) {
+      setSelectedFiles(prev => ({
+        ...prev,
+        [fileId]: false,
+      }));
+      return;
+    }
+
+    // 如果已达到选择上限，则不允许再选择
+    if (currentSelectionCount >= (limit || 1)) {
+      return;
+    }
+
+    // 检查文件类型是否匹配accept规则
+    if (!isFileTypeAllowed(file)) {
+      return;
+    }
+
+    // 选择文件
+    setSelectedFiles(prev => ({
+      ...prev,
+      [fileId]: true,
+    }));
+  };
+
+  // 处理确认选择
+  const handleConfirmSelection = async () => {
+    if (!currentUploadConfig) return;
+
+    // 这里可以根据selectedFiles处理选中的文件
+    const selectedFileList = allFiles.filter(
+      file => selectedFiles[file.fileId]
+    );
+    console.log('Selected files:', selectedFileList);
+    const config = currentUploadConfig;
+
+    // 处理选中的文件
+    const newFiles: UploadFileInfo[] = selectedFileList.map(fileObj => ({
+      uid: generateFileBusinessKey(),
+      fileName: fileObj.fileName,
+      file:fileObj,
+      fileSize: fileObj.fileSizeRaw,
+      fileId:fileObj.fileId,
+      type: fileObj.type,
+      status: 'completed',
+      fileUrl: fileObj.fileUrl,
+      fileBusinessKey: generateFileBusinessKey(),
+      progress: 100,
+      paramName: config.name, // 添加 paramName
+      inputName: config.name, // 添加 inputName（对应 config.name）
+    }));
+
+    // 使用函数式更新添加新文件
+    if (setFileList) {
+      setFileList(prev => [...prev, ...newFiles]);
+    }
+
+    // 为每个选中的文件调用上传绑定接口
+    for (const fileObj of selectedFileList) {
+      await uploadFileBindChat({
+        chatId: botInfo.chatId,
+        fileName: fileObj.fileName,
+        fileSize: fileObj.fileSizeRaw,
+        fileUrl: fileObj.fileUrl,
+        fileBusinessKey: generateFileBusinessKey(),
+        paramName: config.name || config.type, // 添加 paramName 参数
+      });
+    }
+
+    handleCloseUploadModal();
+  };
+
+  // 触发文件选择
+  const triggerFileInput = () => {
+    if (fileInputRef.current && currentUploadConfig) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // 处理文件选择
+  const handleFileSelectWithConfig = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (currentUploadConfig) {
+      const uploadMaxMB =
+        currentUploadConfig.icon === 'image'
+          ? 20
+          : currentUploadConfig.icon === 'video'
+            ? 500
+            : 50;
+      handleFileSelect(e, currentUploadConfig, uploadMaxMB);
+      handleCloseUploadModal();
+    }
   };
 
   /**
@@ -94,28 +282,21 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         placement="top"
         mouseEnterDelay={1}
       >
-        <label
+        <div
           className={clsx(
             'relative flex items-center justify-center gap-1.5 px-2 py-1 cursor-pointer transition-all rounded hover:bg-[#f5f5f5]',
             isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none'
           )}
+          onClick={() => !isDisabled && handleOpenUploadModal(config)}
         >
-          <input
-            type="file"
-            accept={accept}
-            multiple={(limit || 0) > 1}
-            onChange={e => handleFileSelect(e, config, uploadMaxMB)}
-            style={{ display: 'none' }}
-            disabled={isDisabled}
-          />
           <img
             src={getIconUrl(icon)}
             alt={type}
-            className="w-4 h-4 flex-shrink-0"
+            className="w-4 h-4 flex-shrink-0 cursor-pointer"
           />
           <div className="flex flex-col">
             <div className="text-xs whitespace-nowrap">
-              {type} <span>{schema.default?`(${schema.default})`:''}</span>
+              {type} <span>{schema.default ? `(${schema.default})` : ''}</span>
             </div>
             {isPopover && (
               <div className="text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
@@ -127,7 +308,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
               </div>
             )}
           </div>
-        </label>
+        </div>
       </Tooltip>
     );
   };
@@ -156,7 +337,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   };
 
   /**
-   * 渲染合并的上传按钮（当配置项超过3个时使用）
+   * 渲染合并的上传按钮（当配置项超过3个时使用�?
    */
   const renderMergedUploadButton = (
     uploadConfigs: SupportUploadConfig[]
@@ -173,7 +354,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         arrow={false}
       >
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2024-12-04/28cc8ea7-e679-47ba-b3e1-810870f79e38/1733276919310/afsddfsadfs.svg"
+          src="/assets/xfyun-resources/afsddfsadfs.svg"
           alt="Upload"
           className="w-5 h-5 cursor-pointer ml-1"
         />
@@ -182,7 +363,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   };
 
   /**
-   * 渲染所有上传按钮
+   * 渲染所有上传按�?
    */
   const renderUploadButtons = (): JSX.Element => {
     const uploadConfigs: SupportUploadConfig[] =
@@ -211,7 +392,130 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
     );
   };
 
-  return renderUploadButtons();
+  // 渲染上传弹窗
+  const renderUploadModal = () => {
+    if (!currentUploadConfig) return null;
+
+    const { accept, limit, type, icon, name, schema } = currentUploadConfig;
+
+    return (
+      <Modal
+        title="选择个人中心文件"
+        open={uploadModalVisible}
+        onCancel={handleCloseUploadModal}
+        footer={null}
+        width={900}
+      >
+        {/* 搜索栏 */}
+        <div className="flex items-center justify-end mb-4">
+          <div className="flex items-center">
+            <Search
+              placeholder="输入文件名"
+              size={'large'}
+              onChange={e => setSearchValue(e.target.value)}
+              onSearch={getList}
+              enterButton
+            />
+            <div className="ml-2">
+              <Button
+                type="primary"
+                icon={<UploadOutlined />}
+                size="large"
+                onClick={triggerFileInput}
+              >
+                上传本地文件
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* 选择信息提示 */}
+        {allFiles.length > 0 && (
+          <div className="mb-4 text-sm text-gray-600">
+            已选择 {Object.values(selectedFiles).filter(Boolean).length} /{' '}
+            {limit} 个文件
+          </div>
+        )}
+
+        {/* 文件列表 */}
+        <div className="mb-8">
+          <div className={styles.contentWrapper}>
+            {allFiles.map(file => {
+              const isSelected = selectedFiles[file.fileId] || false;
+              const currentSelectionCount = Object.values(selectedFiles).filter(Boolean).length;
+              const isOverLimit = !isSelected && currentSelectionCount >= (limit || 1);
+              const isTypeNotAllowed = !isSelected && !isFileTypeAllowed(file);
+              const isDisabled = isOverLimit || isTypeNotAllowed;
+
+              return (
+                <div
+                  className={`${styles.itemBox} ${isSelected ? 'border-blue-400 bg-blue-50' : ''} ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  key={file.fileId}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleFileItemSelect(file.fileId)}
+                        disabled={isDisabled}
+                        className="mr-2 cursor-pointer"
+                      />
+                      <img
+                        src={getFileIcon(file)}
+                        alt={file.fileExtension}
+                        className="w-10 h-10 mr-2"
+                      />
+                      <div className="flex flex-col">
+                        <div className="text-sm font-medium text-gray-800 truncate max-w-[150px]">
+                          {file.fileName}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {file.createTime}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500">{file.fileSize}</div>
+                </div>
+              );
+            })}
+          </div>
+          {allFiles.length === 0 && <Empty />}
+        </div>
+
+        {/* 底部操作按钮 */}
+        <div className="flex items-center justify-end mt-4">
+          <Button onClick={handleCloseUploadModal}>取消</Button>
+          <Button
+            type="primary"
+            className="ml-2"
+            onClick={handleConfirmSelection}
+            disabled={Object.values(selectedFiles).filter(Boolean).length === 0}
+          >
+            确定
+          </Button>
+        </div>
+
+        {/* 隐藏的文件输入框 */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          multiple={(limit || 0) > 1}
+          onChange={handleFileSelectWithConfig}
+          style={{ display: 'none' }}
+        />
+      </Modal>
+    );
+  };
+
+  return (
+    <>
+      {renderUploadButtons()}
+      {renderUploadModal()}
+    </>
+  );
 };
 
 export default MultiUploadButtons;

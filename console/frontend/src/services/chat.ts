@@ -112,7 +112,7 @@ export const deleteChatList = (params: { chatListId: number }) => {
  * @param chatId 聊天列表Id
  * @returns
  */
-export const deleteChatIndex = ( chatId: number ) => {
+export const deleteChatIndex = (chatId: number) => {
   return http.post(`/chat-list/del-chat-index?chatId=${chatId}`);
 };
 /**
@@ -237,6 +237,18 @@ export const uploadFileBindChat = (
     signal,
   });
 };
+/**
+ * 上传文件保存到我的文件
+ * @param params
+ * @returns
+ */
+export const uploadFileSave = (params: {
+  fileSize: number;
+  fileName: string;
+  fileUrl: string;
+}): Promise<string> => {
+  return http.post('/user-file/save-file', params);
+};
 
 /**
  * 绑定对话的文件解绑
@@ -266,4 +278,50 @@ export const getTtsSign = (params: {
  */
 export const getVcnList = (): Promise<VcnItem[]> => {
   return http.get(`/voice/get-pronunciation-person`);
+};
+/**
+ * 获取文件
+ * @returns
+ */
+export const getAllFiles = (fileName: string): Promise<Record<any, any>[]> => {
+  const params = {
+    fileName,
+  };
+  return http.post(`/user-file/get-all-files `, params);
+};
+
+/**
+ * 删除文件
+ * @returns
+ */
+export const deleteFiles = (fileId: string): Promise<Record<any, any>[]> => {
+  return http.delete(`/user-file/delete-file?fileId=${fileId}`);
+};
+
+/**
+ * 获取对话所以文件
+ * @returns
+ */
+export const getAllChatFiles = (
+  chatId: number,
+  childChatId: string
+): Promise<Record<any, any>[]> => {
+  return http.get('/chat-file/get-all-files', {
+    params: {
+      chatId: chatId,
+      childChatId: childChatId,
+    },
+  });
+};
+
+/**
+ * 重命名
+ * @returns
+ */
+export const updateTitle = (
+  chatId: string,
+  title: string
+): Promise<Record<any, any>[]> => {
+
+  return http.post(`/chat-list/update-chat-title?chatId=${chatId}&title=${title}`);
 };

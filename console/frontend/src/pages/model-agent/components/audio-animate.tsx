@@ -14,7 +14,7 @@ interface AudioAnimateProps {
 const AudioAnimate = ({ isPlaying }: AudioAnimateProps): ReactElement => {
   const [playing, setPlaying] = useState<boolean>(false);
 
-  // 切换播放状态
+  // 切换播放状�?
   const handleTogglePlay = useCallback((): void => {
     setPlaying(!playing);
   }, [playing]);
@@ -45,7 +45,7 @@ const AudioAnimate = ({ isPlaying }: AudioAnimateProps): ReactElement => {
               '[&>div>span]:w-4 [&>div>span]:h-4',
               '[&>div>svg]:w-5 [&>div>svg]:h-5'
             )}
-            src="https://openres.xfyun.cn/xfyundoc/2024-10-23/713754ca-5528-4cc9-a8e8-959facc8c648/1729652844928/afdfsdaaf.svg"
+            src="/assets/xfyun-resources/afdfsdaaf.svg"
           />
         ) : (
           <ReactSVG
@@ -64,3 +64,4 @@ const AudioAnimate = ({ isPlaying }: AudioAnimateProps): ReactElement => {
 };
 
 export default AudioAnimate;
+

@@ -13,13 +13,13 @@ export const OWNER_ROLE = '1';
 export const ADMIN_ROLE = '2';
 export const MEMBER_ROLE = '3';
 
-// 状态常量配置
+// 状态常量配�?
 const ALL_STATUS = '0';
-export const PENDING_STATUS = '1'; // 待确认
-const JOINED_STATUS = '3'; // 已加入
+export const PENDING_STATUS = '1'; // 待确�?
+const JOINED_STATUS = '3'; // 已加�?
 const PASSED_STATUS = '2'; // 通过
 const REJECTED_STATUS_APPLY = '3'; // 拒绝 - 申请
-const REJECTED_STATUS_INVITE = '2'; // 拒绝 - 邀请
+const REJECTED_STATUS_INVITE = '2'; // 拒绝 - 邀�?
 const WITHDRAWN_STATUS = '4'; // 撤回
 const EXPIRED_STATUS = '5'; // 过期
 
@@ -83,7 +83,7 @@ export const roleTypeToRole = (roleType: string | undefined) => {
   );
 };
 
-// 角色筛选配置
+// 角色筛选配�?
 export const ROLE_FILTER = {
   ALL: 'all',
   SUPER_ADMIN: RoleType.SUPER_ADMIN,
@@ -95,7 +95,7 @@ export const ROLE_FILTER = {
 /**
  * 获取角色筛选选项
  * @param locale 语言
- * @param isEnterprise 是否是企业管理
+ * @param isEnterprise 是否是企业管�?
  * @returns 角色筛选选项
  */
 export const getRoleOptions = (
@@ -115,7 +115,7 @@ export const getRoleOptions = (
   { value: ROLE_FILTER.MEMBER, label: getI18nText(locale, 'member') },
 ];
 
-// 状态筛选配置 - 邀请
+// 状态筛选配�?- 邀�?
 export const STATUS_FILTER = {
   ALL: ALL_STATUS,
   PENDING: PENDING_STATUS,
@@ -125,7 +125,7 @@ export const STATUS_FILTER = {
   EXPIRED: EXPIRED_STATUS,
 } as const;
 
-// 状态筛选配置 - 申请
+// 状态筛选配�?- 申请
 export const STATUS_FILTER_APPLY = {
   ALL: ALL_STATUS,
   PENDING: PENDING_STATUS,
@@ -136,7 +136,7 @@ export const STATUS_FILTER_APPLY = {
 /**
  * 获取状态筛选选项
  * @param locale 语言
- * @param isApply 是否是申请管理
+ * @param isApply 是否是申请管�?
  * @returns 状态筛选选项
  */
 export const getStatusOptions = (locale: string, isApply: boolean = false) => [
@@ -171,7 +171,7 @@ export const getStatusOptions = (locale: string, isApply: boolean = false) => [
 export const DEBOUNCE_DELAY = 500;
 export const LOADING_DELAY = 800;
 
-// 默认值配置
+// 默认值配�?
 export const DEFAULT_VALUES = {
   TAB: TAB_KEYS.MEMBERS,
   ROLE_FILTER: ROLE_FILTER.ALL,
@@ -180,14 +180,14 @@ export const DEFAULT_VALUES = {
   SEARCH_VALUE: '',
 } as const;
 
-// 不同状态主题配置-申请
+// 不同状态主题配�?申请
 export const STATUS_THEME_MAP_APPLY = {
   [PENDING_STATUS]: 'warning',
   [REJECTED_STATUS_APPLY]: 'danger',
   [PASSED_STATUS]: 'success',
 } as const;
 
-// 不同状态主题配置-邀请
+// 不同状态主题配�?邀�?
 export const STATUS_THEME_MAP_INVITE = {
   [PENDING_STATUS]: 'warning',
   [REJECTED_STATUS_INVITE]: 'danger',
@@ -197,10 +197,10 @@ export const STATUS_THEME_MAP_INVITE = {
 } as const;
 
 /**
- * 获取申请状态文本展示映射
+ * 获取申请状态文本展示映�?
  * @param locale 语言
- * @param isApply 是否是申请管理
- * @returns 状态文本展示映射
+ * @param isApply 是否是申请管�?
+ * @returns 状态文本展示映�?
  */
 export const getApplyStatusTextMap = (locale: string) => ({
   [STATUS_FILTER_APPLY.ALL]: getI18nText(locale, 'allStatus'),
@@ -210,10 +210,10 @@ export const getApplyStatusTextMap = (locale: string) => ({
 });
 
 /**
- * 获取邀请状态文本展示映射
+ * 获取邀请状态文本展示映�?
  * @param locale 语言
- * @param isApply 是否是申请管理
- * @returns 状态文本展示映射
+ * @param isApply 是否是申请管�?
+ * @returns 状态文本展示映�?
  */
 export const getInvitationStatusTextMap = (
   locale: string,
@@ -227,7 +227,7 @@ export const getInvitationStatusTextMap = (
   [STATUS_FILTER.EXPIRED]: getI18nText(locale, 'expired'),
 });
 
-// 消息提示配置 - 支持国际化
+// 消息提示配置 - 支持国际�?
 export const getMessages = (locale: string) => ({
   SUCCESS: {
     SPACE_UPDATE: getI18nText(locale, 'spaceUpdateSuccess'),
@@ -248,7 +248,7 @@ export const getMessages = (locale: string) => ({
   },
 });
 
-// 空间角色映射 - 支持国际化
+// 空间角色映射 - 支持国际�?
 export const getRoleTextMap = (locale: string) => ({
   [ALL_ROLE]: getI18nText(locale, 'allRoles'),
   [ROLE_FILTER.SUPER_ADMIN]: getI18nText(locale, 'superAdmin'),
@@ -271,4 +271,5 @@ export const getMemberRoleOptions = (locale: string) =>
 
 // export const defaultEnterpriseAvatar = 'https://openres.xfyun.cn/xfyundoc/2025-07-29/9a976f35-e51a-4140-817d-bde44e58ffa5/1753780785368/enterpriseAvatar.svg';
 export const defaultEnterpriseAvatar =
-  'https://openres.xfyun.cn/xfyundoc/2025-08-15/4c1ec85b-b8a5-422f-ad09-b398700a218e/1755245023381/building.svg';
+  '/assets/xfyun-resources/building.svg';
+

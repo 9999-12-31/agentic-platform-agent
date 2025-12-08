@@ -276,19 +276,19 @@ public class BotCreateController {
         List<BotModelDto> allModels = new ArrayList<>();
 
         // 1. Add default models: Spark 4.0 and x1
-        BotModelDto x1Model = new BotModelDto();
-        x1Model.setModelDomain(DefaultBotModelEnum.X1.getDomain());
-        x1Model.setModelName(DefaultBotModelEnum.X1.getName());
-        x1Model.setModelIcon(DefaultBotModelEnum.X1.getIcon());
-        x1Model.setIsCustom(false);
-        allModels.add(x1Model);
+        // BotModelDto x1Model = new BotModelDto();
+        // x1Model.setModelDomain(DefaultBotModelEnum.X1.getDomain());
+        // x1Model.setModelName(DefaultBotModelEnum.X1.getName());
+        // x1Model.setModelIcon(DefaultBotModelEnum.X1.getIcon());
+        // x1Model.setIsCustom(false);
+        // allModels.add(x1Model);
 
-        BotModelDto sparkModel = new BotModelDto();
-        sparkModel.setModelDomain(DefaultBotModelEnum.SPARK_4_0.getDomain());
-        sparkModel.setModelName(DefaultBotModelEnum.SPARK_4_0.getName());
-        sparkModel.setModelIcon(DefaultBotModelEnum.SPARK_4_0.getIcon());
-        sparkModel.setIsCustom(false);
-        allModels.add(sparkModel);
+        // BotModelDto sparkModel = new BotModelDto();
+        // sparkModel.setModelDomain(DefaultBotModelEnum.SPARK_4_0.getDomain());
+        // sparkModel.setModelName(DefaultBotModelEnum.SPARK_4_0.getName());
+        // sparkModel.setModelIcon(DefaultBotModelEnum.SPARK_4_0.getIcon());
+        // sparkModel.setIsCustom(false);
+        // allModels.add(sparkModel);
 
         // 2. Get custom models
         JSONObject result = JSONObject.from(llmService.getLlmAuthList(request, null, "workflow", "spark-llm"));

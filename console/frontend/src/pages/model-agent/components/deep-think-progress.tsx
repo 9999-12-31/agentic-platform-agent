@@ -33,7 +33,7 @@ const DeepThinkProgress: React.FC<{
           ) : (
             <div className="flex justify-center items-center w-full h-7">
               <img
-                src="https://openres.xfyun.cn/xfyundoc/2025-03-31/1c2b6582-14d3-4741-8361-286401473663/1743423234749/scaasc.svg"
+                src="/assets/xfyun-resources/scaasc.svg"
                 alt=""
                 className="w-[13px] h-[13px] flex-shrink-0"
               />
@@ -65,7 +65,7 @@ const DeepThinkProgress: React.FC<{
       >
         {t('chatPage.deepThinkProgress.title')}
         <img
-          src="https://openres.xfyun.cn/xfyundoc/2025-04-01/52202e3f-c57f-4820-81ee-361335e861f9/1743475056488/vasvasavs.svg"
+          src="/assets/xfyun-resources/vasvasavs.svg"
           alt=""
           className={`w-2 h-auto ml-1 transition-transform duration-200 ${
             !open ? 'rotate-180' : ''
@@ -76,7 +76,7 @@ const DeepThinkProgress: React.FC<{
       {thinkComplete ? (
         <div className="flex items-center">
           <img
-            src="https://openres.xfyun.cn/xfyundoc/2025-03-31/1c2b6582-14d3-4741-8361-286401473663/1743423234749/scaasc.svg"
+            src="/assets/xfyun-resources/scaasc.svg"
             alt=""
             className="mr-2.5"
           />
@@ -88,3 +88,5 @@ const DeepThinkProgress: React.FC<{
 };
 
 export default React.memo(DeepThinkProgress);
+
+

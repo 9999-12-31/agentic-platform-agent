@@ -1,72 +1,158 @@
-import { ReactElement } from 'react';
-import { DeleteOutlined } from '@ant-design/icons';
+import React, { ReactElement, useState, useEffect } from 'react';
+import {
+  DeleteOutlined,
+  UploadOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
+import styles from '../sidebar/personal-center/index.module.scss';
+import { Input, Button, Progress, Modal } from 'antd';
+import useChatFileUpload from '@/hooks/use-chat-file-upload';
+import type {
+  BotInfoType,
+  UploadFileInfo,
+  SupportUploadConfig,
+} from '@/types/chat';
+import { deleteFiles, getAllFiles } from '@/services/chat';
+import { getFileIcon } from '@/utils';
 
-// 文件类型图标映射
-const fileTypeIcons: Record<string, string> = {
-  xlsx: 'https://img.icons8.com/color/48/000000/microsoft-excel-2019.png',
-  pdf: 'https://img.icons8.com/color/48/000000/pdf.png',
-  doc: 'https://img.icons8.com/color/48/000000/microsoft-word-2019.png',
-  txt: 'https://img.icons8.com/color/48/000000/txt.png',
-};
+const { Search } = Input;
 
 // 文件数据接口
 interface FileItem {
-  id: string;
-  name: string;
-  type: string;
-  date: string;
-  size: string;
+  createTime: string;
+  fileExtension: string;
+  fileId: string;
+  fileName: string;
+  fileSize: number;
+  fileUrl: string;
 }
 
-// 模拟文件数据
-const mockFiles: FileItem[] = [
-  // 近30天
-  { id: '1', name: '医院绩效考核等级评审材料', type: 'xlsx', date: '2025/10/29', size: '17.7 KB' },
-  { id: '2', name: '医院绩效考核等级评审材料', type: 'pdf', date: '2025/10/29', size: '17.7 KB' },
-  { id: '3', name: '医院绩效考核等级评审材料', type: 'doc', date: '2025/10/29', size: '17.7 KB' },
-  { id: '4', name: '医院绩效考核等级评审材料', type: 'txt', date: '2025/10/29', size: '17.7 KB' },
-  // 更早
-  { id: '5', name: '医院绩效考核等级评审材料', type: 'xlsx', date: '2025/10/29', size: '17.7 KB' },
-  { id: '6', name: '医院绩效考核等级评审材料', type: 'pdf', date: '2025/10/29', size: '17.7 KB' },
-  { id: '7', name: '医院绩效考核等级评审材料', type: 'doc', date: '2025/10/29', size: '17.7 KB' },
-  { id: '8', name: '医院绩效考核等级评审材料', type: 'txt', date: '2025/10/29', size: '17.7 KB' },
-];
+const mockBotInfo: BotInfoType = {
+  pcBackground: '',
+  botStatus: 1,
+  chatId: 123456, // 替换为实际的chatId
+  supportUploadConfig: [
+    {
+      icon: 'file',
+      tip: '支持所有文件类型',
+      accept: '*',
+      businessType: 1,
+      value: 1,
+      limit: 10,
+      required: false,
+      name: 'general_file',
+      type: 'file',
+    },
+  ],
+  model: 'default',
+  botId: 1,
+  creatorNickname: 'admin',
+  prologue: '',
+  mine: true,
+  botName: '默认机器人',
+  avatar: '',
+  botDesc: '',
+  version: 1,
+  inputExample: [],
+  supportContext: true,
+  isFavorite: 0,
+  vcnCn: 'default',
+};
+
+// 模拟上传配置（支持所有文件类型）
+const mockUploadConfig: SupportUploadConfig = {
+  icon: 'file',
+  tip: '支持所有文件类型',
+  accept: '*',
+  businessType: 1,
+  value: 1,
+  limit: 10,
+  required: false,
+  name: 'general_file',
+  type: 'file',
+};
+
+// 格式化文件大小
+const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024)
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+};
 
 const MyFile = (): ReactElement => {
-  // 将文件分为近30天和更早两部分
-  const recentFiles = mockFiles.slice(0, 4);
-  const earlierFiles = mockFiles.slice(4);
+  const [allFiles, setAllFiles] = useState([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [itemIdToDelete, setItemIdToDelete] = useState<string>('');
+  const [searchValue, setSearchValue] = useState('');
 
-  // 处理删除文件
-  const handleDelete = (id: string) => {
-    console.log('Delete file:', id);
-    // 实际项目中这里应该调用API删除文件
+  const getList = async () => {
+    const res = await getAllFiles(searchValue || '');
+    setAllFiles(res);
   };
+  useEffect(() => {
+    getList();
+  }, []);
+
+  const handleDeleteChatConfirm = async () => {
+    await deleteFiles(itemIdToDelete);
+    await getList();
+    setDeleteOpen(false);
+    setItemIdToDelete(null);
+  };
+
+  const toOpen = () => {};
+  const {
+    fileList: uploadedFileList,
+    fileInputRef,
+    handleFileSelect,
+    triggerFileSelect,
+  } = useChatFileUpload({
+    botInfo: mockBotInfo,
+    isBindChat: false,
+    onUploadComplete: getList, // 文件上传完成后重新获取文件列表
+  });
+
+  // 上传最大文件大小（MB）
+  const uploadMaxMB = 50;
 
   // 渲染单个文件项
   const renderFileItem = (file: FileItem) => {
     return (
-      <div key={file.id} className="w-64 bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+      <div className={styles.itemBox} key={file.fileId} onClick={toOpen}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
-            <img 
-              src={fileTypeIcons[file.type] || fileTypeIcons.txt} 
-              alt={file.type} 
-              className="w-10 h-10 mr-2" 
+            <img
+                src={getFileIcon(file)}
+                alt={file.fileExtension}
+                className="w-10 h-10 mr-2"
             />
             <div className="flex flex-col">
               <div className="text-sm font-medium text-gray-800 truncate max-w-[150px]">
-                {file.name}.{file.type}
+                {file.fileName}
               </div>
-              <div className="text-xs text-gray-500">{file.date}</div>
+              <div className="text-xs text-gray-500">{file.createTime}</div>
             </div>
           </div>
-          <DeleteOutlined 
-            className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
-            onClick={() => handleDelete(file.id)}
+          <div
+              onClick={async () => {
+                setItemIdToDelete(file.fileId);
+                setDeleteOpen(true);
+              }}
+              className={styles.delete}
           />
+          {/*<DeleteOutlined*/}
+          {/*    className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors"*/}
+          {/*    onClick={async () => {*/}
+          {/*      setItemIdToDelete(file.fileId);*/}
+          {/*      setDeleteOpen(true);*/}
+          {/*    }}*/}
+          {/*/>*/}
         </div>
-        <div className="text-xs text-gray-500">{file.size}</div>
+        <div className="text-xs text-gray-500">
+          {file.fileSize}
+        </div>
       </div>
     );
   };
@@ -76,35 +162,57 @@ const MyFile = (): ReactElement => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-800">我的文件</h2>
         <div className="flex items-center">
-          <input
-            type="text"
+          <Search
             placeholder="输入文件名"
-            className="border border-gray-300 rounded-l-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            size={'large'}
+            onChange={e => setSearchValue(e.target.value)}
+            onSearch={getList}
+            enterButton
           />
-          <button className="bg-blue-500 text-white px-3 py-1 rounded-r-md text-sm hover:bg-blue-600 transition-colors">
-            搜索
-          </button>
-          <button className="ml-2 bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition-colors">
-            新增文件
-          </button>
+          <div className="ml-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={e => handleFileSelect(e, mockUploadConfig, uploadMaxMB)}
+              style={{ display: 'none' }}
+            />
+            <Button
+              type="primary"
+              icon={<UploadOutlined />}
+              size="large"
+              onClick={triggerFileSelect}
+            >
+              上传文件
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* 近30天 */}
       <div className="mb-8">
-        <h3 className="text-sm font-semibold text-gray-600 mb-3">近30天</h3>
-        <div className="grid grid-cols-4 gap-4">
-          {recentFiles.map(renderFileItem)}
+        <div className={styles.contentWrapper}>
+          {allFiles.map(renderFileItem)}
         </div>
       </div>
 
-      {/* 更早 */}
-      <div>
-        <h3 className="text-sm font-semibold text-gray-600 mb-3">更早</h3>
-        <div className="grid grid-cols-4 gap-4">
-          {earlierFiles.map(renderFileItem)}
+      <Modal
+        open={deleteOpen}
+        onCancel={() => {
+          setDeleteOpen(false);
+          setItemIdToDelete(null);
+        }}
+        closeIcon={null}
+        wrapClassName={styles.delete_mode}
+        centered
+        width={352}
+        maskClosable={false}
+        onOk={handleDeleteChatConfirm}
+      >
+        <div className={styles.delete_mode_title}>
+          <img src={require('@/assets/imgs/sidebar/warning.svg')} alt="" />
+          <span>确定移除该文件？</span>
         </div>
-      </div>
+      </Modal>
     </div>
   );
 };

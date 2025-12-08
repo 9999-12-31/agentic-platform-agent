@@ -89,7 +89,8 @@ export default function Index() {
                 >
                   {t('releaseManagement.workflow')}
                 </div>
-                <div
+                {/* 注释掉虚拟人按钮 */}
+                {/* <div
                   className={`${styles.changeBox} ${
                     (location.pathname === '/management/release/virtual' ||
                       location.pathname === '/management/release/virtual/') &&
@@ -100,7 +101,7 @@ export default function Index() {
                   }}
                 >
                   {t('releaseManagement.virtual')}
-                </div>
+                </div> */}
               </div>
             </>
           )}

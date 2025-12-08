@@ -15,6 +15,7 @@ import RecorderCom, { type RecorderRef } from './recorder-com';
 import useChatFileUpload from '@/hooks/use-chat-file-upload';
 import MultiUploadButtons from './multi-upload-buttons';
 import FileGridDisplay from './file-grid-display';
+import classNames from "classnames";
 
 const ChatInput = (props: {
   handleSendMessage: (params: {
@@ -24,7 +25,7 @@ const ChatInput = (props: {
   }) => void;
   botInfo: BotInfoType;
   stopAnswer: () => void;
-  redirectPage: () => void;
+  redirectPage: (id:string) => void;
 }): ReactElement => {
   const { handleSendMessage, botInfo, stopAnswer, redirectPage } = props;
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ const ChatInput = (props: {
   const $record = useRef<RecorderRef>(null); //  录音ref
   const recordStartTextRef = useRef<string>(''); //  录音开始时的文本
   const { fileList, setFileList, handleFileSelect, removeFile, hasErrorFiles } =
-    useChatFileUpload(botInfo);
+    useChatFileUpload({botInfo});
 
   // 检查是否有待选择的工作流选项
   const hasWorkflowOptionsToSelect = (): boolean => {
@@ -98,7 +99,7 @@ const ChatInput = (props: {
       return;
     }
     try {
-      await postNewChat(currentChatId);
+      const info = await postNewChat(currentChatId);
       // const startMessage: MessageListType = {
       //   id: new Date().getTime(),
       //   reqType: 'START',
@@ -107,7 +108,7 @@ const ChatInput = (props: {
       // };
       // addMessage(startMessage);
       setMessageList([])
-      redirectPage()
+      redirectPage(info?.id)
     } catch (error) {
       console.error(error);
     }
@@ -157,8 +158,9 @@ const ChatInput = (props: {
   }, [fileList]);
 
   return (
-    <div className="pl-2.5 pr-[24px] py-6">
-      <div className="w-full mx-auto max-w-[960px]">
+    <div className={classNames('pl-[24px] py-6',
+        botInfo?.supportUploadConfig?.length ? 'pr-[388px]' : 'pr-[24px]')}>
+      <div className="mx-auto max-w-[960px]">
         <div className="flex items-center relative">
           {messageList.length > 0 && (
             <div
@@ -231,6 +233,7 @@ const ChatInput = (props: {
               botInfo={botInfo}
               handleFileSelect={handleFileSelect}
               fileList={fileList}
+              setFileList={setFileList}
             />
             <div className="flex items-center pb-2.5">
               <RecorderCom

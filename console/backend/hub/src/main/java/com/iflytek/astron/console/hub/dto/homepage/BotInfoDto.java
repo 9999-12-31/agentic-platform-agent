@@ -1,5 +1,7 @@
 package com.iflytek.astron.console.hub.dto.homepage;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,5 +45,14 @@ public class BotInfoDto {
 
     @Schema(description = "Bot version")
     private Integer version;
+
+    @Schema(description = "Review time")
+    private LocalDateTime auditTime;
+
+    @Schema(description = "Create time")
+    private LocalDateTime createTime;
+
+    @Schema(description = "Update time")
+    private LocalDateTime updateTime;
 
 }
