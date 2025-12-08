@@ -131,6 +131,7 @@ public class ChatListDataServiceImpl implements ChatListDataService {
                 .eq(ChatList::getUid, uid)
                 .eq(ChatList::getBotId, botId)
                 .eq(ChatList::getEnable, 1)
+                .eq(ChatList::getIsDelete, 0)
                 .orderByDesc(ChatList::getUpdateTime)
                 .last("LIMIT 1");
 
