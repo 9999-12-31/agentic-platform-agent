@@ -457,29 +457,7 @@ const HomePage: React.FC = () => {
                             }}
                             onClick={e => {
                               e.stopPropagation();
-                              if (item.version === 3) {
-                                getInputsType({ botId: item.botId }).then(
-                                  (res: any) => {
-                                    // 合并不支持对话的条件
-                                    if (
-                                      res.length > 1 &&
-                                      res
-                                        .slice(1)
-                                        .some(
-                                          (inputItem: { fileType?: string }) =>
-                                            inputItem.fileType !== 'file'
-                                        )
-                                    ) {
-                                      return message.info(
-                                        t('agentPage.agentPage.notSupported')
-                                      );
-                                    }
-                                    handleToChat(item.botId);
-                                  }
-                                );
-                              } else {
-                                handleToChat(item.botId);
-                              }
+                              handleToChat(item.botId);
                             }}
                           >
                             <img src={chatIcon} alt="" />
