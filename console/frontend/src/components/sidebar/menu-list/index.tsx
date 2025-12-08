@@ -223,7 +223,10 @@ const RecentList: FC<RecentListProps> = ({
   onToggleGroup,
 }) => {
   const { t } = useTranslation();
-
+  const { chatId: chilChatId, botId: botIdParam } = useParams<{
+    chatId?: string;
+    botId?: string;
+  }>();
   if (isCollapsed) return null;
 
   const toggleGroup = (item: any) => {
@@ -325,7 +328,7 @@ const RecentList: FC<RecentListProps> = ({
                           item.historyList.map((i: any, idx: number) => (
                             <div
                               key={`${item?.id || item?.botId || 'bot'}-${i?.chatId || i?.id || idx}-${index}`}
-                              className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
+                              className={`group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 ${Number(i.chatId) === Number(chilChatId) ? 'bg-[rgba(39,94,255,0.1)]' : ''}`}
                               onClick={() => handleNavigateToChat(item, i)}
                             >
                               <Tooltip title={i.title} placement="top">
@@ -338,7 +341,7 @@ const RecentList: FC<RecentListProps> = ({
                                   {i.title}
                                 </span>
                               </Tooltip>
-                              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0">
+                              <div className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0 ${Number(i.chatId) === Number(chilChatId) ? 'bg-[#f4f7ff] opacity-100' : ''}`}>
                                 <Popover
                                   content={
                                     <div
@@ -382,7 +385,7 @@ const RecentList: FC<RecentListProps> = ({
                                   <img
                                     src={spaceMore}
                                     alt="更多"
-                                    className="w-4 h-3 hover:w-2.5 hover:h-2.5 transition-all duration-200"
+                                    className="w-2.5 h-2.5 transition-all duration-200"
                                     onClick={e => {
                                       e.stopPropagation();
                                       // 切换Popover状态
@@ -525,6 +528,8 @@ const useMenuListHelpers = (
   const currentBotId = useBotInfoStore(state => state.botInfo.botId);
   const currentChatId = useChatStore(state => state.currentChatId);
   const navigate = useNavigate();
+
+  //删除智能体对话
   const {
     botId: botIdParam,
     version,
