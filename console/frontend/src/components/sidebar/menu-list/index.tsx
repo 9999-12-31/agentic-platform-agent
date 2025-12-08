@@ -484,7 +484,7 @@ const useMenuListHelpers = (
 
   // Chat and favorites management
   const handleNavigateToChat = (item: any, i: any) => {
-    handleToChat(item?.botId, i.chatId);
+    handleToChat(item?.botId,item?.chatId, i.chatId);
   };
   const handleDeleteAgent = (item: any, e: any) => {
     e.stopPropagation();
