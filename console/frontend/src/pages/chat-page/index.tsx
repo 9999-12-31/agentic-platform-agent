@@ -219,7 +219,10 @@ const ChatPage = (): ReactElement => {
     let formattedMessages = formatHistoryToMessages(res);
 
     if (chilChatId){
-      formattedMessages = formattedMessages.filter(item => item.chatId == chilChatId);
+      // 确保只有在消息有chatId字段时才进行过滤
+      formattedMessages = formattedMessages.filter(item => 
+        !item.chatId || item.chatId == chilChatId
+      );
     }
     setMessageList(formattedMessages);
   };
