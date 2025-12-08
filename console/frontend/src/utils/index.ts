@@ -537,9 +537,17 @@ const formatHistoryToMessages = (chatHistoryList: ChatHistoryResponse[]) => {
   chatHistoryList.forEach((history, index) => {
     if (history.historyList && Array.isArray(history.historyList)) {
       history.historyList.forEach((msg: any) => {
+        let messageContent = msg.message;
+        
+        // 确保message字段是字符串，但避免对已序列化的JSON字符串再次序列化
+        if (typeof messageContent !== 'string') {
+          messageContent = JSON.stringify(messageContent || '');
+        }
+        
         const formattedMessage = {
           ...msg,
           reqType: msg.reqId ? 'BOT' : 'USER',
+          message: messageContent,
         };
         formattedMessages.push(formattedMessage);
       });
