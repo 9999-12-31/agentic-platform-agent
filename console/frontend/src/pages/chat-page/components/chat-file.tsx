@@ -5,6 +5,7 @@ import { getAllChatFiles, getAllFiles } from '@/services/chat';
 import { useParams } from 'react-router-dom';
 import { getFileIcon } from '@/utils';
 import FilePreview from './file-preview';
+import eventBus from '@/utils/event-bus';
 
 // 组件Props接口
 interface ChatSideProps {
@@ -30,8 +31,15 @@ const ChatFile: React.FC<ChatSideProps> = ({ botInfo }) => {
   };
 
   useEffect(() => {
+    eventBus.on('answerCompleted', getList);
+    return () => {
+      eventBus.off('answerCompleted', getList);
+    };
+  }, []);
+
+  useEffect(() => {
     getList();
-  }, [botId,chilChatId]);
+  }, [botId, chilChatId]);
 
   return (
     <div className="fixed top-[84px] right-6 w-[340px] h-[calc(100vh-108px)] bg-white rounded-2xl py-10 px-6 overflow-y-auto scrollbar-hide">

@@ -25,7 +25,7 @@ const ChatInput = (props: {
   }) => void;
   botInfo: BotInfoType;
   stopAnswer: () => void;
-  redirectPage: () => void;
+  redirectPage: (id:string) => void;
 }): ReactElement => {
   const { handleSendMessage, botInfo, stopAnswer, redirectPage } = props;
   const { t } = useTranslation();
@@ -99,7 +99,7 @@ const ChatInput = (props: {
       return;
     }
     try {
-      await postNewChat(currentChatId);
+      const info = await postNewChat(currentChatId);
       // const startMessage: MessageListType = {
       //   id: new Date().getTime(),
       //   reqType: 'START',
@@ -107,8 +107,9 @@ const ChatInput = (props: {
       //   updateTime: new Date().toISOString(),
       // };
       // addMessage(startMessage);
+      console.log(info);
       setMessageList([])
-      redirectPage()
+      redirectPage(info?.id)
     } catch (error) {
       console.error(error);
     }
@@ -233,6 +234,7 @@ const ChatInput = (props: {
               botInfo={botInfo}
               handleFileSelect={handleFileSelect}
               fileList={fileList}
+              setFileList={setFileList}
             />
             <div className="flex items-center pb-2.5">
               <RecorderCom
