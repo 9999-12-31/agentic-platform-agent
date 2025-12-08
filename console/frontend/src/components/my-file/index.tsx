@@ -124,9 +124,9 @@ const MyFile = (): ReactElement => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
             <img
-              src={getFileIcon(file)}
-              alt={file.fileExtension}
-              className="w-10 h-10 mr-2"
+                src={getFileIcon(file)}
+                alt={file.fileExtension}
+                className="w-10 h-10 mr-2"
             />
             <div className="flex flex-col">
               <div className="text-sm font-medium text-gray-800 truncate max-w-[150px]">
@@ -135,16 +135,23 @@ const MyFile = (): ReactElement => {
               <div className="text-xs text-gray-500">{file.createTime}</div>
             </div>
           </div>
-          <DeleteOutlined
-            className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
-            onClick={async () => {
-              setItemIdToDelete(file.fileId);
-              setDeleteOpen(true);
-            }}
+          <div
+              onClick={async () => {
+                setItemIdToDelete(file.fileId);
+                setDeleteOpen(true);
+              }}
+              className={styles.delete}
           />
+          {/*<DeleteOutlined*/}
+          {/*    className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors"*/}
+          {/*    onClick={async () => {*/}
+          {/*      setItemIdToDelete(file.fileId);*/}
+          {/*      setDeleteOpen(true);*/}
+          {/*    }}*/}
+          {/*/>*/}
         </div>
         <div className="text-xs text-gray-500">
-          {formatFileSize(file.fileSize)}
+          {file.fileSize}
         </div>
       </div>
     );

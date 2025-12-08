@@ -316,7 +316,7 @@ const MessageList = (props: {
                 <div className="w-[inherit]" key={actualIndex}>
                   {item?.reqType === 'USER' && renderReq(item)}
                   {item?.reqType === 'BOT' && renderResp(item, actualIndex)}
-                  {item?.reqType === 'START' && renderRestart()}
+                  {/*{item?.reqType === 'START' && renderRestart()}*/}
                 </div>
               );
             })}

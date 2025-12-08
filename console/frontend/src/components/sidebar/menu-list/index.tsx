@@ -27,7 +27,7 @@ import createSpaceImg from '@/assets/imgs/space/createSpaceImg.png';
 import enterpriseShareCreate from '@/assets/imgs/space/enterpriseShareCreate.png';
 import enterpriseSpaceJoin from '@/assets/imgs/space/enterpriseSpaceJoin.png';
 import arrowRight from '@/assets/imgs/space/arrowRight.png';
-import { deleteChatIndex, deleteChatList, updateTitle } from '@/services/chat';
+import {deleteChatIndex, deleteChatList, postNewChat, updateTitle} from '@/services/chat';
 import { PostChatItem } from '@/types/chat';
 
 // Constants
@@ -277,7 +277,7 @@ const RecentList: FC<RecentListProps> = ({
             {showRecent &&
               mixedChatList?.length > 0 &&
               mixedChatList.map((item: any, index) => (
-                <div key={item?.botName + index} className="w-full">
+                <div key={`${item?.id || item?.botId || 'bot'}-${index}`} className="w-full">
                   <div
                     className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
                     onClick={() => toggleGroup(item)}
@@ -324,7 +324,7 @@ const RecentList: FC<RecentListProps> = ({
                           item.historyList.length > 0 &&
                           item.historyList.map((i: any, idx: number) => (
                             <div
-                              key={item.botId + i.message + idx + index}
+                              key={`${item?.id || item?.botId || 'bot'}-${i?.chatId || i?.id || idx}-${index}`}
                               className="group flex items-center cursor-pointer px-1 py-1.5 rounded hover:bg-[rgba(39,94,255,0.1)] flex-shrink-0 w-full transition-colors duration-200 "
                               onClick={() => handleNavigateToChat(item, i)}
                             >
@@ -546,7 +546,13 @@ const useMenuListHelpers = (
           }
           // 如果删除的记录与当前页面的chilChatId一致，则跳转到该bot的聊天页面
           if (Number(chatListItemId) === Number(chilChatId)) {
-            navigate(`/chat/${botIdParam}`);
+            // navigate(`/chat/${botIdParam}`);
+            try {
+              const info = await postNewChat(currentChatId);
+              navigate(`/chat/${botIdParam}/${info?.id}`);
+            } catch (error) {
+              console.error(error);
+            }
           }
         })
         .catch((err: any) => {
@@ -564,7 +570,12 @@ const useMenuListHelpers = (
             await onRefreshData();
           }
           if ((Number(chatBotId) === Number(botIdParam)) && chilChatId) {
-            navigate(`/chat/${botIdParam}`);
+            try {
+              const info = await postNewChat(currentChatId);
+              navigate(`/chat/${botIdParam}/${info?.id}`);
+            } catch (error) {
+              console.error(error);
+            }
           }
         })
         .catch((err: any) => {
