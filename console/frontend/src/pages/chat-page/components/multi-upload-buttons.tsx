@@ -122,13 +122,45 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
     setSelectedFiles({}); // 重置选择状态
   };
 
+  // 检查文件类型是否匹配accept规则
+  const isFileTypeAllowed = (file: any): boolean => {
+    if (!currentUploadConfig || !currentUploadConfig.accept) return true;
+
+    const { accept } = currentUploadConfig;
+    const fileExtension = file.fileName?.split('.').pop()?.toLowerCase();
+    const fileType = file.type?.toLowerCase();
+
+    // 解析accept字符串，支持逗号分隔的格式，如".pdf,.doc,image/*"
+    const acceptRules = accept.split(',').map(rule => rule.trim().toLowerCase());
+
+    for (const rule of acceptRules) {
+      if (rule === '*/*') return true;
+      if (rule.startsWith('.')) {
+        // 文件扩展名规则
+        if (fileExtension === rule.slice(1)) return true;
+      } else if (rule.includes('/')) {
+        // MIME类型规则
+        if (rule.endsWith('/*')) {
+          // 如image/*
+          const mainType = rule.split('/')[0];
+          if (fileType?.startsWith(mainType + '/')) return true;
+        } else {
+          // 具体MIME类型
+          if (fileType === rule) return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
   // 处理文件项选择
   const handleFileItemSelect = (fileId: string) => {
     if (!currentUploadConfig) return;
 
     const { limit } = currentUploadConfig;
-    const currentSelectionCount =
-      Object.values(selectedFiles).filter(Boolean).length;
+    const currentSelectionCount = Object.values(selectedFiles).filter(Boolean).length;
+    const file = allFiles.find(f => f.fileId === fileId);
 
     // 如果文件已选中，则取消选择
     if (selectedFiles[fileId]) {
@@ -141,6 +173,11 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
 
     // 如果已达到选择上限，则不允许再选择
     if (currentSelectionCount >= (limit || 1)) {
+      return;
+    }
+
+    // 检查文件类型是否匹配accept规则
+    if (!isFileTypeAllowed(file)) {
       return;
     }
 
@@ -405,10 +442,10 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
           <div className={styles.contentWrapper}>
             {allFiles.map(file => {
               const isSelected = selectedFiles[file.fileId] || false;
-              const currentSelectionCount =
-                Object.values(selectedFiles).filter(Boolean).length;
-              const isDisabled =
-                !isSelected && currentSelectionCount >= (limit || 1);
+              const currentSelectionCount = Object.values(selectedFiles).filter(Boolean).length;
+              const isOverLimit = !isSelected && currentSelectionCount >= (limit || 1);
+              const isTypeNotAllowed = !isSelected && !isFileTypeAllowed(file);
+              const isDisabled = isOverLimit || isTypeNotAllowed;
 
               return (
                 <div

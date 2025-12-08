@@ -107,7 +107,6 @@ const ChatInput = (props: {
       //   updateTime: new Date().toISOString(),
       // };
       // addMessage(startMessage);
-      console.log(info);
       setMessageList([])
       redirectPage(info?.id)
     } catch (error) {

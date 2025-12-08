@@ -6,6 +6,7 @@ import eventBus from '@/utils/event-bus';
 import type { Option } from '@/types/chat';
 import {useNavigate, useParams} from 'react-router-dom';
 import { baseURL } from '@/utils/http';
+import {postNewChat} from "@/services/chat";
 
 // SSE 数据类型定义
 interface SSEData {
@@ -79,6 +80,8 @@ const useChat = () => {
     chatId?: string;
     botId?: string;
   }>();
+  const setMessageList = useChatStore(state => state.setMessageList); //  设置消息列表
+
   /**
    *
    * @param url 接口url
@@ -295,11 +298,18 @@ const useChat = () => {
   };
 
   //去对话页面
-  const handleToChat = (botId: number, chatId?:number) => {
+  const handleToChat = async (botId: number, chatId?:number) => {
     if (chatId){
       navigate(`/chat/${botId}/${chatId}`);
     }else {
-      navigate(`/chat/${botId}`);
+      // navigate(`/chat/${botId}`);
+      try {
+        const info = await postNewChat(currentChatId);
+        setMessageList([])
+        navigate(`/chat/${botId}/${info?.id}`);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
   };
