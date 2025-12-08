@@ -162,7 +162,7 @@ function index({ content, isSending = false }): React.ReactElement {
 
               if (option) {
                 return (
-                  <div className="echarts-container" style={{ height: '400px', margin: '16px 0',width:'100%' }}>
+                  <div className="echarts-container" style={{ height: '400px', margin: '16px 0',width:'50vw' }}>
                     <ReactECharts option={option} {...rest} />
                   </div>
                 );
