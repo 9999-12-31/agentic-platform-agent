@@ -27,7 +27,12 @@ import createSpaceImg from '@/assets/imgs/space/createSpaceImg.png';
 import enterpriseShareCreate from '@/assets/imgs/space/enterpriseShareCreate.png';
 import enterpriseSpaceJoin from '@/assets/imgs/space/enterpriseSpaceJoin.png';
 import arrowRight from '@/assets/imgs/space/arrowRight.png';
-import {deleteChatIndex, deleteChatList, postNewChat, updateTitle} from '@/services/chat';
+import {
+  deleteChatIndex,
+  deleteChatList,
+  postNewChat,
+  updateTitle,
+} from '@/services/chat';
 import { PostChatItem } from '@/types/chat';
 
 // Constants
@@ -280,7 +285,10 @@ const RecentList: FC<RecentListProps> = ({
             {showRecent &&
               mixedChatList?.length > 0 &&
               mixedChatList.map((item: any, index) => (
-                <div key={`${item?.id || item?.botId || 'bot'}-${index}`} className="w-full">
+                <div
+                  key={`${item?.id || item?.botId || 'bot'}-${index}`}
+                  className="w-full"
+                >
                   <div
                     className="flex items-center justify-between cursor-pointer px-1 py-[10px] text-sm font-medium text-[#333]  rounded"
                     onClick={() => toggleGroup(item)}
@@ -341,7 +349,9 @@ const RecentList: FC<RecentListProps> = ({
                                   {i.title}
                                 </span>
                               </Tooltip>
-                              <div className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0 ${Number(i.chatId) === Number(chilChatId) ? 'bg-[#f4f7ff] opacity-100' : ''}`}>
+                              <div
+                                className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#f4f7ff] flex-shrink-0 ${Number(i.chatId) === Number(chilChatId) ? 'bg-[#f4f7ff] opacity-100' : ''}`}
+                              >
                                 <Popover
                                   content={
                                     <div
@@ -484,7 +494,7 @@ const useMenuListHelpers = (
 
   // Chat and favorites management
   const handleNavigateToChat = (item: any, i: any) => {
-    handleToChat(item?.botId,item?.chatId, i.chatId);
+    handleToChat(item?.botId, item?.chatId, i.chatId);
   };
   const handleDeleteAgent = (item: any, e: any) => {
     e.stopPropagation();
@@ -574,13 +584,18 @@ const useMenuListHelpers = (
           if (onRefreshData) {
             await onRefreshData();
           }
-          if ((Number(chatBotId) === Number(botIdParam)) && chilChatId) {
+          if (Number(chatBotId) === Number(botIdParam) && chilChatId) {
             try {
               const info = await postNewChat(currentChatId);
               navigate(`/chat/${botIdParam}/${info?.id}`);
             } catch (error) {
               console.error(error);
             }
+          }
+          // 如果当前页面是home页，触发重新加载agent列表的事件
+          if (location.pathname === '/home') {
+            // 触发事件，通知home页面重新加载agent列表
+            eventBus.emit('refreshAgentList');
           }
         })
         .catch((err: any) => {

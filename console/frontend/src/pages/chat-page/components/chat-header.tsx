@@ -29,11 +29,11 @@ const ChatHeader = (props: {
   // 返回首页
   const handleBack = (): void => {
     controllerRef?.abort();
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
+    // if (window.history.length > 2) {
+    //   navigate(-1);
+    // } else {
       navigate('/home');
-    }
+    // }
   };
 
   // 收藏/取消收藏

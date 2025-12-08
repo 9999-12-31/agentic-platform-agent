@@ -283,10 +283,21 @@ const HomePage: React.FC = () => {
     }
     loadAgentTypeList();
     eventBus.on('favoriteChange', handleFavoriteChange);
+    // 监听菜单列表删除对话事件，当当前页面是home页时重新加载agent列表
+    const handleRefreshAgentList = () => {
+      setPageInfo({
+        ...PAGE_INFO_ORIGIN,
+        type: botType,
+        search: searchInputValue || '',
+      });
+    };
+    eventBus.on('refreshAgentList', handleRefreshAgentList);
     return () => {
       eventBus.off('favoriteChange', handleFavoriteChange);
+      // 移除事件监听
+      eventBus.off('refreshAgentList', handleRefreshAgentList);
     };
-  }, []);
+  }, [botType, searchInputValue]);
 
   const handleSearch = useCallback(
     debounce((value, pageInfo) => {
