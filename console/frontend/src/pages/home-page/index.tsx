@@ -297,7 +297,7 @@ const HomePage: React.FC = () => {
       // 移除事件监听
       eventBus.off('refreshAgentList', handleRefreshAgentList);
     };
-  }, [botType, searchInputValue]);
+  }, []);
 
   const handleSearch = useCallback(
     debounce((value, pageInfo) => {
