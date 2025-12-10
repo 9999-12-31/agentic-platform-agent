@@ -106,12 +106,19 @@ public class ChatDataServiceImpl implements ChatDataService {
                 .eq(ChatTreeIndex::getChildChatId, chatReqRecords.getChatId())
                 .eq(ChatTreeIndex::getUid, chatReqRecords.getUid())
                 .orderByAsc(ChatTreeIndex::getId);
-        // List<ChatTreeIndex> childChatTreeIndexList = chatTreeIndexMapper.selectList(chatTreeQuery);
-        // Long rootId = childChatTreeIndexList.getFirst().getRootChatId();
-        // if (rootId != null && !rootId.equals(chatReqRecords.getChatId())) {
-        //     updateWrapper.eq(ChatList::getId, rootId);
-        //     chatListMapper.update(null, updateWrapper);
-        // }
+        List<ChatTreeIndex> childChatTreeIndexList = chatTreeIndexMapper.selectList(chatTreeQuery);
+        Long rootId = childChatTreeIndexList.getFirst().getRootChatId();
+        if (rootId != null && !rootId.equals(chatReqRecords.getChatId())) {
+            updateWrapper.eq(ChatList::getId, rootId);
+            chatListMapper.update(null, updateWrapper);
+        }
+
+        // 更新对应chatTreeIndex 的时间
+        LambdaUpdateWrapper<ChatTreeIndex> updateTreeIndexWrapper = Wrappers.lambdaUpdate(ChatTreeIndex.class);
+        updateTreeIndexWrapper.eq(ChatTreeIndex::getChildChatId, chatReqRecords.getChatId());
+        updateTreeIndexWrapper.set(ChatTreeIndex::getUpdateTime, LocalDateTime.now());
+        chatTreeIndexMapper.update(null, updateTreeIndexWrapper);
+
         return chatReqRecords;
     }
 

@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author mingsuiyongheng
@@ -78,7 +76,10 @@ public class ChatHistoryController {
             List<ChatHistoryResponseDto> allTreeHistory = new ArrayList<>(8);
             List<ChatTreeIndex> chatTreeIndexList = chatListDataService.getListByRootChatId(chatId, uid);
 
-            processOrderAndFilter(uid, chatTreeIndexList);
+            // order by update time desc
+            chatTreeIndexList.sort((o1, o2) -> o2.getUpdateTime().compareTo(o1.getUpdateTime()));
+            // filter by isDelete = 0
+            chatTreeIndexList.removeIf(e -> e.getIsDelete() == 1);
 
             chatTreeIndexList.forEach(e -> {
                 allTreeHistory.add(getMessageHistory(uid, e.getChildChatId(), chatList));
@@ -89,34 +90,6 @@ public class ChatHistoryController {
             return ApiResult.error(ResponseEnum.CHAT_NORMAL_TREE_ERROR);
         }
     }
-
-
-    private void processOrderAndFilter(String uid, List<ChatTreeIndex> chatTreeIndexList) {
-        // filter by isDelete = 0
-        chatTreeIndexList.removeIf(e -> e.getIsDelete() == 1);
-
-        // 由于会话更新的是chat_list的时间，因此要按照 ChatTreeIndex 对应的 chat_list.update_time 进行排序
-        // 提取 childChatId
-        List<Long> chatIds = chatTreeIndexList.stream()
-                .map(ChatTreeIndex::getChildChatId)
-                .collect(Collectors.toList());
-
-        // 批量查询 ChatList
-        List<ChatList> chatLists = chatListDataService.findByUidAndChatIdIn(uid, chatIds);
-        Map<Long, ChatList> chatListMap = chatLists.stream()
-                .collect(Collectors.toMap(ChatList::getId, Function.identity()));
-
-        // 设置 updateTime
-        for (ChatTreeIndex index : chatTreeIndexList) {
-            ChatList cl = chatListMap.get(index.getChildChatId());
-            if (cl != null) {
-                index.setUpdateTime(cl.getUpdateTime());
-            }
-        }
-        // order by update time desc
-        chatTreeIndexList.sort((o1, o2) -> o2.getUpdateTime().compareTo(o1.getUpdateTime()));
-    }
-
     /**
      * Function to get message history
      *
