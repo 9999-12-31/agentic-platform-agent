@@ -102,6 +102,7 @@ public class ChatDataServiceImpl implements ChatDataService {
         updateWrapper.eq(ChatList::getId, chatReqRecords.getChatId());
         updateWrapper.set(ChatList::getUpdateTime, LocalDateTime.now());
         chatListMapper.update(null, updateWrapper);
+
         LambdaQueryWrapper<ChatTreeIndex> chatTreeQuery = new LambdaQueryWrapper<ChatTreeIndex>()
                 .eq(ChatTreeIndex::getChildChatId, chatReqRecords.getChatId())
                 .eq(ChatTreeIndex::getUid, chatReqRecords.getUid())

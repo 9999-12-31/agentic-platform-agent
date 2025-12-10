@@ -121,7 +121,7 @@ public class ChatListDataServiceImpl implements ChatListDataService {
     }
 
     @Override
-    public ChatList findLatestEnabledChatByUserAndBot(String uid, Integer botId) {
+    public ChatList findRootEnabledChatByUserAndBot(String uid, Integer botId) {
         if (uid == null || botId == null) {
             log.warn("Query parameters cannot be null: uid={}, botId={}", uid, botId);
             return null;
@@ -131,6 +131,7 @@ public class ChatListDataServiceImpl implements ChatListDataService {
                 .eq(ChatList::getUid, uid)
                 .eq(ChatList::getBotId, botId)
                 .eq(ChatList::getEnable, 1)
+                .eq(ChatList::getRootFlag, 1)
                 .eq(ChatList::getIsDelete, 0)
                 .orderByDesc(ChatList::getUpdateTime)
                 .last("LIMIT 1");

@@ -229,7 +229,7 @@ class ChatListServiceImplTest {
     void testCreateChatList_WithExistingDeletedChat_ShouldReactivateChat() {
         // Given
         chatList.setIsDelete(1);
-        when(chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
+        when(chatListDataService.findRootEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
         when(chatListDataService.getListByRootChatId(chatList.getId(), uid)).thenReturn(Collections.emptyList());
 
         // When
@@ -249,7 +249,7 @@ class ChatListServiceImplTest {
         List<ChatTreeIndex> indexList = Arrays.asList(
                 createChatTreeIndex(1L),
                 createChatTreeIndex(2L));
-        when(chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
+        when(chatListDataService.findRootEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
         when(chatListDataService.getListByRootChatId(chatList.getId(), uid)).thenReturn(indexList);
 
         // When
@@ -266,7 +266,7 @@ class ChatListServiceImplTest {
     void testCreateChatList_WithActiveExistingChat_ShouldReturnExistingChat() {
         // Given
         chatList.setIsDelete(0);
-        when(chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
+        when(chatListDataService.findRootEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
 
         // When
         ChatListCreateResponse result = chatListService.createChatList(uid, chatListName, botId);
@@ -284,7 +284,7 @@ class ChatListServiceImplTest {
         chatList.setIsDelete(0);
         chatList.setEnabledPluginIds(null);
         chatList.setFileId(null);
-        when(chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
+        when(chatListDataService.findRootEnabledChatByUserAndBot(uid, botId)).thenReturn(chatList);
         lenient().when(chatDataService.findRequestsByChatIdAndUid(chatList.getId(), uid)).thenReturn(Collections.emptyList());
 
         // When
@@ -330,7 +330,7 @@ class ChatListServiceImplTest {
         req2.setCreateTime(LocalDateTime.now().minusMinutes(45));
         existingRequests.add(req2);
 
-        when(chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId)).thenReturn(existingChatWithRequests);
+        when(chatListDataService.findRootEnabledChatByUserAndBot(uid, botId)).thenReturn(existingChatWithRequests);
         when(chatDataService.findRequestsByChatIdAndUid(existingChatWithRequests.getId(), uid)).thenReturn(existingRequests);
 
         // When
@@ -348,7 +348,7 @@ class ChatListServiceImplTest {
     @Test
     void testCreateChatList_WithNullExistingChat_ShouldCreateNewChat() {
         // Given
-        when(chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId)).thenReturn(null);
+        when(chatListDataService.findRootEnabledChatByUserAndBot(uid, botId)).thenReturn(null);
         // Mock createChat to simulate database behavior that sets the ID
         doAnswer(invocation -> {
             ChatList chatList = invocation.getArgument(0);
