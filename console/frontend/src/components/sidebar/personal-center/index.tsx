@@ -178,38 +178,38 @@ const FavoritesList: FC<{
   }
 
   return (
-    <>
-      {memoizedList?.length > 0 &&
-        memoizedList.map((item, index) => (
-          <div
-            key={`favorite-${index}`}
-            onClick={() => handleItemClick(item)}
-            className={styles.itemBox}
-          >
-            <div className={styles.itemHead}>
-              <img className={styles.headImg} src={item.bot.avatar} alt="" />
-              <div title={item.bot.botName} className={styles.headTitle}>
-                {item.bot.botName}
-              </div>
-            </div>
-            <div title={item.bot.botDesc} className={styles.headDesc}>
-              {item.bot.botDesc}
-            </div>
-            {/*<div className={styles.itemInfo}>*/}
-            {/*  <img className={styles.actImg} src={act} alt="" />*/}
-            {/*  <div className={styles.actText}>*/}
-            {/*    {item.bot.creatorName || '@讯飞星火'}*/}
-            {/*  </div>*/}
-            {/*  <img className={styles.fireImg} src={fire} alt="" />*/}
-            {/*  <div className={styles.fireText}>{item.bot.hotNum || 0}</div>*/}
-            {/*</div>*/}
-            <div
-              onClick={e => handleDeleteClick(item, e)}
-              className={styles.delete}
-            />
-          </div>
-        ))}
-    </>
+      <div className={styles.contentWrapper}>
+        {memoizedList?.length > 0 &&
+            memoizedList.map((item, index) => (
+                <div
+                    key={`favorite-${index}`}
+                    onClick={() => handleItemClick(item)}
+                    className={styles.itemBox}
+                >
+                  <div className={styles.itemHead}>
+                    <img className={styles.headImg} src={item.bot.avatar} alt=""/>
+                    <div title={item.bot.botName} className={styles.headTitle}>
+                      {item.bot.botName}
+                    </div>
+                  </div>
+                  <div title={item.bot.botDesc} className={styles.headDesc}>
+                    {item.bot.botDesc}
+                  </div>
+                  {/*<div className={styles.itemInfo}>*/}
+                  {/*  <img className={styles.actImg} src={act} alt="" />*/}
+                  {/*  <div className={styles.actText}>*/}
+                  {/*    {item.bot.creatorName || '@讯飞星火'}*/}
+                  {/*  </div>*/}
+                  {/*  <img className={styles.fireImg} src={fire} alt="" />*/}
+                  {/*  <div className={styles.fireText}>{item.bot.hotNum || 0}</div>*/}
+                  {/*</div>*/}
+                  <div
+                      onClick={e => handleDeleteClick(item, e)}
+                      className={styles.delete}
+                  />
+                </div>
+            ))}
+      </div>
   );
 });
 

@@ -1,11 +1,12 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect, useMemo } from 'react';
+import dayjs from 'dayjs';
 import {
   DeleteOutlined,
   UploadOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
 import styles from '../sidebar/personal-center/index.module.scss';
-import { Input, Button, Progress, Modal } from 'antd';
+import {Input, Button, Progress, Modal, Empty} from 'antd';
 import useChatFileUpload from '@/hooks/use-chat-file-upload';
 import type {
   BotInfoType,
@@ -117,6 +118,26 @@ const MyFile = (): ReactElement => {
   // 上传最大文件大小（MB）
   const uploadMaxMB = 50;
 
+  // 将文件按照创建时间分为最近30天和更早的两部分
+  const { recentFiles, olderFiles } = useMemo(() => {
+    const thirtyDaysAgo = dayjs().subtract(30, 'day');
+    const recent = [];
+    const older = [];
+
+    allFiles.forEach(file => {
+      if (
+        dayjs(file.createTime).isAfter(thirtyDaysAgo) ||
+        dayjs(file.createTime).isSame(thirtyDaysAgo, 'day')
+      ) {
+        recent.push(file);
+      } else {
+        older.push(file);
+      }
+    });
+
+    return { recentFiles: recent, olderFiles: older };
+  }, [allFiles]);
+
   // 渲染单个文件项
   const renderFileItem = (file: FileItem) => {
     return (
@@ -124,9 +145,9 @@ const MyFile = (): ReactElement => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
             <img
-                src={getFileIcon(file)}
-                alt={file.fileExtension}
-                className="w-10 h-10 mr-2"
+              src={getFileIcon(file)}
+              alt={file.fileExtension}
+              className="w-10 h-10 mr-2"
             />
             <div className="flex flex-col">
               <div className="text-sm font-medium text-gray-800 truncate max-w-[150px]">
@@ -136,11 +157,11 @@ const MyFile = (): ReactElement => {
             </div>
           </div>
           <div
-              onClick={async () => {
-                setItemIdToDelete(file.fileId);
-                setDeleteOpen(true);
-              }}
-              className={styles.delete}
+            onClick={async () => {
+              setItemIdToDelete(file.fileId);
+              setDeleteOpen(true);
+            }}
+            className={styles.delete}
           />
           {/*<DeleteOutlined*/}
           {/*    className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors"*/}
@@ -150,9 +171,7 @@ const MyFile = (): ReactElement => {
           {/*    }}*/}
           {/*/>*/}
         </div>
-        <div className="text-xs text-gray-500">
-          {file.fileSize}
-        </div>
+        <div className="text-xs text-gray-500">{file.fileSize}</div>
       </div>
     );
   };
@@ -190,9 +209,30 @@ const MyFile = (): ReactElement => {
       </div>
 
       <div className="mb-8">
-        <div className={styles.contentWrapper}>
-          {allFiles.map(renderFileItem)}
-        </div>
+        {/* 最近30天的文件 */}
+        {recentFiles.length > 0 && (
+          <div className="mb-8">
+            <h3 className="font-semibold text-gray-800 mb-4">最近30天</h3>
+            <div className={styles.contentWrapper}>
+              {recentFiles.map(renderFileItem)}
+            </div>
+          </div>
+        )}
+
+        {/* 更早的文件 */}
+        {olderFiles.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-4">更早</h3>
+            <div className={styles.contentWrapper}>
+              {olderFiles.map(renderFileItem)}
+            </div>
+          </div>
+        )}
+
+        {/* 没有文件时的提示 */}
+        {allFiles.length === 0 && (
+            <Empty />
+        )}
       </div>
 
       <Modal

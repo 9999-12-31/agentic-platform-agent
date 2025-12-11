@@ -42,15 +42,15 @@ const ChatFile: React.FC<ChatSideProps> = ({ botInfo }) => {
   }, [botId, chilChatId]);
 
   return (
-    <div className="fixed top-[84px] right-6 w-[340px] h-[calc(100vh-108px)] bg-white rounded-2xl py-10 px-6 overflow-y-auto scrollbar-hide">
+    <div className="fixed top-[84px] right-6 w-[340px] h-[calc(100vh-108px)] bg-white rounded-2xl py-4 px-6 overflow-y-auto scrollbar-hide">
       <div className="flex flex-col space-y-4">
         {/* 标题 */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between pb-4  border-b border-[#E7E7F0]">
           <h3 className="text-lg font-semibold text-gray-900">文件</h3>
         </div>
 
         {/* 文件列表 */}
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-3 ">
           {allFiles.map(file => (
             <div
               key={file.fileId}
