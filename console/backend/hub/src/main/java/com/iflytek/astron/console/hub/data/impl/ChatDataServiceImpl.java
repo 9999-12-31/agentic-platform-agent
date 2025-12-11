@@ -102,16 +102,28 @@ public class ChatDataServiceImpl implements ChatDataService {
         updateWrapper.eq(ChatList::getId, chatReqRecords.getChatId());
         updateWrapper.set(ChatList::getUpdateTime, LocalDateTime.now());
         chatListMapper.update(null, updateWrapper);
+
         LambdaQueryWrapper<ChatTreeIndex> chatTreeQuery = new LambdaQueryWrapper<ChatTreeIndex>()
                 .eq(ChatTreeIndex::getChildChatId, chatReqRecords.getChatId())
                 .eq(ChatTreeIndex::getUid, chatReqRecords.getUid())
                 .orderByAsc(ChatTreeIndex::getId);
-        // List<ChatTreeIndex> childChatTreeIndexList = chatTreeIndexMapper.selectList(chatTreeQuery);
-        // Long rootId = childChatTreeIndexList.getFirst().getRootChatId();
-        // if (rootId != null && !rootId.equals(chatReqRecords.getChatId())) {
-        //     updateWrapper.eq(ChatList::getId, rootId);
-        //     chatListMapper.update(null, updateWrapper);
-        // }
+        // 更新对应rootChat 时间
+        List<ChatTreeIndex> childChatTreeIndexList = chatTreeIndexMapper.selectList(chatTreeQuery);
+        Long rootId = childChatTreeIndexList.getFirst().getRootChatId();
+        if (rootId != null && !rootId.equals(chatReqRecords.getChatId())) {
+            // 使用全新的Wrappers
+            LambdaUpdateWrapper<ChatList> rootUpdateWrapper = Wrappers.lambdaUpdate(ChatList.class)
+                    .eq(ChatList::getId, rootId)
+                    .set(ChatList::getUpdateTime, LocalDateTime.now());
+            chatListMapper.update(null, rootUpdateWrapper);
+        }
+
+        // 更新对应chatTreeIndex 的时间
+        LambdaUpdateWrapper<ChatTreeIndex> updateTreeIndexWrapper = Wrappers.lambdaUpdate(ChatTreeIndex.class);
+        updateTreeIndexWrapper.eq(ChatTreeIndex::getChildChatId, chatReqRecords.getChatId());
+        updateTreeIndexWrapper.set(ChatTreeIndex::getUpdateTime, LocalDateTime.now());
+        chatTreeIndexMapper.update(null, updateTreeIndexWrapper);
+
         return chatReqRecords;
     }
 

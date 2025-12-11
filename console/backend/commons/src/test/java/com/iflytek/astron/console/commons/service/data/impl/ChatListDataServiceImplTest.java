@@ -193,7 +193,7 @@ class ChatListDataServiceImplTest {
         when(chatListMapper.selectOne(any(LambdaQueryWrapper.class))).thenReturn(mockChatList);
 
         // When
-        ChatList result = chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId);
+        ChatList result = chatListDataService.findRootEnabledChatByUserAndBot(uid, botId);
 
         // Then
         assertNotNull(result);
@@ -204,7 +204,7 @@ class ChatListDataServiceImplTest {
     @Test
     void testFindLatestEnabledChatByUserAndBot_UidNull() {
         // When
-        ChatList result = chatListDataService.findLatestEnabledChatByUserAndBot(null, botId);
+        ChatList result = chatListDataService.findRootEnabledChatByUserAndBot(null, botId);
 
         // Then
         assertNull(result);
@@ -214,7 +214,7 @@ class ChatListDataServiceImplTest {
     @Test
     void testFindLatestEnabledChatByUserAndBot_BotIdNull() {
         // When
-        ChatList result = chatListDataService.findLatestEnabledChatByUserAndBot(uid, null);
+        ChatList result = chatListDataService.findRootEnabledChatByUserAndBot(uid, null);
 
         // Then
         assertNull(result);

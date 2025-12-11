@@ -1,13 +1,11 @@
 package com.iflytek.astron.console.hub.service.chat.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.iflytek.astron.console.commons.constant.ResponseEnum;
 import com.iflytek.astron.console.commons.dto.bot.BotModelDto;
 import com.iflytek.astron.console.commons.dto.bot.BotInfoDto;
 import com.iflytek.astron.console.commons.dto.chat.ChatListResponseDto;
 import com.iflytek.astron.console.commons.entity.chat.ChatTreeIndex;
 import com.iflytek.astron.console.commons.enums.bot.DefaultBotModelEnum;
-import com.iflytek.astron.console.commons.exception.BusinessException;
 import com.iflytek.astron.console.commons.response.ApiResult;
 import com.iflytek.astron.console.commons.service.bot.BotService;
 import com.iflytek.astron.console.toolkit.entity.vo.LLMInfoVo;
@@ -110,6 +108,9 @@ public class ChatListServiceImpl implements ChatListService {
         entity.setRootFlag(0);
 
         chatListDataService.createChat(entity);
+
+        // 更新rootChatId 时间
+
         return new ChatListCreateResponse(
                 entity.getId(), entity.getTitle(), entity.getEnable(),
                 entity.getCreateTime(), false, null, botId, null, null);
@@ -170,7 +171,7 @@ public class ChatListServiceImpl implements ChatListService {
     public ChatListCreateResponse createChatList(String uid, String chatListName, Integer botId) {
         ChatList latestOne;
         // Query bot list if botId is not null, otherwise query regular list
-        latestOne = chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId);
+        latestOne = chatListDataService.findRootEnabledChatByUserAndBot(uid, botId);
         // Query the user's latest window record for this botId, the window may have been deleted and needs
         // to be re-enabled later.
         if (latestOne != null) {
