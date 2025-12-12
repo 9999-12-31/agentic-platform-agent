@@ -14,6 +14,13 @@ const translation = {
       templatePlaceholder:
         '可以使用{{变量名}}、{{变量名.子变量名}}、{{变量名[数组索引]}}的方式引用输出参数中的变量',
     },
+    ossNode:{
+      ossConfig: "存储配置",
+      filename: "文件名",
+      filenamePlaceholder: "请输入文件名",
+      fileBytes: "文件内容",
+      fileBytesPlaceholder: "请输入文件内容",
+    },
     largeModelNode: {
       type: '大模型',
       prompt: '提示词',

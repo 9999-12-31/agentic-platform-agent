@@ -69,4 +69,6 @@ public interface ChatListService {
     BotModelDto getBotModelDto(HttpServletRequest request, Long modelId, String model);
 
     Boolean logicDeleteChatIndex(Long chatId, String uid);
+
+    Boolean updateChatListTitle(Long chatId, String uid, String title);
 }

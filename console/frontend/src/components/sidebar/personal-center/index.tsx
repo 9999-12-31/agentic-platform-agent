@@ -1,6 +1,6 @@
 import React from 'react';
 import { FC, useState, useCallback, useMemo } from 'react';
-import { Input, message, Modal } from 'antd';
+import { Empty, Input, message, Modal } from 'antd';
 import styles from './index.module.scss';
 import useUserStore from '@/store/user-store';
 import user from '@/assets/imgs/personal-center/user.svg';
@@ -20,7 +20,7 @@ import { cancelFavorite } from '@/services/agent-square';
 import { deleteChatList } from '@/services/chat';
 import { useTranslation } from 'react-i18next';
 import eventBus from '@/utils/event-bus';
-import MyFile from "@/components/my-file";
+import MyFile from '@/components/my-file';
 
 interface PersonalCenterProps {
   open: boolean;
@@ -38,7 +38,11 @@ interface TabItem {
 }
 
 // 常量定义
-const tabs: TabItem[] = [{ tab: '最近使用' }, { tab: '我的收藏' }, { tab: '我的文件' }];
+const tabs: TabItem[] = [
+  { tab: '最近使用' },
+  { tab: '我的收藏' },
+  { tab: '我的文件' },
+];
 
 // 内部组件定义
 
@@ -100,11 +104,15 @@ const RecentUsedList: FC<{
   );
 
   if (memoizedList?.length === 0) {
-    return <EmptyState />;
+    return (
+      <div className="w-full mt-2">
+        <Empty />
+      </div>
+    );
   }
 
   return (
-    <>
+    <div className={styles.contentWrapper}>
       {memoizedList?.length > 0 &&
         memoizedList.map((item, index) => (
           <div
@@ -135,7 +143,7 @@ const RecentUsedList: FC<{
             />
           </div>
         ))}
-    </>
+    </div>
   );
 });
 
@@ -162,42 +170,46 @@ const FavoritesList: FC<{
   );
 
   if (memoizedList?.length === 0) {
-    return <EmptyState />;
+    return (
+      <div className="w-full mt-2">
+        <Empty />
+      </div>
+    );
   }
 
   return (
-    <>
-      {memoizedList?.length > 0 &&
-        memoizedList.map((item, index) => (
-          <div
-            key={`favorite-${index}`}
-            onClick={() => handleItemClick(item)}
-            className={styles.itemBox}
-          >
-            <div className={styles.itemHead}>
-              <img className={styles.headImg} src={item.bot.avatar} alt="" />
-              <div title={item.bot.botName} className={styles.headTitle}>
-                {item.bot.botName}
-              </div>
-            </div>
-            <div title={item.bot.botDesc} className={styles.headDesc}>
-              {item.bot.botDesc}
-            </div>
-            {/*<div className={styles.itemInfo}>*/}
-            {/*  <img className={styles.actImg} src={act} alt="" />*/}
-            {/*  <div className={styles.actText}>*/}
-            {/*    {item.bot.creatorName || '@讯飞星火'}*/}
-            {/*  </div>*/}
-            {/*  <img className={styles.fireImg} src={fire} alt="" />*/}
-            {/*  <div className={styles.fireText}>{item.bot.hotNum || 0}</div>*/}
-            {/*</div>*/}
-            <div
-              onClick={e => handleDeleteClick(item, e)}
-              className={styles.delete}
-            />
-          </div>
-        ))}
-    </>
+      <div className={styles.contentWrapper}>
+        {memoizedList?.length > 0 &&
+            memoizedList.map((item, index) => (
+                <div
+                    key={`favorite-${index}`}
+                    onClick={() => handleItemClick(item)}
+                    className={styles.itemBox}
+                >
+                  <div className={styles.itemHead}>
+                    <img className={styles.headImg} src={item.bot.avatar} alt=""/>
+                    <div title={item.bot.botName} className={styles.headTitle}>
+                      {item.bot.botName}
+                    </div>
+                  </div>
+                  <div title={item.bot.botDesc} className={styles.headDesc}>
+                    {item.bot.botDesc}
+                  </div>
+                  {/*<div className={styles.itemInfo}>*/}
+                  {/*  <img className={styles.actImg} src={act} alt="" />*/}
+                  {/*  <div className={styles.actText}>*/}
+                  {/*    {item.bot.creatorName || '@讯飞星火'}*/}
+                  {/*  </div>*/}
+                  {/*  <img className={styles.fireImg} src={fire} alt="" />*/}
+                  {/*  <div className={styles.fireText}>{item.bot.hotNum || 0}</div>*/}
+                  {/*</div>*/}
+                  <div
+                      onClick={e => handleDeleteClick(item, e)}
+                      className={styles.delete}
+                  />
+                </div>
+            ))}
+      </div>
   );
 });
 
@@ -458,26 +470,23 @@ const PersonalCenter: FC<PersonalCenterProps> = ({
                 </span>
               </div>
             </Modal>
-          <div className={styles.contentWrapper}>
-            {activeIndex === 0 && (
-              <RecentUsedList
-                recentList={mixedChatList.concat(mixedChatList).concat(mixedChatList)}
-                onItemClick={handleToChat}
-                onDeleteClick={handleDelete}
-              />
-            )}
-            {activeIndex === 1 && (
-              <FavoritesList
-                collectList={favoriteBotList}
-                onItemClick={handleToChat}
-                onDeleteClick={handleDelete}
-              />
-            )}
-          </div>
-            {activeIndex === 2 && (
-                <MyFile
+            <div>
+              {activeIndex === 0 && (
+                <RecentUsedList
+                  recentList={mixedChatList}
+                  onItemClick={handleToChat}
+                  onDeleteClick={handleDelete}
                 />
-            )}
+              )}
+              {activeIndex === 1 && (
+                <FavoritesList
+                  collectList={favoriteBotList}
+                  onItemClick={handleToChat}
+                  onDeleteClick={handleDelete}
+                />
+              )}
+            </div>
+            {activeIndex === 2 && <MyFile />}
           </div>
         </div>
       </div>

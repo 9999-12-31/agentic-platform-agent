@@ -22,6 +22,8 @@ interface Bot {
   creator: string;
   version?: number;
   hotNum?: number;
+  //更新时间
+  updateTime?:string
 }
 
 interface BotListPage {

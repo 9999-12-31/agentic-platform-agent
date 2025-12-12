@@ -37,7 +37,14 @@ public interface ChatListDataService {
      * @param botId Bot ID
      * @return Latest chat list, or null if not exists
      */
-    ChatList findLatestEnabledChatByUserAndBot(String uid, Integer botId);
+    ChatList findRootEnabledChatByUserAndBot(String uid, Integer botId);
+
+    /**
+     * 查找rootChatId
+     * @param uid
+     * @param botId
+     * @return
+     */
 
     /**
      * Reactivate chat list (set is_delete=0)
@@ -98,4 +105,6 @@ public interface ChatListDataService {
     ChatBotBase updateChatBotList(ChatBotBase chatBotBase);
 
     int deleteByChildChatId(Long childChatId, String uid);
+
+    int updateChatListTitleByUidAndChatId(Long chatId, String uid, String title);
 }

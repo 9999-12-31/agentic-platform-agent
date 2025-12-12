@@ -36,6 +36,7 @@ from workflow.engine.nodes.question_answer.question_answer_node import (
 from workflow.engine.nodes.rpa.rpa_node import RPANode
 from workflow.engine.nodes.start.start_node import StartNode
 from workflow.engine.nodes.text_joiner.text_joiner_node import TextJoinerNode
+from workflow.engine.nodes.oss.oss_node import OSSNode
 
 # TODO: Implement automatic loading mechanism for dynamic node discovery
 # Registry mapping node types to their corresponding node classes
@@ -61,5 +62,6 @@ tool_classes = {
     "agent": AgentNode,  # Agent node for autonomous task execution
     "question-answer": QuestionAnswerNode,  # Question-answer node for Q&A processing
     "database": PGSqlNode,  # PostgreSQL database node for data operations
-    "rpa": RPANode,
+    "rpa": RPANode,  # RPA node for robotic process automation
+    "oss": OSSNode,  # OSS node for file upload to S3-compatible storage
 }

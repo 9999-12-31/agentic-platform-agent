@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iflytek.astron.console.commons.response.ApiResult;
 import com.iflytek.astron.console.commons.util.RequestContextUtil;
+import com.iflytek.astron.console.hub.dto.user.UserFileResponseDto;
 import com.iflytek.astron.console.hub.dto.user.UserFileVo;
 import com.iflytek.astron.console.hub.service.user.UserFileService;
 
@@ -36,14 +37,14 @@ public class UserFileController {
      */
     @PostMapping(path = "/save-file")
     @Operation(summary = "Save File")
-    public ApiResult<UserFileVo> saveFile(@RequestBody UserFileVo vo) {
+    public ApiResult<UserFileResponseDto> saveFile(@RequestBody UserFileVo vo) {
         String uid = RequestContextUtil.getUID();
          return ApiResult.success(userFileService.saveFile(uid, vo));
     }
 
     @PostMapping(path = "/get-all-files")
     @Operation(summary = "Get All Files")
-    public ApiResult<List<UserFileVo>> getAllFiles(@RequestBody UserFileVo vo) {
+    public ApiResult<List<UserFileResponseDto>> getAllFiles(@RequestBody UserFileVo vo) {
         String uid = RequestContextUtil.getUID();
          return ApiResult.success(userFileService.getAllFiles(uid, vo));
     }

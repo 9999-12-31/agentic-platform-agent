@@ -4,6 +4,7 @@ import com.iflytek.astron.console.commons.constant.ResponseEnum;
 import com.iflytek.astron.console.commons.entity.bot.ChatBotMarket;
 import com.iflytek.astron.console.commons.exception.BusinessException;
 import com.iflytek.astron.console.commons.response.ApiResult;
+import com.iflytek.astron.console.commons.service.data.ChatListDataService;
 import com.iflytek.astron.console.commons.util.RequestContextUtil;
 import com.iflytek.astron.console.commons.util.space.SpaceInfoUtil;
 import com.iflytek.astron.console.commons.service.bot.ChatBotDataService;
@@ -100,6 +101,21 @@ public class ChatListController {
         }
 
         return ApiResult.success(chatListService.logicDeleteChatIndex(chatId, uid));
+    }
+    // 更新 chatlist title
+    @PostMapping("/update-chat-title")
+    @Operation(summary = "Update Chat List Title")
+    public ApiResult<Boolean> updateChatListTitle(@RequestParam Long chatId, @RequestParam String title) {
+        String uid = RequestContextUtil.getUID();
+        if (uid == null) {
+            throw new BusinessException(ResponseEnum.LOGIN_INFO_ERROR);
+        }
+        if (chatId == null) {
+            throw new BusinessException(ResponseEnum.PARAMS_ERROR);
+        }
+
+        Boolean result = chatListService.updateChatListTitle(chatId, uid, title);
+        return result ? ApiResult.success() : ApiResult.error(999999, "更新失败");
     }
 
     /**

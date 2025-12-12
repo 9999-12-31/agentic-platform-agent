@@ -320,8 +320,10 @@ export interface UploadFileInfo {
   type: string;
   /** 文件名 */
   fileName: string;
-  /** 文件大小（字节） */
+  /** 文件大小（字节）-带单位 */
   fileSize: number;
+  /** 文件大小（字节） */
+  fileSizeRaw?:number;
   /** 文件业务Key */
   fileBusinessKey: string;
   /** 文件URL（上传完成后生成） */

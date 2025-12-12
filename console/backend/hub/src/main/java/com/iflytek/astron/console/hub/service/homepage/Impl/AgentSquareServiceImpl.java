@@ -79,11 +79,11 @@ public class AgentSquareServiceImpl implements AgentSquareService {
                 .stream()
                 .map(market -> {
                     String creatorName = userInfoDataService.findNickNameByUid(market.getUid()).orElse(null);
-                    ChatList latestChat;
+                    ChatList rootChat;
                     Long chatId = null;
                     if (finalUid != null && !finalUid.isEmpty()) {
-                        latestChat = chatListDataService.findLatestEnabledChatByUserAndBot(finalUid, market.getBotId());
-                        chatId = latestChat != null ? latestChat.getId() : null;
+                        rootChat = chatListDataService.findRootEnabledChatByUserAndBot(finalUid, market.getBotId());
+                        chatId = rootChat != null ? rootChat.getId() : null;
                     }
                     return new BotInfoDto(
                             market.getBotId(),
@@ -95,7 +95,10 @@ public class AgentSquareServiceImpl implements AgentSquareService {
                             market.getBotDesc(),
                             finalFavoriteIds.contains(market.getBotId()),
                             creatorName,
-                            market.getVersion());
+                            market.getVersion(),
+                            market.getAuditTime(),
+                            market.getCreateTime(),
+                            market.getUpdateTime());
                 })
                 .collect(Collectors.toList());
         return new BotListPageDto(

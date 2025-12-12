@@ -108,6 +108,9 @@ public class ChatListServiceImpl implements ChatListService {
         entity.setRootFlag(0);
 
         chatListDataService.createChat(entity);
+
+        // 更新rootChatId 时间
+
         return new ChatListCreateResponse(
                 entity.getId(), entity.getTitle(), entity.getEnable(),
                 entity.getCreateTime(), false, null, botId, null, null);
@@ -168,7 +171,7 @@ public class ChatListServiceImpl implements ChatListService {
     public ChatListCreateResponse createChatList(String uid, String chatListName, Integer botId) {
         ChatList latestOne;
         // Query bot list if botId is not null, otherwise query regular list
-        latestOne = chatListDataService.findLatestEnabledChatByUserAndBot(uid, botId);
+        latestOne = chatListDataService.findRootEnabledChatByUserAndBot(uid, botId);
         // Query the user's latest window record for this botId, the window may have been deleted and needs
         // to be re-enabled later.
         if (latestOne != null) {
@@ -355,5 +358,14 @@ public class ChatListServiceImpl implements ChatListService {
     public Boolean logicDeleteChatIndex(Long chatId, String uid) {
         log.info("***** uid: {} delete single chat index childChatId: {}", uid, chatId);
         return chatListDataService.deleteByChildChatId(chatId, uid) > 0;
+    }
+
+    @Override
+    public Boolean updateChatListTitle(Long chatId, String uid, String title) {
+        log.info("***** uid: {} update single chat list id: {} title: {}", uid, chatId, title);
+        if (title == null || title.isEmpty()) {
+            return false;
+        }
+        return chatListDataService.updateChatListTitleByUidAndChatId(chatId, uid, title) > 0;
     }
 }

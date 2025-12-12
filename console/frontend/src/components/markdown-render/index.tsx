@@ -232,8 +232,8 @@ function MarkdownRender({ content, isSending = false }): React.ReactElement {
                 // console.log('Rendering ECharts with option:', option);
                 // console.log('ECharts container style:', { height: '400px', margin: '16px 0', width: '100%', maxWidth: '960px', display: 'block' });
                 return (
-                  <div className="echarts-container" style={{ height: '400px', margin: '16px 0', width: '100%', maxWidth: '960px', display: 'block' }}>
-                    <ReactECharts option={option} style={{ minWidth: '50vw', height: '100%', maxWidth: '960px' }} />
+                  <div className="echarts-container" style={{ height: '400px', margin: '0', width: '100%', minWidth: '40vw' , display: 'block' }}>
+                    <ReactECharts option={option} style={{ width: '100%', height: '100%', minWidth: '40vw' }} />
                   </div>
                 );
               }

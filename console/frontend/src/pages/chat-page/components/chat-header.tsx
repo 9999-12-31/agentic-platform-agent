@@ -29,11 +29,11 @@ const ChatHeader = (props: {
   // 返回首页
   const handleBack = (): void => {
     controllerRef?.abort();
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
-      navigate('/home');
-    }
+    // if (window.history.length > 2) {
+    //   navigate(-1);
+    // } else {
+    navigate('/home');
+    // }
   };
 
   // 收藏/取消收藏
@@ -110,24 +110,24 @@ const ChatHeader = (props: {
       return (
         <div className="flex items-center">
           <Skeleton.Avatar
-            active
+            active={false}
             size={48}
             className="mr-4"
             style={{ borderRadius: 12 }}
           />
           <div className="flex flex-col gap-1">
             <Skeleton.Input
-              active
+              active={false}
               size="small"
               style={{ width: 120, height: 20 }}
             />
-            <div className="flex items-center">
-              <Skeleton.Input
-                active
-                size="small"
-                style={{ width: 80, height: 16 }}
-              />
-            </div>
+            {/*<div className="flex items-center">*/}
+            {/*  <Skeleton.Input*/}
+            {/*    active*/}
+            {/*    size="small"*/}
+            {/*    style={{ width: 80, height: 16 }}*/}
+            {/*  />*/}
+            {/*</div>*/}
           </div>
         </div>
       );
@@ -202,8 +202,11 @@ const ChatHeader = (props: {
   };
 
   return (
-      // <div className="w-full h-20 bg-white flex justify-between items-center z-10 fixed rounded-b-[18px] shadow-sm">
-    <div className="h-14 bg-white flex justify-between items-center z-10 fixed rounded-b-[10px] shadow-sm" style={{width:'-webkit-fill-available'}}>
+    // <div className="w-full h-20 bg-white flex justify-between items-center z-10 fixed rounded-b-[18px] shadow-sm">
+    <div
+      className="h-14 bg-white flex justify-between items-center z-10 fixed rounded-b-[10px] shadow-sm"
+      style={{ width: '-webkit-fill-available' }}
+    >
       {/* 左侧区域 */}
       <div className="flex items-center justify-start h-full">
         <img

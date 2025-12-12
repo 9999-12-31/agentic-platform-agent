@@ -287,7 +287,7 @@ public class ChatMessageController {
      */
     @PostMapping(path = "/re-answer", produces = "text/event-stream;charset=UTF-8")
     @Operation(summary = "Regenerate conversation result")
-    public SseEmitter reAnswer(@RequestParam Long chatId, @RequestParam Long requestId) {
+    public SseEmitter reAnswer(@RequestParam Long chatId, @RequestParam Long requestId, @RequestParam(required = false) Long childChatId) {
         String sseId = RandomUtil.randomString(8);
         SseEmitter sseEmitter = SseEmitterUtil.createSseEmitter();
 
@@ -301,7 +301,13 @@ public class ChatMessageController {
             SseEmitterUtil.sendEndAndComplete(sseEmitter);
             return sseEmitter;
         }
-        Long lastChatId = chatTreeIndexList.getFirst().getChildChatId();
+
+        Long lastChatId = null;
+        if (childChatId != null) {
+            lastChatId = childChatId;
+        } else {
+            lastChatId = chatTreeIndexList.getFirst().getChildChatId();
+        }
 
         // Validate request parameters
         ValidationResult validation = validateReAnswerRequest(lastChatId, requestId, sseId, sseEmitter);
