@@ -80,6 +80,21 @@ class OSSNode(BaseNode):
                 elif input_key == 'file_bytes':
                     file_bytes = value
             
+            # If parameters not found in input_identifier, try to get from nodeParam
+            if not filename or not file_bytes:
+                try:
+                    node_protocol = variable_pool.get_node_protocol(self.node_id)
+                    if node_protocol and node_protocol.nodeParam:
+                        if not filename and 'filename' in node_protocol.nodeParam:
+                            filename = node_protocol.nodeParam['filename']
+                            inputs['filename'] = filename
+                        if not file_bytes and 'file_bytes' in node_protocol.nodeParam:
+                            file_bytes = node_protocol.nodeParam['file_bytes']
+                            inputs['file_bytes'] = file_bytes
+                except Exception:
+                    # Ignore errors when getting node protocol
+                    pass
+            
             # Validate required parameters
             if not filename or not file_bytes:
                 raise CustomException(
