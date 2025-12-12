@@ -15,7 +15,7 @@ INSERT INTO astron_console.bot_type_list (id,type_key,type_name,order_num,show_i
 -- chat_tree_index 增加字段 is_delete tinyint
 ALTER TABLE astron_console.chat_tree_index ADD COLUMN is_delete TINYINT DEFAULT 0 COMMENT 'Whether deleted: 0 not delete, 1 delete'  AFTER child_chat_id;
 
-
+-- 用户文件存储表
 CREATE TABLE `user_file`
 (
     `id`                  bigint       NOT NULL AUTO_INCREMENT,
@@ -34,3 +34,6 @@ CREATE TABLE `user_file`
     KEY                   `user_file_deleted_IDX` (`deleted`) USING BTREE,
     KEY                   `user_file_create_time_IDX` (`create_time`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='User file information';
+
+-- 工作流文件存储节点
+INSERT INTO astron_console.config_info (id, category, code, name, value, is_valid, remarks, create_time, update_time) VALUES(1, 'WORKFLOW_NODE_TEMPLATE', '1,2', '基础节点', '{"idType":"oss","nodeType":"基础节点","aliasName":"文件存储","description":"上传文件到对象存储并返回下载URL","data":{"nodeMeta":{"nodeType":"基础节点","aliasName":"文件存储"},"nodeParam":{"filename":"","file_bytes":""},"inputs":[{"id":"","name":"input","schema":{"type":"","value":{"type":"ref","content":{}}}}],"outputs":[{"id":"","name":"filename","schema":{"type":"string","default":""}},{"id":"","name":"download_url","schema":{"type":"string","default":""}}],"references":[],"allowInputReference":true,"allowOutputReference":true,"icon":"https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/iteration-icon.png"}}', 1, '文件存储', '2000-01-01 00:00:00', '2025-12-12 06:24:34');
