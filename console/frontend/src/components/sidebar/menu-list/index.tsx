@@ -29,7 +29,7 @@ import enterpriseSpaceJoin from '@/assets/imgs/space/enterpriseSpaceJoin.png';
 import arrowRight from '@/assets/imgs/space/arrowRight.png';
 import {
   deleteChatIndex,
-  deleteChatList,
+  deleteChatList, postCreateChat,
   postNewChat,
   updateTitle,
 } from '@/services/chat';
@@ -585,12 +585,20 @@ const useMenuListHelpers = (
             await onRefreshData();
           }
           if (Number(chatBotId) === Number(botIdParam) && chilChatId) {
-            try {
-              const info = await postNewChat(currentChatId);
-              navigate(`/chat/${botIdParam}/${info?.id}`);
-            } catch (error) {
-              console.error(error);
-            }
+            // try {
+            //   const info = await postNewChat(currentChatId);
+            //   navigate(`/chat/${botIdParam}/${info?.id}`);
+            // } catch (error) {
+            //   console.error(error);
+            // }
+            // if (chatId) {
+            //   const info = await postNewChat(chatId);
+            //   setMessageList([]);
+            //   navigate(`/chat/${botId}/${info?.id}`);
+            // } else {
+              const creatInfo = await postCreateChat(botIdParam);
+              navigate(`/chat/${botIdParam}/${creatInfo?.id}`, { replace: true });
+            // }
           }
           // 如果当前页面是home页，触发重新加载agent列表的事件
           if (location.pathname === '/home') {

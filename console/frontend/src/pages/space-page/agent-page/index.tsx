@@ -313,7 +313,7 @@ function index() {
                 { label: t('agentPage.agentPage.allTypes'), value: 0 },
                 { label: t('agentPage.agentPage.instructionType'), value: 1 },
                 { label: t('agentPage.agentPage.workflowType'), value: 3 },
-                { label: '语音*虚拟人', value: 4 },
+                // { label: '语音*虚拟人', value: 4 },
               ]}
             />
             <Select
@@ -491,8 +491,8 @@ function index() {
                               t('agentPage.agentPage.instructionType')}
                             {k.version === 3 &&
                               t('agentPage.agentPage.workflowType')}
-                            {k.version === 4 &&
-                              t('agentPage.agentPage.voiceVirtualType')}
+                            {/*{k.version === 4 &&*/}
+                            {/*  t('agentPage.agentPage.voiceVirtualType')}*/}
                           </div>
                         </div>
                       </span>
