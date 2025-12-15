@@ -2,10 +2,7 @@ package com.iflytek.astron.console.hub.controller.publish;
 
 import com.iflytek.astron.console.commons.annotation.RateLimit;
 import com.iflytek.astron.console.commons.response.ApiResult;
-import com.iflytek.astron.console.hub.dto.publish.AppListDTO;
-import com.iflytek.astron.console.hub.dto.publish.BotApiInfoDTO;
-import com.iflytek.astron.console.hub.dto.publish.CreateAppVo;
-import com.iflytek.astron.console.hub.dto.publish.CreateBotApiVo;
+import com.iflytek.astron.console.hub.dto.publish.*;
 import com.iflytek.astron.console.hub.service.publish.PublishApiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,6 +55,20 @@ public class PublishApiController {
     @GetMapping("/get-bot-api-info")
     public ApiResult<BotApiInfoDTO> usageRealTime(@RequestParam Long botId) {
         return ApiResult.success(publishApiService.getApiInfo(botId));
+    }
+
+    @Operation(summary = "Update User App", description = "update user app")
+    @RateLimit(limit = 30, window = 60, dimension = "USER")
+    @PostMapping("/update-user-app")
+    public ApiResult<Boolean> updateUserApp(@RequestBody UpdateAppVo updateAppVo) {
+        return ApiResult.success(publishApiService.updateApp(updateAppVo));
+    }
+
+    @Operation(summary = "Delete User App", description = "delete user app")
+    @RateLimit(limit = 30, window = 60, dimension = "USER")
+    @PostMapping("/delete-user-app")
+    public ApiResult<Boolean> deleteUserApp(@RequestParam String appId) {
+        return ApiResult.success(publishApiService.deleteApp(appId));
     }
 
 }
