@@ -61,4 +61,22 @@ public class AppMstServiceImpl implements AppMstService {
                 .eq(AppMst::getIsDelete, 0)
                 .last("LIMIT 1"));
     }
+
+    @Override
+    public Boolean updateApp(String appId, String appName, String appDescribe) {
+        return appMstMapper.update(null, Wrappers.lambdaUpdate(AppMst.class)
+                .eq(AppMst::getAppId, appId)
+                .eq(AppMst::getIsDelete, 0)
+                .set(AppMst::getAppName, appName)
+                .set(AppMst::getAppDescribe, appDescribe)
+                .set(AppMst::getUpdateTime, LocalDateTime.now())) > 0;
+    }
+
+    @Override
+    public Boolean deleteApp(String appId) {
+        return appMstMapper.update(null, Wrappers.lambdaUpdate(AppMst.class)
+                .eq(AppMst::getAppId, appId)
+                .set(AppMst::getIsDelete, 1)
+                .set(AppMst::getUpdateTime, LocalDateTime.now())) > 0;
+    }
 }

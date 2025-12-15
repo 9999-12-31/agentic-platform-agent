@@ -15,4 +15,8 @@ public interface AppMstService {
     List<AppMst> getAppListByUid(String uid);
 
     AppMst getByAppId(String uid, String appId);
+
+    Boolean updateApp(String appId, String appName, String appDescribe);
+
+    Boolean deleteApp(String appId);
 }

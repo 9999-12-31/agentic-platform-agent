@@ -13,10 +13,7 @@ import com.iflytek.astron.console.commons.service.user.AppMstService;
 import com.iflytek.astron.console.commons.util.MaasUtil;
 import com.iflytek.astron.console.commons.util.RequestContextUtil;
 import com.iflytek.astron.console.commons.util.space.SpaceInfoUtil;
-import com.iflytek.astron.console.hub.dto.publish.AppListDTO;
-import com.iflytek.astron.console.hub.dto.publish.BotApiInfoDTO;
-import com.iflytek.astron.console.hub.dto.publish.CreateAppVo;
-import com.iflytek.astron.console.hub.dto.publish.CreateBotApiVo;
+import com.iflytek.astron.console.hub.dto.publish.*;
 import com.iflytek.astron.console.hub.dto.user.TenantAuth;
 import com.iflytek.astron.console.commons.enums.bot.BotVersionEnum;
 import com.iflytek.astron.console.hub.service.chat.ChatBotApiService;
@@ -178,6 +175,35 @@ public class PublishApiServiceImpl implements PublishApiService {
                 .serviceUrl(serviceUrlHost + botApi.getApiPath())
                 .flowId(botApi.getAssistantId())
                 .build();
+    }
+
+    @Override
+    public Boolean updateApp(UpdateAppVo updateAppVo) {
+        String uid = RequestContextUtil.getUID();
+
+        if (appMstService.exist(updateAppVo.getAppName())) {
+            throw new BusinessException(ResponseEnum.USER_APP_NAME_REPEAT);
+        }
+
+        String appId = updateAppVo.getAppId();
+        AppMst appMst = appMstService.getByAppId(uid, appId);
+        if (Objects.isNull(appMst)) {
+            throw new BusinessException(ResponseEnum.USER_APP_ID_NOT_EXISTE);
+        }
+
+        return appMstService.updateApp(appId, updateAppVo.getAppName(), updateAppVo.getAppDescribe());
+    }
+
+    @Override
+    public Boolean deleteApp(String appId) {
+        String uid = RequestContextUtil.getUID();
+
+        AppMst appMst = appMstService.getByAppId(uid, appId);
+        if (Objects.isNull(appMst)) {
+            throw new BusinessException(ResponseEnum.USER_APP_ID_NOT_EXISTE);
+        }
+
+        return appMstService.deleteApp(appId);
     }
 
     private BotApiInfoDTO createMaasApi(String uid, AppMst appMst, ChatBotBase botBase, HttpServletRequest request) {
