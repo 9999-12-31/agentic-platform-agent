@@ -100,7 +100,7 @@ class S3Service(BaseOSSService, Service):
                 raise
 
     def upload_file(
-        self, filename: str, file_bytes: bytes, bucket_name: Optional[str] = None
+        self, filename: str, file_bytes: bytes, bucket_name: Optional[str] = None, content_type: Optional[str] = None
     ) -> str:
         """
         Upload a file to S3-compatible storage with public read access.
@@ -113,11 +113,16 @@ class S3Service(BaseOSSService, Service):
         """
         if not bucket_name:
             bucket_name = self.bucket_name
+        
+        if content_type is None:
+            content_type, _ = mimetypes.guess_type(filename)
+            if content_type is None:
+                content_type = "application/octet-stream"
 
         try:
             # Set public read access
             self.client.put_object(
-                Bucket=bucket_name, Key=filename, Body=file_bytes, ACL="public-read"
+                Bucket=bucket_name, Key=filename, Body=file_bytes, ACL="public-read", ContentType=content_type
             )
             return f"{self.oss_download_host}/{bucket_name}/{filename}"
         except Exception as e:

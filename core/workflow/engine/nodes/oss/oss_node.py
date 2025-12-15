@@ -83,6 +83,7 @@ class OSSNode(BaseNode):
             access_key_secret = self.access_key_secret
             bucket_name = self.bucket_name
             download_host = self.download_host
+            content_type = None
             
             # Extract filename and file_bytes from input_identifier
             for input_key in self.input_identifier:
@@ -107,7 +108,9 @@ class OSSNode(BaseNode):
                 elif input_key == 'oss_file_name':
                     self.file_name = value
                 elif input_key == 'oss_file_content':
-                    self.file_content = value    
+                    self.file_content = value 
+                elif input_key == 'oss_content_type':
+                    content_type = value       
 
             file_name = prompt_template_replace(
                     input_identifier=self.input_identifier,
@@ -146,7 +149,7 @@ class OSSNode(BaseNode):
             
             # Upload file
             file_bytes = file_content.encode('utf-8') if isinstance(file_content, str) else file_content
-            file_url = s3_service.upload_file(file_name, file_bytes)
+            file_url = s3_service.upload_file(file_name, file_bytes, content_type=content_type)
             
             # Prepare output
             output_mapping = {
