@@ -4,7 +4,7 @@ OSS Service Manager module.
 This module provides concrete implementations of OSS services,
 including S3-compatible storage and iFly Gateway Storage clients.
 """
-
+import mimetypes
 import json
 from typing import Optional
 from urllib.parse import urlencode
