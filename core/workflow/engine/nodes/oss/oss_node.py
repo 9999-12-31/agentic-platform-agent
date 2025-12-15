@@ -11,7 +11,7 @@ from workflow.engine.nodes.oss.s3_service import S3Service
 from workflow.exception.e import CustomException
 from workflow.exception.errors.err_code import CodeEnum
 from workflow.extensions.otlp.trace.span import Span
-from workflow.utils.prompt_template_replace import prompt_template_replace
+from workflow.engine.nodes.util.prompt import prompt_template_replace
 
 
 class OSSNode(BaseNode):
@@ -102,6 +102,12 @@ class OSSNode(BaseNode):
                     bucket_name = value
                 elif input_key == 'oss_download_host':
                     download_host = value
+                elif input_key == 'oss_file_extension':
+                    self.file_extension = value
+                elif input_key == 'oss_file_name':
+                    self.file_name = value
+                elif input_key == 'oss_file_content':
+                    self.file_content = value    
 
             file_name = prompt_template_replace(
                     input_identifier=self.input_identifier,
