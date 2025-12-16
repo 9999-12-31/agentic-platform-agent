@@ -272,6 +272,16 @@ export const createApp = (params: any) => {
   return http.post(`/publish-api/create-user-app`, params);
 };
 
+// 更新应用
+export const updateApp = (params: any) => {
+  return http.post(`/publish-api/update-user-app`, params);
+};
+
+// 删除应用
+export const deleteApp = (appId: string) => {
+  return http.post(`/publish-api/delete-user-app?appId=${appId}`);
+};
+
 // 获取api 历史用量
 export const getApiHistory = (botId: any, type: number): Promise<any> => {
   return http.get(`/bot/api/usage/history?botId=${botId}&type=${type}`);
