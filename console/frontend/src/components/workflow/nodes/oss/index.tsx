@@ -27,39 +27,39 @@ export const OssDetail = memo(({ id, data }): React.ReactElement => {
             <div className="rounded-md px-[18px] pb-3 pointer-events-auto">
                 {/* Filename Field */}
                 <div className="my-2 flex items-center justify-between">
-                    <span>{t('workflow.nodes.ossNode.filename')}</span>
+                    <span>{t('workflow.nodes.ossNode.fileName')}</span>
                 </div>
                 <div>
                     <FlowTemplateEditor
                     id={id}
                     data={data}
-                    value={data?.nodeParam?.filename}
+                    value={data?.nodeParam?.file_name}
                     onChange={value =>
                         handleChangeNodeParam(
-                        (data, value) => (data.nodeParam.filename = value),
+                        (data, value) => (data.nodeParam.file_name = value),
                         value
                         )
                     }
-                    placeholder={t('workflow.nodes.ossNode.filenamePlaceholder')}
+                    placeholder={t('workflow.nodes.ossNode.fileNamePlaceholder')}
                     disabled={canvasesDisabled}
                     />
                 </div>
-                {/* File Bytes Field */}
+                {/* File Content Field */}
                 <div className="my-2 flex items-center justify-between">
-                    <span>{t('workflow.nodes.ossNode.fileBytes')}</span>
+                    <span>{t('workflow.nodes.ossNode.fileContent')}</span>
                 </div>
                 <div>
                     <FlowTemplateEditor
                     id={id}
                     data={data}
-                    value={data?.nodeParam?.file_bytes}
+                    value={data?.nodeParam?.file_content}
                     onChange={value =>
                         handleChangeNodeParam(
-                        (data, value) => (data.nodeParam.file_bytes = value),
+                        (data, value) => (data.nodeParam.file_content = value),
                         value
                         )
                     }
-                    placeholder={t('workflow.nodes.ossNode.fileBytesPlaceholder')}
+                    placeholder={t('workflow.nodes.ossNode.fileContentPlaceholder')}
                     disabled={canvasesDisabled}
                     />
                 </div>

@@ -15,7 +15,7 @@ import RecorderCom, { type RecorderRef } from './recorder-com';
 import useChatFileUpload from '@/hooks/use-chat-file-upload';
 import MultiUploadButtons from './multi-upload-buttons';
 import FileGridDisplay from './file-grid-display';
-import classNames from "classnames";
+import classNames from 'classnames';
 
 const ChatInput = (props: {
   handleSendMessage: (params: {
@@ -25,7 +25,7 @@ const ChatInput = (props: {
   }) => void;
   botInfo: BotInfoType;
   stopAnswer: () => void;
-  redirectPage: (id:string) => void;
+  redirectPage: (id: string) => void;
 }): ReactElement => {
   const { handleSendMessage, botInfo, stopAnswer, redirectPage } = props;
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ const ChatInput = (props: {
   const $record = useRef<RecorderRef>(null); //  录音ref
   const recordStartTextRef = useRef<string>(''); //  录音开始时的文本
   const { fileList, setFileList, handleFileSelect, removeFile, hasErrorFiles } =
-    useChatFileUpload({botInfo});
+    useChatFileUpload({ botInfo });
 
   // 检查是否有待选择的工作流选项
   const hasWorkflowOptionsToSelect = (): boolean => {
@@ -107,8 +107,8 @@ const ChatInput = (props: {
       //   updateTime: new Date().toISOString(),
       // };
       // addMessage(startMessage);
-      setMessageList([])
-      redirectPage(info?.id)
+      setMessageList([]);
+      redirectPage(info?.id);
     } catch (error) {
       console.error(error);
     }
@@ -158,11 +158,15 @@ const ChatInput = (props: {
   }, [fileList]);
 
   return (
-    <div className={classNames('pl-[24px] py-6',
-        botInfo?.supportUploadConfig?.length ? 'pr-[388px]' : 'pr-[24px]')}>
+    <div
+      className={classNames(
+        'pl-[24px] py-6',
+        botInfo?.supportUploadConfig?.length ? 'pr-[388px]' : 'pr-[24px]'
+      )}
+    >
       <div className="mx-auto max-w-[960px]">
         <div className="flex items-center relative">
-          {messageList.length > 0 && (
+          {messageList.filter(e => e.reqType !== 'START').length > 0 && (
             <div
               className="flex items-center justify-center w-auto h-8 px-2.5 border border-[#d3dbf8] rounded-2xl mb-3 cursor-pointer mr-3 bg-white text-[#333333] hover:border-[#5895f0]"
               onClick={handleNewChat}

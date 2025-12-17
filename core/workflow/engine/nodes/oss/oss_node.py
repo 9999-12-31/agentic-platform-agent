@@ -1,7 +1,6 @@
 import os
 import uuid
-
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from pydantic import Field
 
@@ -12,6 +11,7 @@ from workflow.engine.nodes.oss.s3_service import S3Service
 from workflow.exception.e import CustomException
 from workflow.exception.errors.err_code import CodeEnum
 from workflow.extensions.otlp.trace.span import Span
+from workflow.engine.nodes.util.prompt import prompt_template_replace
 
 
 class OSSNode(BaseNode):
@@ -42,9 +42,21 @@ class OSSNode(BaseNode):
         default_factory=lambda: os.getenv("OSS_BUCKET_NAME", ""),
         description="Default bucket name for file operations (fallback: OSS_BUCKET_NAME env var)"
     )
-    oss_download_host: str = Field(
+    download_host: str = Field(
         default_factory=lambda: os.getenv("OSS_DOWNLOAD_HOST", ""),
         description="Host URL for generating download links (fallback: OSS_DOWNLOAD_HOST env var)"
+    )
+    file_extension: str = Field(
+        default_factory=lambda: "txt", 
+        description="File extension for uploaded files"
+    )
+    file_name: str = Field(
+        default_factory=lambda: f"{uuid.uuid4()}.{{file_extension}}",
+        description="File name for uploaded files"
+    )
+    file_content: str = Field(
+        default_factory=lambda: "hello world",
+        description="Content of the uploaded file"
     )
     
     async def async_execute(
@@ -63,9 +75,15 @@ class OSSNode(BaseNode):
         """
         try:
             # Get input parameters from variable pool
-            inputs = {}
-            filename = None
-            file_bytes = None
+            inputs: Dict[str, Any] = {}
+            
+            # Initialize parameters with class defaults
+            endpoint = self.endpoint
+            access_key_id = self.access_key_id
+            access_key_secret = self.access_key_secret
+            bucket_name = self.bucket_name
+            download_host = self.download_host
+            content_type = None
             
             # Extract filename and file_bytes from input_identifier
             for input_key in self.input_identifier:
@@ -74,70 +92,73 @@ class OSSNode(BaseNode):
                 )
                 inputs[input_key] = value
                 
-                # Identify filename and file_bytes parameters
-                if input_key == 'filename':
-                    filename = value
-                elif input_key == 'file_bytes':
-                    file_bytes = value
-            
-            # If parameters not found in input_identifier, try to get from nodeParam
-            if not filename or not file_bytes:
-                try:
-                    node_protocol = variable_pool.get_node_protocol(self.node_id)
-                    if node_protocol and node_protocol.nodeParam:
-                        if not filename and 'filename' in node_protocol.nodeParam:
-                            filename = node_protocol.nodeParam['filename']
-                            inputs['filename'] = filename
-                        if not file_bytes and 'file_bytes' in node_protocol.nodeParam:
-                            file_bytes = node_protocol.nodeParam['file_bytes']
-                            inputs['file_bytes'] = file_bytes
-                except Exception:
-                    # Ignore errors when getting node protocol
-                    pass
-            
-            # Validate required parameters
-            if not filename or not file_bytes:
-                raise CustomException(
-                    err_code=CodeEnum.PARAM_ERROR,
-                    err_msg="filename and file_bytes are required parameters",
-                    cause_error="Missing required parameters"
+                # Override parameters if provided in input
+                if input_key == 'oss_endpoint':
+                    endpoint = value
+                elif input_key == 'oss_access_key_id':
+                    access_key_id = value
+                elif input_key == 'oss_access_key_secret':
+                    access_key_secret = value
+                elif input_key == 'oss_bucket_name':
+                    bucket_name = value
+                elif input_key == 'oss_download_host':
+                    download_host = value
+                elif input_key == 'oss_file_extension':
+                    self.file_extension = value
+                elif input_key == 'oss_file_name':
+                    self.file_name = value
+                elif input_key == 'oss_file_content':
+                    self.file_content = value 
+                elif input_key == 'oss_content_type':
+                    content_type = value       
+
+            file_name = prompt_template_replace(
+                    input_identifier=self.input_identifier,
+                    _prompt_template=self.file_name,
+                    node_id=self.node_id,
+                    variable_pool=variable_pool,
+                    span_context=span,
                 )
-            
-            # Generate random filename if only extension is provided
-            if isinstance(filename, str) and filename.startswith('.'):
-                # Generate random UUID and append the extension
-                filename = f"{uuid.uuid4().hex}{filename}"
-            
-            # Convert file_bytes to bytes if it's a string
-            if isinstance(file_bytes, str):
-                file_bytes = file_bytes.encode('utf-8')
-            elif not isinstance(file_bytes, bytes):
-                raise CustomException(
-                    err_code=CodeEnum.PARAM_ERROR,
-                    err_msg="file_bytes must be either string or bytes type",
-                    cause_error=f"Invalid type: {type(file_bytes).__name__}"
+                
+            file_content = prompt_template_replace(
+                    input_identifier=self.input_identifier,
+                    _prompt_template=self.file_content,
+                    node_id=self.node_id,
+                    variable_pool=variable_pool,
+                    span_context=span,
                 )
+            # 提取文件扩展名，如果不存在就使用默认扩展名
+            _, ext = os.path.splitext(file_name)
+            # 如果没有扩展名或扩展名是空的，使用默认扩展名
+            if not ext:
+                # 确保默认扩展名以点开头
+                file_extension = f".{self.file_extension}" if not self.file_extension.startswith('.') else self.file_extension
+                file_name = f"{file_name}{file_extension}"
+            elif not ext.startswith('.'):
+                # 如果扩展名存在但没有点，添加点
+                file_name = f"{os.path.splitext(file_name)[0]}.{ext}"
             
             # Create S3Service instance
             s3_service = S3Service(
-                endpoint=self.endpoint,
-                access_key_id=self.access_key_id,
-                access_key_secret=self.access_key_secret,
-                bucket_name=self.bucket_name,
-                oss_download_host=self.oss_download_host,
+                endpoint=endpoint,
+                access_key_id=access_key_id,
+                access_key_secret=access_key_secret,
+                bucket_name=bucket_name,
+                oss_download_host=download_host,
             )
             
             # Upload file
-            download_url = s3_service.upload_file(filename, file_bytes)
+            file_bytes = file_content.encode('utf-8') if isinstance(file_content, str) else file_content
+            file_url = s3_service.upload_file(file_name, file_bytes, content_type=content_type)
             
             # Prepare output
+            output_mapping = {
+                'file_url': file_url,
+                'file_name': file_name
+            }
             outputs = {}
             for output_key in self.output_identifier:
-                if output_key == 'download_url':
-                    outputs[output_key] = download_url
-                else:
-                    # If output key is not download_url, use the corresponding input value
-                    outputs[output_key] = inputs.get(output_key, None)
+                outputs[output_key] = output_mapping.get(output_key, inputs.get(output_key, None))
             
             return self.success(inputs=inputs, outputs=outputs)
             

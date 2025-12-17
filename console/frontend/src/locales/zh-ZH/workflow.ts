@@ -16,10 +16,10 @@ const translation = {
     },
     ossNode:{
       ossConfig: "存储配置",
-      filename: "文件名",
-      filenamePlaceholder: "请输入文件名",
-      fileBytes: "文件内容",
-      fileBytesPlaceholder: "请输入文件内容",
+      fileName: "文件名",
+      fileNamePlaceholder: '必须有扩展名，没有扩展名时，默认扩展名是txt,支持{{变量名}}',
+      fileContent: "文件内容",
+      fileContentPlaceholder: "文件内容支持{{变量名}}",
     },
     largeModelNode: {
       type: '大模型',
