@@ -12,9 +12,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-spark}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-spark123}
       PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Asia/Shanghai  # ← 统一时区
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./pgsql/:/docker-entrypoint-initdb.d/
+      - /etc/localtime:/etc/localtime:ro  # ← 挂载宿主机时区
     networks:
       - astron-agent-network
     restart: always
@@ -30,11 +32,13 @@ services:
     container_name: astron-agent-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      TZ: Asia/Shanghai  # ← 统一时区
     ports:
       - "33306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql/:/docker-entrypoint-initdb.d/
+      - /etc/localtime:/etc/localtime:ro  # ← 挂载宿主机时区
     networks:
       - astron-agent-network
     restart: always
@@ -48,10 +52,13 @@ services:
   redis:
     image: harbor.bigdata.com/agentic/redis:7
     container_name: astron-agent-redis
+    environment:
+      TZ: Asia/Shanghai  # ← 统一时区（Alpine 镜像依赖此变量）
     ports:
       - "36379:6379"
     volumes:
       - redis_data:/data
+      - /etc/localtime:/etc/localtime:ro  # ← 挂载宿主机时区
     networks:
       - astron-agent-network
     restart: always
@@ -71,8 +78,10 @@ services:
       - "ES_JAVA_OPTS=${ES_JAVA_OPTS:--Xms512m -Xmx512m}"
       - xpack.security.enabled=${ELASTICSEARCH_SECURITY_ENABLED:-false}
       - cluster.name=astron-agent-cluster
+      - TZ=Asia/Shanghai  # ← JVM 依赖此变量设置时区
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+      - /etc/localtime:/etc/localtime:ro  # ← 辅助系统时间
     networks:
       - astron-agent-network
     restart: always
@@ -99,8 +108,10 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_REPLICATION_FACTOR:-1}
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_REPLICATION_FACTOR:-1}
       CLUSTER_ID: ${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk}
+      TZ: Asia/Shanghai  # ← Kafka 基于 JVM，需设置时区
     volumes:
       - kafka_data:/var/lib/kafka/data
+      - /etc/localtime:/etc/localtime:ro  # ← 挂载宿主机时区
     networks:
       - astron-agent-network
     restart: always
@@ -118,11 +129,13 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
       MINIO_SERVER_URL: ${OSS_REMOTE_ENDPOINT:-http://localhost:18998}
+      TZ: Asia/Shanghai  # ← MinIO (Go) 支持 TZ 环境变量
     ports:
       - "${EXPOSE_MINIO_PORT:-9000}:9000"
       - "${EXPOSE_MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio_data:/data
+      - /etc/localtime:/etc/localtime:ro  # ← 挂载宿主机时区
     networks:
       - astron-agent-network
     restart: always
@@ -151,6 +164,7 @@ services:
       DATABASE_MAX_OPEN_CONNS: "${DATABASE_MAX_OPEN_CONNS:-5}"
       DATABASE_MAX_IDLE_CONNS: "${DATABASE_MAX_IDLE_CONNS:-5}"
       LOG_PATH: "${LOG_PATH:-log.txt}"
+      TZ: Asia/Shanghai  # ← 补全缺失的 TZ
     depends_on:
       postgres:
         condition: service_healthy
@@ -163,13 +177,12 @@ services:
     volumes:
       - ./config/tenant/logs:/opt/tenant/logs
       - ./config/tenant/config.toml:/opt/tenant/config/config.toml
-      - /etc/localtime:/etc/localtime
+      - /etc/localtime:/etc/localtime:ro  # 已存在，统一加 :ro
     networks:
       - astron-agent-network
     restart: always
 
   # Memory Database Service
-
   core-database:
     image: harbor.bigdata.com/agentic/agentic-platform-agent/core-database:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-database
@@ -182,6 +195,7 @@ services:
       PGSQL_DATABASE: "${DATABASE_POSTGRES_DATABASE:-sparkdb_manager}"
       OTLP_ENDPOINT: "${OTLP_ENDPOINT:-127.0.0.1:4317}"
       OTLP_ENABLE: "${OTLP_ENABLE:-0}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -194,6 +208,7 @@ services:
     volumes:
       - ./config/database/config.env:/opt/core/memory/database/config.env
       - ./config/database/logs/:/opt/core/memory/database/logs
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -210,6 +225,7 @@ services:
       KAFKA_SERVERS: "${KAFKA_SERVERS:-kafka:29092}"
       XIAOWU_RPA_TASK_CREATE_URL: "${XIAOWU_RPA_TASK_CREATE_URL_INTERNAL:-${XIAOWU_RPA_TASK_CREATE_URL}}"
       XIAOWU_RPA_TASK_QUERY_URL: "${XIAOWU_RPA_TASK_QUERY_URL_INTERNAL:-${XIAOWU_RPA_TASK_QUERY_URL}}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -222,6 +238,7 @@ services:
     volumes:
       - ./config/rpa/config.env:/opt/core/plugin/rpa/config.env
       - ./config/rpa/logs/:/opt/core/logs/
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -245,6 +262,7 @@ services:
       OTLP_ENABLE: "${OTLP_ENABLE:-0}"
       KAFKA_ENABLE: "${KAFKA_ENABLE:-0}"
       KAFKA_SERVERS: "${KAFKA_SERVERS:-kafka:29092}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -257,6 +275,7 @@ services:
     volumes:
       - ./config/link/config.env:/opt/core/plugin/link/config.env
       - ./config/link/logs/:/opt/core/plugin/link/logs/
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -279,6 +298,7 @@ services:
       AI_APP_ID: "${PLATFORM_APP_ID}"
       AI_API_KEY: "${PLATFORM_API_KEY}"
       AI_API_SECRET: "${PLATFORM_API_SECRET}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -291,6 +311,7 @@ services:
     volumes:
       - ./config/aitools/config.env:/opt/core/plugin/aitools/config.env
       - ./config/aitools/logs/:/opt/core/logs/
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -343,6 +364,7 @@ services:
       APP_AUTH_PROT: "${APP_AUTH_PROT:-http}"
       APP_AUTH_API_KEY: "${APP_AUTH_API_KEY:-YOUR_APP_AUTH_API_KEY}"
       APP_AUTH_SECRET: "${APP_AUTH_SECRET:-YOUR_APP_AUTH_SECRET}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -354,6 +376,7 @@ services:
         condition: service_healthy
     volumes:
       - ./config/agent/config.env:/opt/core/agent/config.env
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -362,7 +385,6 @@ services:
   core-knowledge:
     image: harbor.bigdata.com/agentic/agentic-platform-agent/core-knowledge:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-core-knowledge
-    # Map container's localhost to host machine, to access services on the host
     extra_hosts:
       - "localhost:host-gateway"
     environment:
@@ -375,6 +397,7 @@ services:
       XINGHUO_DATASET_ID: "${XINGHUO_DATASET_ID:-}"
       XINGHUO_APP_ID: "${PLATFORM_APP_ID}"
       XINGHUO_APP_SECRET: "${PLATFORM_API_SECRET}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -387,6 +410,7 @@ services:
     volumes:
       - ./config/knowledge/config.env:/opt/core/knowledge/config.env
       - ./config/knowledge/logs/:/opt/core/logs
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -436,6 +460,7 @@ services:
       AGENT_BASE_URL: "${AGENT_BASE_URL:-http://core-agent:${CORE_AGENT_PORT}}"
       PGSQL_BASE_URL: "${PGSQL_BASE_URL:-http://core-database:${CORE_DATABASE_PORT}}"
       RPA_BASE_URL: "${RPA_BASE_URL:-http://core-rpa:${CORE_RPA_PORT}}"
+      TZ: Asia/Shanghai  # ← 新增
     depends_on:
       postgres:
         condition: service_healthy
@@ -448,6 +473,7 @@ services:
     volumes:
       - ./config/workflow/config.env:/opt/core/workflow/config.env
       - ./config/workflow/logs/:/opt/core/logs
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
@@ -460,11 +486,14 @@ services:
   nginx:
     image: harbor.bigdata.com/agentic/nginx:1.25-alpine
     container_name: astron-agent-nginx
+    environment:
+      TZ: Asia/Shanghai  # ← Alpine 镜像必须设 TZ
     ports:
       - "${EXPOSE_NGINX_PORT:-80}:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - nginx_logs:/var/log/nginx
+      - /etc/localtime:/etc/localtime:ro  # ← 挂载时区
     depends_on:
       - console-frontend
       - console-hub
@@ -479,7 +508,6 @@ services:
 
   # Console Frontend
   console-frontend:
-    # image: ghcr.io/iflytek/astron-agent/console-frontend:${ASTRON_AGENT_VERSION:-latest}
     image: harbor.bigdata.com/agentic/agentic-platform-agent/console-frontend:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-console-frontend
     environment:
@@ -489,18 +517,19 @@ services:
       CONSOLE_CASDOOR_ORG: "${CONSOLE_CASDOOR_ORG:-}"
       SPARK_APP_ID: "${SPARK_APP_ID:-}"
       SPARK_VIRTUAL_MAN_APP_ID: "${SPARK_VIRTUAL_MAN_APP_ID:-}"
+      TZ: Asia/Shanghai  # ← 新增
     expose:
       - "1881"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
 
-#   Console Hub Service
+  # Console Hub Service
   console-hub:
-    # image: ghcr.io/iflytek/astron-agent/console-hub:${ASTRON_AGENT_VERSION:-latest}
     image: harbor.bigdata.com/agentic/agentic-platform-agent/console-hub:${ASTRON_AGENT_VERSION:-latest}
     container_name: astron-agent-console-hub
-    # Map container's localhost to host machine, to access MinIO and other services from both inside and outside the container
     extra_hosts:
       - "localhost:host-gateway"
     environment:
@@ -582,7 +611,7 @@ services:
       BOT_API_MAAS_BASE_URL: "${BOT_API_MAAS_BASE_URL:-}"
       TENANT_CREATE_APP: "${TENANT_CREATE_APP:-}"
       TENANT_GET_APP_DETAIL: "${TENANT_GET_APP_DETAIL:-}"
-      
+      TZ: Asia/Shanghai  # ← 新增
     expose:
       - "8080"
     depends_on:
@@ -594,6 +623,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # ← 新增
     networks:
       - astron-agent-network
     restart: always
