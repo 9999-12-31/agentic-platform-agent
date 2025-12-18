@@ -281,11 +281,12 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
         })}
         placement="top"
         mouseEnterDelay={1}
+        overlayClassName="black-tooltip"
       >
         <div
           className={clsx(
             'relative flex items-center justify-center gap-1.5 px-2 py-1 cursor-pointer transition-all rounded hover:bg-[#f5f5f5]',
-            isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none'
+            isDisabled && 'opacity-50 !cursor-not-allowed'
           )}
           onClick={() => !isDisabled && handleOpenUploadModal(config)}
         >

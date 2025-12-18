@@ -26,6 +26,7 @@ class NodeType(Enum):
     QUESTION_ANSWER = "question-answer"
     DATABASE = "database"
     RPA = "rpa"
+    MCP = "mcp"
     OSS = "oss"
 
     @classmethod
@@ -89,6 +90,7 @@ CONTINUE_ON_ERROR_NOT_STREAM_NODE_TYPE = [
     NodeType.DECISION_MAKING.value,
     NodeType.KNOWLEDGE_BASE.value,
     NodeType.PARAMETER_EXTRACTOR.value,
+    NodeType.MCP.value,
 ]
 
 # Node types that continue execution on error with streaming
