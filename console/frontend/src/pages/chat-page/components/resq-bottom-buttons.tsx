@@ -166,7 +166,7 @@ const ResqBottomButtons = ({
           <ReactSVG wrapper="span" src={copyIcon} />
         </div>
       </Tooltip>
-      <Tooltip
+      {/* <Tooltip
         title={
           isPlaying
             ? t('chatPage.chatBottom.stopReading')
@@ -181,7 +181,7 @@ const ResqBottomButtons = ({
         >
           <AudioAnimate isPlaying={isPlaying} type="play" />
         </div>
-      </Tooltip>
+      </Tooltip> */}
     </div>
   );
 };
