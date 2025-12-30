@@ -31,7 +31,7 @@ html,
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #b3b3b3;
+  background-color: #d9d9d9;
   border-radius: 4px;
 }
 
@@ -98,7 +98,7 @@ html,
 
   &::-webkit-scrollbar-thumb {
     border-radius: calc(var(--scrollbar-width) / 2);
-    background: #E7E7F0;
+    background: #F0F0F5;
     transition: background-color 0.2s ease;
   }
 
@@ -129,7 +129,7 @@ html,
 @supports (-moz-appearance: none) {
   .scroll-bar-UI {
     scrollbar-width: thin;
-    scrollbar-color: #E7E7F0 transparent;
+    scrollbar-color: #F0F0F5 transparent;
   }
 
   .scroll-bar-hide-UI {

@@ -270,13 +270,13 @@ const RecentList: FC<RecentListProps> = ({
         <div
           className={`flex flex-col w-full overflow-x-hidden transition-[height,max-height] duration-300 ease-out  ${
             showRecent
-              ? 'min-h-[50px] overflow-y-auto scrollbar-hide'
+              ? 'min-h-[50px] overflow-y-auto'
               : 'h-0 max-h-0 overflow-hidden'
           }`}
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
+          // style={{
+          //   scrollbarWidth: 'none',
+          //   msOverflowStyle: 'none',
+          // }}
         >
           {/* 内容区域 - 固定间距 */}
           <div
@@ -1028,8 +1028,9 @@ const MenuList: FC<MenuListProps> = ({
           : isShowSpacePopover
             ? 'overflow-hidden'
             : 'overflow-auto'
-      } scroll-bar-hide-UI scrollbar-none`}
-    >
+      // } scroll-bar-hide-UI scrollbar-none`}
+        }`}
+>
       {getDynamicMenuList.map((item, index) => (
         <div
           key={`${index}-${item?.title}`}
