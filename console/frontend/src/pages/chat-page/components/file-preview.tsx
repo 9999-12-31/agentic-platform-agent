@@ -1,10 +1,14 @@
 import { UploadFileInfo } from '@/types/chat';
-import { ReactElement, useEffect, useState } from 'react';
-import { Modal, Button } from 'antd';
+import { ReactElement, useEffect, useRef, useState } from 'react';
+import { Modal, Button, Spin } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { getFileIcon } from '@/utils';
 import closeIcon from '@/assets/imgs/chat/plugin/delete-file.png';
 import { useTranslation } from 'react-i18next';
+import * as XLSX from 'xlsx';
+import { renderAsync } from 'docx-preview';
+import DOMPurify from 'dompurify';
+import styles from '../index.module.scss';
 
 const FilePreview = ({
   file,
@@ -16,6 +20,8 @@ const FilePreview = ({
   const { t } = useTranslation();
   const extension = file.fileName?.split('.').pop()?.toLowerCase();
   const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(false);
+  const docxContainerRef = useRef<HTMLDivElement>(null);
   const downloadTxtFile = (url?: string) => {
     if (!url) return;
     fetch(url)
@@ -32,11 +38,58 @@ const FilePreview = ({
         console.error('下载失败:', error);
       });
   };
+  const loadExcel = async (url?: string) => {
+    if (!url) return;
+    setLoading(true);
+    try {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const firstSheetName = workbook.SheetNames?.[0];
+      if (!firstSheetName) {
+        setContent('');
+      } else {
+        const worksheet =
+          workbook.Sheets[firstSheetName as keyof typeof workbook.Sheets];
+        if (worksheet) {
+          const html = XLSX.utils.sheet_to_html(worksheet);
+          setContent(DOMPurify.sanitize(html));
+        } else {
+          setContent('');
+        }
+      }
+    } catch (error) {
+      console.error('Excel load failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const loadWord = async (url?: string) => {
+    if (!url) return;
+    setLoading(true);
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      if (docxContainerRef.current) {
+        docxContainerRef.current.innerHTML = '';
+        await renderAsync(blob, docxContainerRef.current);
+      }
+    } catch (error) {
+      console.error('Word load failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
+    if (!file.fileUrl) return;
     if (extension === 'txt') {
       downloadTxtFile(file.fileUrl);
+    } else if (extension === 'docx') {
+      loadWord(file.fileUrl);
+    } else if (extension === 'xls' || extension === 'xlsx') {
+      loadExcel(file.fileUrl);
     }
-  }, [file.fileUrl]);
+  }, [file.fileUrl, extension]);
 
   // 根据文件类型渲染预览内容 预览txt文件时，需要先下载文件内容
   const renderFilePreview = (): ReactElement => {
@@ -74,6 +127,24 @@ const FilePreview = ({
         return (
           <div className="flex justify-center">
             <pre>{content}</pre>
+          </div>
+        );
+      case 'xls':
+      case 'xlsx':
+        return (
+          <div className="flex justify-center p-4 overflow-auto">
+            {loading ? (
+              <Spin />
+            ) : (
+              <div className="excel-preview" dangerouslySetInnerHTML={{ __html: content }} />
+            )}
+          </div>
+        );
+      case 'docx':
+        return (
+          <div className="flex justify-center p-4 min-h-[200px] bg-white overflow-auto">
+            {loading && <Spin />}
+            <div ref={docxContainerRef} className="w-full" />
           </div>
         );
       default:

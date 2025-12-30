@@ -56,8 +56,8 @@ export default defineConfig(({ mode }) => {
           // target: 'http://10.1.196.7:8080', // 旭东本机ip，调试用
           // target: 'http://10.1.196.7:8080', // 旭东
           // target: 'http://10.1.203.40:8080', // 彭颖
-          // target: 'http://10.1.200.151:8080', // 超睿
-          target: 'http://172.19.230.2/', // 联调服务器地址
+          target: 'http://10.110.177.35/', // 最新迁移地址
+          // target: 'http://172.19.230.2/', // 联调服务器地址
           //  target: 'http://172.29.201.92:8080', // 测试服务器地址
           changeOrigin: true,
           headers: {
