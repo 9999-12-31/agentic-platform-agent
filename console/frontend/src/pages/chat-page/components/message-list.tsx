@@ -14,7 +14,7 @@ import type {
 import recommendIcon from '@/assets/imgs/chat/recommend.svg';
 import rightArrowIcon from '@/assets/imgs/chat/right-arrow.svg';
 import LoadingAnimate from '@/constants/lottie-react/chat-loading.json';
-import { Progress, Skeleton } from 'antd';
+import { Progress, Skeleton, Modal } from 'antd';
 import useUserStore from '@/store/user-store';
 import useChatStore from '@/store/chat-store';
 import Lottie from 'lottie-react';
@@ -68,6 +68,22 @@ const MessageList = (props: {
     id: number;
     option: { id: string };
   } | null>(null);
+
+  // 弹窗状态
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+
+  // 处理放大按钮点击事件
+  const handleZoomIn = (content: string) => {
+    setModalContent(content);
+    setModalVisible(true);
+  };
+
+  // 关闭弹窗
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setModalContent('');
+  };
 
   // 处理节点选项点击
   const handleNodeClick = (option: Option, messageId: number) => {
@@ -213,11 +229,12 @@ const MessageList = (props: {
     const workflowContent = item?.workflowEventData?.content;
     const messageContent = workflowContent ? workflowContent : item.message;
     const isLastMessage = messageIndex === messageList.length - 1; //是否是最后一条消息
+    const containsIframe = messageContent?.includes('<iframe'); //判断是否包含iframe
+    
     if (isLastMessage) {
       console.log('item    ' + !item.sid);
       console.log('isLoading   ' + isLoading);
       console.log('answerPercent   ' + !!answerPercent);
-
       console.log('showLoading   ' + showLoading);
     }
     return (
@@ -231,7 +248,7 @@ const MessageList = (props: {
             alt="avatar"
             className="w-9 h-9 rounded-full mr-4 object-cover"
           />
-          <div className="bg-white rounded-[0px_12px_12px_12px] p-[14px_19px] w-auto text-[#333333] max-w-full min-w-[10%]">
+          <div className="bg-white rounded-[0px_12px_12px_12px] p-[14px_19px] w-auto text-[#333333] max-w-full min-w-[10%] relative">
             {showLoading && (
               <div className="flex items-center w-auto max-w-xs mb-2">
                 <Lottie
@@ -264,58 +281,88 @@ const MessageList = (props: {
             {/* 思考链 */}
             <DeepThinkProgress answerItem={item} />
             {/* 回答内容 */}
-            <MarkdownRender
-              content={messageContent}
-              isSending={!!streamId && !item.sid}
-            />
+            <div className="relative">
+              <MarkdownRender
+                content={messageContent}
+                isSending={!!streamId && !item.sid}
+              />
+              {/* 放大按钮 */}
+              {containsIframe && (
+                  <button
+                      className="absolute top-0 right-5 text-gray-600 p-1 rounded-full transition-all duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation(); // 阻止事件冒泡
+                        handleZoomIn(messageContent);
+                      }}
+                      title="放大查看"
+                  >
+                    {/*<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"*/}
+                    {/*     strokeLinecap="round" strokeLinejoin="round">*/}
+                    {/*  <circle cx="11" cy="11" r="8"></circle>*/}
+                    {/*  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>*/}
+                    {/*  <line x1="11" y1="8" x2="11" y2="14"></line>*/}
+                    {/*  <line x1="8" y1="11" x2="14" y2="11"></line>*/}
+                    {/*</svg>*/}
+                    <svg width="16" height="16" t="1767574964361" className="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="3802" >
+                      <path
+                          d="M853.333333 0h-682.666666C75.093333 0 0 75.093333 0 170.666667v682.666666C0 948.906667 75.093333 1024 170.666667 1024h682.666666c95.573333 0 170.666667-75.093333 170.666667-170.666667v-682.666666C1024 75.093333 948.906667 0 853.333333 0zM955.733333 853.333333c0 54.613333-47.786667 102.4-102.4 102.4h-682.666666c-54.613333 0-102.4-47.786667-102.4-102.4v-682.666666C68.266667 116.053333 116.053333 68.266667 170.666667 68.266667h682.666666c54.613333 0 102.4 47.786667 102.4 102.4v682.666666z"
+                          fill="#777777" p-id="3803"></path>
+                      <path
+                          d="M402.773333 573.44L204.8 771.413333V648.533333c0-20.48-13.653333-34.133333-34.133333-34.133333s-34.133333 13.653333-34.133334 34.133333v204.8c0 20.48 13.653333 34.133333 34.133334 34.133334h204.8c20.48 0 34.133333-13.653333 34.133333-34.133334s-13.653333-34.133333-34.133333-34.133333H252.586667l197.973333-197.973333c13.653333-13.653333 13.653333-34.133333 0-47.786667-13.653333-13.653333-34.133333-13.653333-47.786667 0zM853.333333 136.533333h-204.8c-20.48 0-34.133333 13.653333-34.133333 34.133334s13.653333 34.133333 34.133333 34.133333h122.88L573.44 402.773333c-13.653333 13.653333-13.653333 34.133333 0 47.786667 13.653333 13.653333 34.133333 13.653333 47.786667 0L819.2 252.586667v122.88c0 20.48 13.653333 34.133333 34.133333 34.133333s34.133333-13.653333 34.133334-34.133333v-204.8c0-20.48-13.653333-34.133333-34.133334-34.133334z"
+                          fill="#777777" p-id="3804"></path>
+                    </svg>
+                  </button>
+              )}
+            </div>
             <WorkflowNodeOptions
-              message={item}
-              isLastMessage={isLastMessage}
-              workflowOperation={workflowOperation}
-              selectedOptionId={selectedOptionId}
-              onOptionClick={handleNodeClick}
+                message={item}
+                isLastMessage={isLastMessage}
+                workflowOperation={workflowOperation}
+                selectedOptionId={selectedOptionId}
+                onOptionClick={handleNodeClick}
             />
           </div>
         </div>
-        {item?.sid && <SourceInfoBox traceSource={item?.traceSource} />}
+        {item?.sid && <SourceInfoBox traceSource={item?.traceSource}/>}
         {item?.sid && (
-          <ResqBottomButtons
-            message={item}
-            isLastMessage={isLastMessage}
-            chatType={chatType}
-          />
+            <ResqBottomButtons
+                message={item}
+                isLastMessage={isLastMessage}
+                chatType={chatType}
+            />
         )}
       </div>
     );
   };
 
   return (
-    <div
-      className={`relative w-full flex flex-col flex-1 overflow-hidden scrollbar-hide  `}
-    >
       <div
-        className="w-full flex flex-col-reverse items-center overflow-y-auto min-h-0  pl-6"
-        style={{
-          scrollbarWidth: 'none',
-        }}
+          className={`relative w-full flex flex-col flex-1 overflow-hidden scrollbar-hide  `}
       >
         <div
-          className={`w-full flex flex-col-reverse items-center max-w-[960px] min-h-min scrollbar-hide m-[0_auto] ${
-            chatType === 'text' ? 'pr-0' : 'pr-52'
-          }`}
+            className="w-full flex flex-col-reverse items-center overflow-y-auto min-h-0  pl-6"
+            style={{
+              scrollbarWidth: 'none',
+            }}
         >
-          <div ref={scrollAnchorRef} />
+          <div
+              className={`w-full flex flex-col-reverse items-center max-w-[960px] min-h-min scrollbar-hide m-[0_auto] ${
+                  chatType === 'text' ? 'pr-0' : 'pr-52'
+              }`}
+          >
+            <div ref={scrollAnchorRef}/>
 
-          {/* 直接渲染消息列表 */}
-          {messageList
-            .slice()
-            .reverse()
-            .map((item: MessageListType, index: number) => {
-              const actualIndex = messageList.length - 1 - index; // 计算真实的消息索引
-              return (
-                <div className="w-[inherit]" key={actualIndex}>
-                  {item?.reqType === 'USER' && renderReq(item)}
-                  {item?.reqType === 'BOT' && renderResp(item, actualIndex)}
+            {/* 直接渲染消息列表 */}
+            {messageList
+                .slice()
+                .reverse()
+                .map((item: MessageListType, index: number) => {
+                  const actualIndex = messageList.length - 1 - index; // 计算真实的消息索引
+                  return (
+                      <div className="w-[inherit]" key={actualIndex}>
+                        {item?.reqType === 'USER' && renderReq(item)}
+                        {item?.reqType === 'BOT' && renderResp(item, actualIndex)}
                   {/*{item?.reqType === 'START' && renderRestart()}*/}
                 </div>
               );
@@ -328,6 +375,26 @@ const MessageList = (props: {
         file={previewFile || ({} as UploadFileInfo)}
         onClose={() => setPreviewFile({} as UploadFileInfo)}
       />
+      {/* iframe放大弹窗 */}
+      <Modal
+        title=""
+        open={modalVisible}
+        onCancel={handleModalClose}
+        footer={null}
+        width={'90%'}
+        style={{ top: 20 }}
+        styles={{
+          body: {
+            height: 'calc(100vh - 100px)',
+            overflowY: 'auto',
+          },
+        }}
+      >
+        <div className="iframe-preview-container p-4">
+          <MarkdownRender content={modalContent} isSending={false} />
+          {/*<div style={{height:'2000px'}}>455555</div>*/}
+        </div>
+      </Modal>
     </div>
   );
 };
