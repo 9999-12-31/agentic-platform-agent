@@ -492,9 +492,9 @@ const HomePage: React.FC = () => {
                 <div className={styles.empty_state}>
                   <img src={'/assets/xfyun-resources/组1@2x.png'} alt="" />
                   <span
-                    onClick={() => {
-                      eventBus.emit('createBot');
-                    }}
+                    // onClick={() => {
+                    //   eventBus.emit('createBot');
+                    // }}
                   >
                     {t('home.noRelatedSearchResults')}
                   </span>
