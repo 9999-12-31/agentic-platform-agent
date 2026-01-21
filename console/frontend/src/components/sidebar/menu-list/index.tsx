@@ -1022,14 +1022,13 @@ const MenuList: FC<MenuListProps> = ({
 
   return (
     <div
-      className={`flex flex-col flex-1 mt-6 gap-4 ${
+      className={`flex flex-col flex-1 mt-6 gap-4 scroll-bar-hover-UI ${
         isCollapsed
           ? 'overflow-visible'
           : isShowSpacePopover
             ? 'overflow-hidden'
             : 'overflow-auto'
-      // } scroll-bar-hide-UI scrollbar-none`}
-        }`}
+      }`}
 >
       {getDynamicMenuList.map((item, index) => (
         <div
