@@ -5,9 +5,12 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.iflytek.astron.console.commons.constant.RedisKeyConstant;
+import com.iflytek.astron.console.commons.dto.chat.ChatFileReq;
 import com.iflytek.astron.console.commons.dto.workflow.WorkflowEventData;
+import com.iflytek.astron.console.commons.entity.chat.ChatFileUser;
 import com.iflytek.astron.console.commons.entity.chat.ChatReqRecords;
 import com.iflytek.astron.console.commons.service.WssListenerService;
+import com.iflytek.astron.console.commons.service.data.ChatDataService;
 import com.iflytek.astron.console.commons.util.SseEmitterUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +23,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author mingsuiyongheng
@@ -244,6 +251,77 @@ public class WorkflowListener extends EventSourceListener {
         } catch (Exception e) {
             log.warn("Exception occurred while ending SSE connection, streamId: {}, error: {}", streamId, e.getMessage());
         }
+
+        // 对于特定输出格式的工作流 保存输出的URL
+        try {
+            String finalResult = completeData.getString("finalResult");
+            if (finalResult == null) return;
+
+            // 正则提取 工作流输出的最后一个 URL 文件
+            Pattern urlPattern = Pattern.compile("https?://[^\\s]+");
+            Matcher matcher = urlPattern.matcher(finalResult);
+            String fileUrl = null;
+            while (matcher.find()) {
+                fileUrl = matcher.group();
+            }
+
+            if (fileUrl != null) {
+                saveUrlToChatFile(fileUrl.trim());
+            }
+        } catch (Exception e) {
+            log.error("Error extracting or saving URL from completeData", e);
+        }
+    }
+
+    private void saveUrlToChatFile(String fileUrl) {
+        // 随机生成uuid
+        String fileBusinessKey = UUID.randomUUID().toString();
+        String uid = chatReqRecords.getUid();
+        ChatDataService chatDataService = wssListenerService.getChatDataService();
+
+        try {
+            log.info("Saving URL to chatFileUser: {}", fileUrl);
+            ChatFileUser chatFileUser = ChatFileUser.builder()
+                    .fileId(null)
+                    .fileName("报告解析结果" + uid + ".md")
+                    .uid(chatReqRecords.getUid())
+                    .fileUrl(fileUrl)
+                    .fileSize(null)
+                    .createTime(LocalDateTime.now())
+                    .updateTime(LocalDateTime.now())
+                    .clientType(1)
+                    .deleted(0)
+                    .businessType(16)
+                    .display(1)
+                    .fileStatus(2)
+                    .extraLink(null)
+                    .fileBusinessKey(fileBusinessKey)
+                    .documentType(1)
+                    .collectOriginFrom(null)
+                    .icon(null)
+                    .fileIndex(chatDataService.getFileUserCount(uid) + 1)
+                    .build();
+
+            Long chatFileUserId = chatDataService.createChatFileUser(chatFileUser).getId();
+            // Bind chatFileUser and chatFileReq
+            String fileId = "agent_" + chatFileUserId;
+            chatDataService.setFileId(chatFileUserId, fileId);
+
+            ChatFileReq chatFileReq = ChatFileReq.builder()
+                    .fileId(fileId)
+                    .chatId(chatReqRecords.getChatId())
+                    .uid(uid)
+                    .createTime(LocalDateTime.now())
+                    .updateTime(LocalDateTime.now())
+                    .clientType(1)
+                    .businessType(16)
+                    .build();
+            chatDataService.createChatFileReq(chatFileReq);
+            log.info("Save success URL to chatFileUser And ChatFileReq : {}", fileUrl);
+        } catch (Exception e) {
+            log.error("Error saving URL to chatFileUser: {}", fileUrl, e);
+        }
+
     }
 
     /**
