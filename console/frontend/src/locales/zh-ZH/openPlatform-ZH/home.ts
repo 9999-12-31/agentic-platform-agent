@@ -17,7 +17,7 @@ const translation = {
   officialTutorial: '官方教程',
   friendCompanion: '友伴',
   searchPlaceholder: '搜索你感兴趣的智能体',
-  noRelatedSearchResults: '没有相关搜索结果 前往创建专属智能体',
+  noRelatedSearchResults: '没有相关搜索结果',
 };
 
 export default translation;

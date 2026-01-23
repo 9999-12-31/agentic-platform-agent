@@ -411,20 +411,20 @@ const RecentList: FC<RecentListProps> = ({
                               </div>
                             </div>
                           ))}
-                        {(!item.historyList ||
-                          (item.historyList &&
-                            item.historyList.length === 0)) && (
-                          <div className="group flex items-center cursor-pointer px-1 py-1.5 rounded flex-shrink-0 w-full transition-colors duration-200">
-                            <span
-                              className="text-xs  text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200"
-                              style={{
-                                fontSize: '13px',
-                              }}
-                            >
-                              暂无数据
-                            </span>
-                          </div>
-                        )}
+                        {/*{(!item.historyList ||*/}
+                        {/*  (item.historyList &&*/}
+                        {/*    item.historyList.length === 0)) && (*/}
+                        {/*  <div className="group flex items-center cursor-pointer px-1 py-1.5 rounded flex-shrink-0 w-full transition-colors duration-200">*/}
+                        {/*    <span*/}
+                        {/*      className="text-xs  text-[#676773] flex-1 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 transition-all duration-200"*/}
+                        {/*      style={{*/}
+                        {/*        fontSize: '13px',*/}
+                        {/*      }}*/}
+                        {/*    >*/}
+                        {/*      暂无数据*/}
+                        {/*    </span>*/}
+                        {/*  </div>*/}
+                        {/*)}*/}
                       </div>
                     )}
                   </div>
@@ -1022,14 +1022,13 @@ const MenuList: FC<MenuListProps> = ({
 
   return (
     <div
-      className={`flex flex-col flex-1 mt-6 gap-4 ${
+      className={`flex flex-col flex-1 mt-6 gap-4 scroll-bar-hover-UI ${
         isCollapsed
           ? 'overflow-visible'
           : isShowSpacePopover
             ? 'overflow-hidden'
             : 'overflow-auto'
-      // } scroll-bar-hide-UI scrollbar-none`}
-        }`}
+      }`}
 >
       {getDynamicMenuList.map((item, index) => (
         <div
