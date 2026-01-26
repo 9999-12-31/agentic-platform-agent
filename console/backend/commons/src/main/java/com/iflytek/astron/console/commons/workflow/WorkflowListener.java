@@ -254,7 +254,7 @@ public class WorkflowListener extends EventSourceListener {
 
         // 对特定输出格式的工作流 保存输出的URL
         try {
-            String finalResultStr = completeData.getString("finalResultStr");
+            String finalResultStr = completeData.getString("finalResult");
             if (finalResultStr == null) return;
 
             // 正则提取 工作流输出的最后一个 URL 文件
