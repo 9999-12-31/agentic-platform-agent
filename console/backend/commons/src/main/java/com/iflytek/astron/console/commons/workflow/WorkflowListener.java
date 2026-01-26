@@ -252,21 +252,23 @@ public class WorkflowListener extends EventSourceListener {
             log.warn("Exception occurred while ending SSE connection, streamId: {}, error: {}", streamId, e.getMessage());
         }
 
-        // 对于特定输出格式的工作流 保存输出的URL
+        // 对特定输出格式的工作流 保存输出的URL
         try {
-            String finalResult = completeData.getString("finalResult");
-            if (finalResult == null) return;
+            String finalResultStr = completeData.getString("finalResultStr");
+            if (finalResultStr == null) return;
 
             // 正则提取 工作流输出的最后一个 URL 文件
-            Pattern urlPattern = Pattern.compile("https?://[^\\s]+");
-            Matcher matcher = urlPattern.matcher(finalResult);
-            String fileUrl = null;
+            // 提取规则 前缀
+            Pattern urlPattern = Pattern.compile("解析报告文件地址：https?://[^\\s]*\\.[a-zA-Z]{1,10}");
+            Matcher matcher = urlPattern.matcher(finalResultStr);
+            String matchedUrl = null;
             while (matcher.find()) {
-                fileUrl = matcher.group();
+                matchedUrl = matcher.group();
             }
 
-            if (fileUrl != null) {
-                saveUrlToChatFile(fileUrl.trim());
+            if (matchedUrl != null) {
+                String finalUrl = matchedUrl.replaceAll("解析报告文件地址：", "");
+                saveUrlToChatFile(finalUrl);
             }
         } catch (Exception e) {
             log.error("Error extracting or saving URL from completeData", e);
@@ -283,7 +285,7 @@ public class WorkflowListener extends EventSourceListener {
             log.info("Saving URL to chatFileUser: {}", fileUrl);
             ChatFileUser chatFileUser = ChatFileUser.builder()
                     .fileId(null)
-                    .fileName("报告解析结果" + uid + ".md")
+                    .fileName("报告解析" + fileBusinessKey + ".md")
                     .uid(chatReqRecords.getUid())
                     .fileUrl(fileUrl)
                     .fileSize(100L)
