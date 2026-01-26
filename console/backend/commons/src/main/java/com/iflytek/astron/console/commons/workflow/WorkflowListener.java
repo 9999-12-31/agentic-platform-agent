@@ -286,7 +286,7 @@ public class WorkflowListener extends EventSourceListener {
                     .fileName("报告解析结果" + uid + ".md")
                     .uid(chatReqRecords.getUid())
                     .fileUrl(fileUrl)
-                    .fileSize(null)
+                    .fileSize(100L)
                     .createTime(LocalDateTime.now())
                     .updateTime(LocalDateTime.now())
                     .clientType(1)
