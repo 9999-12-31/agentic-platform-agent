@@ -228,6 +228,8 @@ public class WorkflowListener extends EventSourceListener {
             return;
         }
 
+        specialPreProcess(completeData);
+
         try {
             // Try to send completion data
             emitter.send(SseEmitter.event().name("complete").data(completeData.toJSONString()));
@@ -252,23 +254,34 @@ public class WorkflowListener extends EventSourceListener {
             log.warn("Exception occurred while ending SSE connection, streamId: {}, error: {}", streamId, e.getMessage());
         }
 
+
+    }
+
+    /**
+     * 对工作流特定输出 保存URL,同时移除该输出内容
+     * Pattern：save file url:http...
+     * @param completeData
+     */
+    private void specialPreProcess(JSONObject completeData) {
         // 对特定输出格式的工作流 保存输出的URL
         try {
             String finalResultStr = completeData.getString("finalResult");
-            if (finalResultStr == null) return;
+            if (finalResultStr == null) return ;
 
-            // 正则提取 工作流输出的最后一个 URL 文件
+            // 正则提取 工作流输出的第一个符合题意的
             // 提取规则 前缀
-            Pattern urlPattern = Pattern.compile("解析报告文件地址：https?://[^\\s]*\\.[a-zA-Z]{1,10}");
+            Pattern urlPattern = Pattern.compile("save file url:https?://[^\\s]*\\.[a-zA-Z]{1,10}");
             Matcher matcher = urlPattern.matcher(finalResultStr);
             String matchedUrl = null;
-            while (matcher.find()) {
-                matchedUrl = matcher.group();
+            if (matcher.find()) {
+                matchedUrl = matcher.group(); // 或 matcher.group(1) 如果用了捕获组
             }
 
             if (matchedUrl != null) {
-                String finalUrl = matchedUrl.replaceAll("解析报告文件地址：", "");
+                String finalUrl = matchedUrl.replaceAll("save file url:", "");
                 saveUrlToChatFile(finalUrl);
+                // 移除工作流关于url的输出
+                completeData.put("finalResult", finalResultStr.replace(matchedUrl, ""));
             }
         } catch (Exception e) {
             log.error("Error extracting or saving URL from completeData", e);
@@ -313,6 +326,7 @@ public class WorkflowListener extends EventSourceListener {
                     .fileId(fileId)
                     .chatId(chatReqRecords.getChatId())
                     .uid(uid)
+                    .reqId(chatReqRecords.getId())  // 如果id为null 则会在聊天输入框中显示 且 可以取消绑定
                     .createTime(LocalDateTime.now())
                     .updateTime(LocalDateTime.now())
                     .clientType(1)
