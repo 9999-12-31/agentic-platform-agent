@@ -228,6 +228,7 @@ public class WorkflowListener extends EventSourceListener {
             return;
         }
 
+        // 保存特定格式的file url
         specialPreProcess(completeData);
 
         try {
@@ -258,8 +259,8 @@ public class WorkflowListener extends EventSourceListener {
     }
 
     /**
-     * 对工作流特定输出 保存URL,同时移除该输出内容
-     * Pattern：save file url:http...
+     * 对工作流特定输出 保存URL,同时移除该输出内容。
+     * 匹配模式：save file url:http...
      * @param completeData
      */
     private void specialPreProcess(JSONObject completeData) {
@@ -280,8 +281,6 @@ public class WorkflowListener extends EventSourceListener {
             if (matchedUrl != null) {
                 String finalUrl = matchedUrl.replaceAll("save file url:", "");
                 saveUrlToChatFile(finalUrl);
-                // 移除工作流关于url的输出
-                completeData.put("finalResult", finalResultStr.replace(matchedUrl, ""));
             }
         } catch (Exception e) {
             log.error("Error extracting or saving URL from completeData", e);
