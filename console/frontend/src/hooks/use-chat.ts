@@ -298,6 +298,9 @@ const useChat = () => {
     const form = new FormData();
     form.append('requestId', requestId.toString());
     form.append('chatId', `${currentChatId}`);
+    if (chilChatId) {
+      form.append('childChatId', `${chilChatId}`);
+    }
     fetchSSE(esURL, form, false);
   };
 
