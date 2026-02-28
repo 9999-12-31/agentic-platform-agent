@@ -252,7 +252,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
           ? 20
           : currentUploadConfig.icon === 'video'
             ? 500
-            : 500;
+            : 1024;
       handleFileSelect(e, currentUploadConfig, uploadMaxMB);
       handleCloseUploadModal();
     }
@@ -268,7 +268,7 @@ const MultiUploadButtons: React.FC<MultiUploadButtonsProps> = ({
   ): JSX.Element => {
     const { accept, limit, type, icon, name, schema } = config;
     const currentCount = fileTypeCounts[name || type] || 0;
-    const uploadMaxMB = icon === 'image' ? 20 : icon === 'video' ? 500 : 500;
+    const uploadMaxMB = icon === 'image' ? 20 : icon === 'video' ? 500 : 1024;
     const isDisabled = currentCount >= (limit || 1);
 
     return (
