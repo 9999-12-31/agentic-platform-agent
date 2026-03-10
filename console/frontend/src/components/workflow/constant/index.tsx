@@ -101,6 +101,10 @@ export const originOutputTypeList: OriginOutputType[] = [
         label: 'Subtitle',
         value: 'subtitle',
       },
+      {
+        label: 'Html',
+        value: 'html',
+      },
     ],
   },
   {
@@ -153,7 +157,11 @@ export const originOutputTypeList: OriginOutputType[] = [
       },
       {
         label: 'Array<Audio>',
-        value: 'Array<audio>',
+        value: 'Array<Audio>',
+      },
+      {
+        label: 'Array<Html>',
+        value: 'Array<Html>',
       },
     ],
   },
