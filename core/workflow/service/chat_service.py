@@ -483,7 +483,7 @@ async def _run(
 
             sparkflow_engine.engine_ctx.variable_pool.system_params.set(
                 ParamKey.FlowId, chat_vo.flow_id
-            ).set(ParamKey.ChatId, chat_vo.chat_id).set(ParamKey.Uid, chat_vo.uid).set(
+            ).set(ParamKey.ChatId, chat_vo.parameters.get("chat_id", "")).set(ParamKey.Uid, chat_vo.uid).set(
                 ParamKey.AppId, app_alias_id
             )
             # Initialize model content output queues
