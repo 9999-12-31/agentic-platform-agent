@@ -50,10 +50,24 @@ class StartNode(BaseNode):
                     node_id=self.node_id, key_name=key, span=span
                 )
 
+            # Add chat_id to outputs if it exists in input variables
+            try:
+                chat_id = variable_pool.get_variable(
+                    node_id=self.node_id, key_name="chat_id", span=span
+                )
+                outputs["chat_id"] = chat_id
+            except Exception:
+                # If chat_id is not found, continue execution without it
+                pass
+
             # Set special tracing attribute for agent user input if present
             # This helps with debugging and monitoring agent interactions
             if "AGENT_USER_INPUT" in outputs:
                 span.set_attribute("AGENT_USER_INPUT", outputs["AGENT_USER_INPUT"])
+
+            # Also set tracing attribute for chat_id if present
+            if "chat_id" in outputs:
+                span.set_attribute("chat_id", outputs["chat_id"])
 
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,

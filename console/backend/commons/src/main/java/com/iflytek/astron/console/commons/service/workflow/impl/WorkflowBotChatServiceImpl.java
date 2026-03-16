@@ -105,6 +105,7 @@ public class WorkflowBotChatServiceImpl implements WorkflowBotChatService {
 
         JSONObject inputs = new JSONObject();
         inputs.put("AGENT_USER_INPUT", ask);
+        inputs.put("chat_id", chatId);
 
         UserLangChainInfo userLangChainInfo = userLangChainDataService.findOneByBotId(botId);
         if (userLangChainInfo == null) {
