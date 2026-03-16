@@ -60,7 +60,19 @@ class CodeNode(BaseNode):
         func_variables = _parser_code_parameter(self.code)
         actual_parameters = {}
         for variable_key in func_variables:
-            # First try to get from system params for common system variables
+            # First try to get from regular variables
+            try:
+                value_content = variable_pool.get_variable(
+                    node_id=self.node_id, key_name=variable_key, span=span_context
+                )
+                # Check if value is None or empty
+                if value_content is not None and value_content != "":
+                    actual_parameters.update({variable_key: value_content})
+                    continue
+            except Exception:
+                pass
+            
+            # If not found or empty in regular variables, try to get from system params
             if variable_key == "chat_id":
                 chat_id = variable_pool.system_params.get(ParamKey.ChatId, default="")
                 actual_parameters.update({"chat_id": chat_id})
@@ -71,15 +83,8 @@ class CodeNode(BaseNode):
                 app_id = variable_pool.system_params.get(ParamKey.AppId, default="")
                 actual_parameters.update({"app_id": app_id})
             else:
-                # For other variables, try to get from regular variables
-                try:
-                    value_content = variable_pool.get_variable(
-                        node_id=self.node_id, key_name=variable_key, span=span_context
-                    )
-                    actual_parameters.update({variable_key: value_content})
-                except Exception:
-                    # If not found, leave it as None
-                    actual_parameters.update({variable_key: None})
+                # For other variables that are not found, leave it as None
+                actual_parameters.update({variable_key: None})
         span_context.add_info_events(
             {"input": json.dumps(actual_parameters, ensure_ascii=False)}
         )
