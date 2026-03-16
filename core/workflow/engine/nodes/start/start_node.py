@@ -1,6 +1,6 @@
 from typing import Any
 
-from workflow.engine.entities.variable_pool import VariablePool
+from workflow.engine.entities.variable_pool import ParamKey, VariablePool
 from workflow.engine.nodes.base_node import BaseNode
 from workflow.engine.nodes.entities.node_run_result import (
     NodeRunResult,
@@ -50,15 +50,9 @@ class StartNode(BaseNode):
                     node_id=self.node_id, key_name=key, span=span
                 )
 
-            # Add chat_id to outputs if it exists in input variables
-            try:
-                chat_id = variable_pool.get_variable(
-                    node_id=self.node_id, key_name="chat_id", span=span
-                )
-                outputs["chat_id"] = chat_id
-            except Exception:
-                # If chat_id is not found, continue execution without it
-                pass
+            # Add chat_id to outputs from system parameters
+            chat_id: str = variable_pool.system_params.get(ParamKey.ChatId, default="")
+            outputs["chat_id"] = chat_id
 
             # Set special tracing attribute for agent user input if present
             # This helps with debugging and monitoring agent interactions
