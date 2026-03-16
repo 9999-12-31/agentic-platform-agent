@@ -1481,10 +1481,15 @@ class WorkflowEngine(BaseModel):
         :raises CustomException: If initialization fails
         """
         try:
+            # Get start node output identifiers
+            start_node_outputs = self.sparkflow_engine_node.node_instance.output_identifier
+            # Only include variables that are in start node's output identifiers
+            filtered_inputs = {k: v for k, v in inputs.items() if k in start_node_outputs}
+            # Add init variables only for filtered inputs
             self.engine_ctx.variable_pool.add_init_variable(
                 node_id=self.sparkflow_engine_node.id,
-                key_name_list=list(inputs.keys()),
-                value=inputs,
+                key_name_list=list(filtered_inputs.keys()),
+                value=filtered_inputs,
                 span=span,
             )
             self.engine_ctx.variable_pool.add_history(history)

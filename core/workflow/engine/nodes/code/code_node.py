@@ -5,7 +5,7 @@ from typing import Any, Dict, Literal
 
 from pydantic import Field
 
-from workflow.engine.entities.variable_pool import VariablePool
+from workflow.engine.entities.variable_pool import ParamKey, VariablePool
 from workflow.engine.nodes.base_node import BaseNode
 from workflow.engine.nodes.code.executor.base_executor import CodeExecutorFactory
 from workflow.engine.nodes.entities.node_run_result import NodeRunResult
@@ -60,10 +60,23 @@ class CodeNode(BaseNode):
         func_variables = _parser_code_parameter(self.code)
         actual_parameters = {}
         for variable_key in func_variables:
-            value_content = variable_pool.get_variable(
-                node_id=self.node_id, key_name=variable_key, span=span_context
-            )
-            actual_parameters.update({variable_key: value_content})
+            try:
+                # First try to get from regular variables
+                value_content = variable_pool.get_variable(
+                    node_id=self.node_id, key_name=variable_key, span=span_context
+                )
+                actual_parameters.update({variable_key: value_content})
+            except Exception:
+                # If not found, try to get from system params
+                if variable_key == "chat_id":
+                    chat_id = variable_pool.system_params.get(ParamKey.ChatId, default="")
+                    actual_parameters.update({"chat_id": chat_id})
+                elif variable_key == "uid":
+                    uid = variable_pool.system_params.get(ParamKey.Uid, default="")
+                    actual_parameters.update({"uid": uid})
+                elif variable_key == "app_id":
+                    app_id = variable_pool.system_params.get(ParamKey.AppId, default="")
+                    actual_parameters.update({"app_id": app_id})
         span_context.add_info_events(
             {"input": json.dumps(actual_parameters, ensure_ascii=False)}
         )
