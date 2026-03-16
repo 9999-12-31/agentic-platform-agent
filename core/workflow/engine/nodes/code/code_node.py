@@ -60,23 +60,26 @@ class CodeNode(BaseNode):
         func_variables = _parser_code_parameter(self.code)
         actual_parameters = {}
         for variable_key in func_variables:
-            try:
-                # First try to get from regular variables
-                value_content = variable_pool.get_variable(
-                    node_id=self.node_id, key_name=variable_key, span=span_context
-                )
-                actual_parameters.update({variable_key: value_content})
-            except Exception:
-                # If not found, try to get from system params
-                if variable_key == "chat_id":
-                    chat_id = variable_pool.system_params.get(ParamKey.ChatId, default="")
-                    actual_parameters.update({"chat_id": chat_id})
-                elif variable_key == "uid":
-                    uid = variable_pool.system_params.get(ParamKey.Uid, default="")
-                    actual_parameters.update({"uid": uid})
-                elif variable_key == "app_id":
-                    app_id = variable_pool.system_params.get(ParamKey.AppId, default="")
-                    actual_parameters.update({"app_id": app_id})
+            # First try to get from system params for common system variables
+            if variable_key == "chat_id":
+                chat_id = variable_pool.system_params.get(ParamKey.ChatId, default="")
+                actual_parameters.update({"chat_id": chat_id})
+            elif variable_key == "uid":
+                uid = variable_pool.system_params.get(ParamKey.Uid, default="")
+                actual_parameters.update({"uid": uid})
+            elif variable_key == "app_id":
+                app_id = variable_pool.system_params.get(ParamKey.AppId, default="")
+                actual_parameters.update({"app_id": app_id})
+            else:
+                # For other variables, try to get from regular variables
+                try:
+                    value_content = variable_pool.get_variable(
+                        node_id=self.node_id, key_name=variable_key, span=span_context
+                    )
+                    actual_parameters.update({variable_key: value_content})
+                except Exception:
+                    # If not found, leave it as None
+                    actual_parameters.update({variable_key: None})
         span_context.add_info_events(
             {"input": json.dumps(actual_parameters, ensure_ascii=False)}
         )
